@@ -153,39 +153,6 @@ export default function LoginPage() {
                             </Alert>
                         ) : null}
 
-                        {/* Social (optional) */}
-                        <Stack spacing={1.25} className="mb-4">
-                            <Button
-                                variant="outlined"
-                                disabled={loading}
-                                startIcon={<GoogleIcon />}
-                                className="rounded-xl! py-2.5! font-semibold! normal-case"
-                                sx={{
-                                    borderColor: "rgba(203,213,225,0.9)",
-                                    color: "rgb(15 23 42)",
-                                    "&:hover": { borderColor: "rgb(148,163,184)" },
-                                }}
-                                onClick={() => setError("ยังไม่ได้เชื่อม Google Login (ตัวอย่าง UI)")}
-                            >
-                                เข้าสู่ระบบด้วย Google
-                            </Button>
-
-                            <Button
-                                variant="outlined"
-                                disabled={loading}
-                                startIcon={<FacebookRoundedIcon />}
-                                className="rounded-xl! py-2.5! font-semibold! normal-case"
-                                sx={{
-                                    borderColor: "rgba(203,213,225,0.9)",
-                                    color: "rgb(15 23 42)",
-                                    "&:hover": { borderColor: "rgb(148,163,184)" },
-                                }}
-                                onClick={() => setError("ยังไม่ได้เชื่อม Facebook Login (ตัวอย่าง UI)")}
-                            >
-                                เข้าสู่ระบบด้วย Facebook
-                            </Button>
-                        </Stack>
-
                         <Stack direction="row" className="items-center gap-3 py-2">
                             <Divider className="flex-1 border-slate-200!" />
                             <Typography className="text-xs text-slate-500">หรือ</Typography>
