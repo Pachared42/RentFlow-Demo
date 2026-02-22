@@ -20,6 +20,7 @@ import {
   MenuItem,
   Divider,
 } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import DirectionsCarRounded from "@mui/icons-material/DirectionsCarRounded";
@@ -37,6 +38,7 @@ export default function Navbar() {
 
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = (v: boolean) => () => setOpen(v);
+  const isCompact = useMediaQuery("(max-width: 800px)");
 
   // mock auth
   const [user, setUser] = React.useState<User | null>(null);
@@ -72,103 +74,110 @@ export default function Navbar() {
           >
             <DirectionsCarRounded className="text-slate-900!" />
             <Typography className="font-bold! text-slate-900!">
-              RentFlow Car
+              RentFlow Demo
             </Typography>
           </Box>
 
           {/* Desktop nav */}
           <Box className="hidden md:flex items-center gap-1">
-            {NAV.map((n) => (
-              <NavLink key={n.href} href={n.href} label={n.label} />
-            ))}
-          </Box>
-
-          {/* Right side (desktop only) */}
-          <Box className="hidden md:flex items-center gap-2">
-            {!user ? (
-              <>
-                <Button
-                  component={Link}
-                  href="/login"
-                  variant="outlined"
-                  className="rounded-xl! border-slate-300! text-slate-900! hover:border-slate-400!"
-                  sx={{ textTransform: "none" }}
-                >
-                  ล็อกอิน
-                </Button>
-
-                <Button
-                  component={Link}
-                  href="/register"
-                  variant="contained"
-                  className="rounded-xl! font-semibold!"
-                  sx={{
-                    textTransform: "none",
-                    backgroundColor: "rgb(15 23 42)",
-                  }}
-                >
-                  สมัครสมาชิก
-                </Button>
-              </>
-            ) : (
-              <>
-                <IconButton onClick={handleOpenMenu} className="p-1!">
-                  <Avatar className="bg-slate-900! text-white!">
-                    {user.name[0].toUpperCase()}
-                  </Avatar>
-                </IconButton>
-
-                <Menu
-                  anchorEl={anchorEl}
-                  open={openMenu}
-                  onClose={handleCloseMenu}
-                >
-                  <MenuItem disabled>
-                    <Box>
-                      <Typography className="font-semibold! text-slate-900!">
-                        {user.name}
-                      </Typography>
-                      <Typography className="text-xs! text-slate-500!">
-                        {user.email}
-                      </Typography>
-                    </Box>
-                  </MenuItem>
-
-                  <Divider />
-
-                  <MenuItem
-                    component={Link}
-                    href="/profile"
-                    onClick={handleCloseMenu}
-                  >
-                    โปรไฟล์
-                  </MenuItem>
-
-                  <MenuItem
-                    component={Link}
-                    href="/my-bookings"
-                    onClick={handleCloseMenu}
-                  >
-                    การจองของฉัน
-                  </MenuItem>
-
-                  <MenuItem onClick={handleLogout} className="text-red-600!">
-                    ออกจากระบบ
-                  </MenuItem>
-                </Menu>
-              </>
+            {!isCompact && (
+              <Box className="flex items-center gap-1">
+                {NAV.map((n) => (
+                  <NavLink key={n.href} href={n.href} label={n.label} />
+                ))}
+              </Box>
             )}
           </Box>
 
+          {/* Right side (desktop only) */}
+          {!isCompact && (
+            <Box className="flex items-center gap-2">
+              {!user ? (
+                <>
+                  <Button
+                    component={Link}
+                    href="/login"
+                    variant="outlined"
+                    className="rounded-xl! border-slate-300! text-slate-900! hover:border-slate-400!"
+                    sx={{ textTransform: "none" }}
+                  >
+                    ล็อกอิน
+                  </Button>
+
+                  <Button
+                    component={Link}
+                    href="/register"
+                    variant="contained"
+                    className="rounded-xl! font-semibold!"
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "rgb(15 23 42)",
+                    }}
+                  >
+                    สมัครสมาชิก
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <IconButton onClick={handleOpenMenu} className="p-1!">
+                    <Avatar className="bg-slate-900! text-white!">
+                      {user.name[0].toUpperCase()}
+                    </Avatar>
+                  </IconButton>
+
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={openMenu}
+                    onClose={handleCloseMenu}
+                  >
+                    <MenuItem disabled>
+                      <Box>
+                        <Typography className="font-semibold! text-slate-900!">
+                          {user.name}
+                        </Typography>
+                        <Typography className="text-xs! text-slate-500!">
+                          {user.email}
+                        </Typography>
+                      </Box>
+                    </MenuItem>
+
+                    <Divider />
+
+                    <MenuItem
+                      component={Link}
+                      href="/profile"
+                      onClick={handleCloseMenu}
+                    >
+                      โปรไฟล์
+                    </MenuItem>
+
+                    <MenuItem
+                      component={Link}
+                      href="/my-bookings"
+                      onClick={handleCloseMenu}
+                    >
+                      การจองของฉัน
+                    </MenuItem>
+
+                    <MenuItem onClick={handleLogout} className="text-red-600!">
+                      ออกจากระบบ
+                    </MenuItem>
+                  </Menu>
+                </>
+              )}
+            </Box>
+          )}
+
           {/* Mobile hamburger (โชว์เฉพาะจอเล็กจริง ๆ) */}
-          <IconButton
-            onClick={toggleDrawer(true)}
-            aria-label="Open menu"
-            sx={{ display: { xs: "inline-flex", md: "none" } }}
-            className="text-slate-900!"
-          >
-            <MenuIcon />
-          </IconButton>
+          {isCompact && (
+            <IconButton
+              onClick={toggleDrawer(true)}
+              aria-label="Open menu"
+              className="text-slate-900!"
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
         </Toolbar>
       </Container>
 

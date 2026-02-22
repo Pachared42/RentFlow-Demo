@@ -1,0 +1,323 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+    Box,
+    Container,
+    Card,
+    CardContent,
+    Typography,
+    TextField,
+    Button,
+    Stack,
+    Divider,
+    InputAdornment,
+    IconButton,
+    Alert,
+    Checkbox,
+    FormControlLabel,
+    CircularProgress,
+} from "@mui/material";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
+import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
+
+const fieldSX = {
+    "& .MuiOutlinedInput-root": {
+        backgroundColor: "rgba(255,255,255,0.98)",
+        borderRadius: "14px",
+        transition: "box-shadow .2s ease, transform .06s ease",
+        "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgba(203,213,225,0.9)",
+            borderWidth: 1.5,
+            borderRadius: "14px",
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgb(148,163,184)",
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: "rgb(15 23 42)",
+            borderWidth: 2,
+        },
+        "&.Mui-focused": {
+            boxShadow: "0 10px 30px rgba(15,23,42,0.10)",
+        },
+    },
+    "& .MuiInputBase-input": { color: "rgb(15,23,42)" },
+    "& .MuiInputLabel-root": { color: "rgb(71,85,105)" },
+    "& .MuiInputLabel-root.Mui-focused": { color: "rgb(15 23 42)" },
+} as const;
+
+function isValidEmail(v: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+}
+
+export default function RegisterPage() {
+    const router = useRouter();
+
+    const [name, setName] = React.useState("");
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [confirm, setConfirm] = React.useState("");
+    const [showPw, setShowPw] = React.useState(false);
+
+    const [accept, setAccept] = React.useState(true);
+
+    const [error, setError] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState(false);
+
+    const nameOk = name.trim().length >= 2;
+    const emailOk = isValidEmail(email);
+    const pwOk = password.trim().length >= 6;
+    const confirmOk = confirm === password && confirm.length > 0;
+
+    const canSubmit = nameOk && emailOk && pwOk && confirmOk && accept && !loading;
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!nameOk) return setError("กรุณากรอกชื่ออย่างน้อย 2 ตัวอักษร");
+        if (!emailOk) return setError("อีเมลไม่ถูกต้อง");
+        if (!pwOk) return setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
+        if (confirm !== password) return setError("ยืนยันรหัสผ่านไม่ตรงกัน");
+        if (!accept) return setError("กรุณายอมรับเงื่อนไขการใช้งาน");
+
+        try {
+            setLoading(true);
+
+            // TODO: ต่อ API จริง
+            // const res = await fetch("/api/auth/register", {
+            //   method: "POST",
+            //   headers: { "Content-Type": "application/json" },
+            //   body: JSON.stringify({ name, email, password }),
+            // });
+            // if (!res.ok) throw new Error("สมัครสมาชิกไม่สำเร็จ");
+            // router.push("/login");
+
+            await new Promise((r) => setTimeout(r, 450)); // mock
+            router.push("/login");
+        } catch (err: any) {
+            setError(err?.message || "สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const pwMismatch = confirm.length > 0 && confirm !== password;
+
+    return (
+        <Box className="min-h-screen bg-slate-50">
+            {/* Background soft gradient */}
+            <Box
+                aria-hidden
+                className="pointer-events-none fixed inset-0"
+            />
+
+            <Container maxWidth="sm" className="relative py-12">
+                {/* Brand / Header */}
+                <Stack className="mb-6 items-center text-center">
+                    <Box
+                        className="mb-3 grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white shadow-sm"
+                        sx={{ boxShadow: "0 10px 30px rgba(15,23,42,0.08)" }}
+                    >
+                        <Typography className="text-base font-black text-slate-900">CR</Typography>
+                    </Box>
+                    <Typography className="text-2xl font-extrabold text-slate-900">
+                        สร้างบัญชี Car Rental
+                    </Typography>
+                    <Typography className="mt-1 text-sm text-slate-600">
+                        สมัครสมาชิกเพื่อเริ่มจองรถและติดตามสถานะการจอง
+                    </Typography>
+                </Stack>
+
+                <Card
+                    elevation={0}
+                    className="w-full rounded-2xl! border border-slate-200 bg-white"
+                    sx={{
+                        boxShadow: "0 20px 60px rgba(15,23,42,0.10)",
+                        backdropFilter: "blur(6px)",
+                    }}
+                >
+                    <CardContent className="p-7">
+                        <Stack spacing={1}>
+                            <Typography className="text-xl font-bold text-slate-900">
+                                สมัครสมาชิก
+                            </Typography>
+                            <Typography className="text-sm text-slate-600">
+                                กรอกข้อมูลให้ครบเพื่อสร้างบัญชีใหม่
+                            </Typography>
+                        </Stack>
+
+                        <Divider className="my-5! border-slate-200!" />
+
+                        {error ? (
+                            <Alert
+                                severity="error"
+                                className="mb-4 rounded-xl!"
+                                onClose={() => setError(null)}
+                            >
+                                {error}
+                            </Alert>
+                        ) : null}
+
+                        <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
+                            <TextField
+                                label="ชื่อผู้ใช้งาน"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                fullWidth
+                                sx={fieldSX}
+                                autoComplete="name"
+                                error={name.length > 0 && !nameOk}
+                                helperText={name.length > 0 && !nameOk ? "อย่างน้อย 2 ตัวอักษร" : " "}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <PersonRoundedIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+
+                            <TextField
+                                label="อีเมล"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                fullWidth
+                                sx={fieldSX}
+                                autoComplete="email"
+                                inputMode="email"
+                                error={email.length > 0 && !emailOk}
+                                helperText={email.length > 0 && !emailOk ? "รูปแบบอีเมลไม่ถูกต้อง" : " "}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <EmailRoundedIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+
+                            <TextField
+                                label="รหัสผ่าน"
+                                type={showPw ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                fullWidth
+                                sx={fieldSX}
+                                autoComplete="new-password"
+                                error={password.length > 0 && !pwOk}
+                                helperText={password.length > 0 && !pwOk ? "อย่างน้อย 6 ตัวอักษร" : " "}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LockRoundedIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                edge="end"
+                                                onClick={() => setShowPw((v) => !v)}
+                                                aria-label={showPw ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+                                            >
+                                                {showPw ? (
+                                                    <VisibilityOffRoundedIcon fontSize="small" />
+                                                ) : (
+                                                    <VisibilityRoundedIcon fontSize="small" />
+                                                )}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+
+                            <TextField
+                                label="ยืนยันรหัสผ่าน"
+                                type={showPw ? "text" : "password"}
+                                value={confirm}
+                                onChange={(e) => setConfirm(e.target.value)}
+                                fullWidth
+                                sx={fieldSX}
+                                autoComplete="new-password"
+                                error={pwMismatch}
+                                helperText={pwMismatch ? "ยืนยันรหัสผ่านไม่ตรงกัน" : " "}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LockRoundedIcon fontSize="small" />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+
+                            <FormControlLabel
+                                className="select-none"
+                                control={
+                                    <Checkbox
+                                        checked={accept}
+                                        onChange={(e) => setAccept(e.target.checked)}
+                                        sx={{
+                                            color: "rgb(148,163,184)",
+                                            "&.Mui-checked": { color: "rgb(15 23 42)" },
+                                        }}
+                                    />
+                                }
+                                label={
+                                    <Typography className="text-xs text-slate-600">
+                                        ฉันยอมรับ{" "}
+                                        <Link href="/terms" className="font-semibold text-slate-900 hover:underline">
+                                            เงื่อนไขการใช้งาน
+                                        </Link>{" "}
+                                        และ{" "}
+                                        <Link href="/privacy" className="font-semibold text-slate-900 hover:underline">
+                                            นโยบายความเป็นส่วนตัว
+                                        </Link>
+                                    </Typography>
+                                }
+                            />
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                disabled={!canSubmit}
+                                className="rounded-xl! py-3! font-semibold!"
+                                sx={{
+                                    textTransform: "none",
+                                    backgroundColor: "rgb(15 23 42)",
+                                    "&:hover": { backgroundColor: "rgb(2 6 23)" },
+                                }}
+                            >
+                                {loading ? (
+                                    <Stack direction="row" className="items-center gap-2">
+                                        <CircularProgress size={18} />
+                                        <span>กำลังสมัครสมาชิก...</span>
+                                    </Stack>
+                                ) : (
+                                    "สมัครสมาชิก"
+                                )}
+                            </Button>
+
+                            <Stack direction="row" className="items-center justify-between">
+                                <Typography className="text-xs text-slate-500">
+                                    มีบัญชีแล้ว?
+                                </Typography>
+                                <Link
+                                    href="/login"
+                                    className="text-xs font-semibold text-slate-900 underline-offset-4 hover:underline"
+                                >
+                                    เข้าสู่ระบบ
+                                </Link>
+                            </Stack>
+                        </Box>
+                    </CardContent>
+                </Card>
+            </Container>
+        </Box>
+    );
+}
