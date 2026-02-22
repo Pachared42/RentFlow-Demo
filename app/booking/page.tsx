@@ -1,7 +1,10 @@
-import BookingPage from "@/components/pages/BookingPage";
+"use client";
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
 
-export const dynamic = "force-dynamic";
+const BookingPage = dynamic(() => import("@/components/pages/BookingPage"), {
+    ssr: false,
+});
 
 export default function Page() {
     return (
