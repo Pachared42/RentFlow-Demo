@@ -2,10 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-const FeaturesPage = dynamic(() => import("@/components/pages/FeaturesPage"), {
+const FeaturesPage = dynamic(
+  () => import("@/src/components/pages/FeaturesPage"),
+  {
     ssr: false,
-});
+  }
+);
 
 export default function Page() {
-    return <FeaturesPage />;
+  return <FeaturesPage />;
 }
