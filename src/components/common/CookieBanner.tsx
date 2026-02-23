@@ -41,8 +41,15 @@ export default function CookieBanner() {
   return (
     <Snackbar
       open={open}
-      onClose={close}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      autoHideDuration={null}
+      disableWindowBlurListener
+      onClose={(event, reason) => {
+        if (reason === "clickaway" || reason === "escapeKeyDown") {
+          return;
+        }
+        setOpen(false);
+      }}
       sx={{
         "& .MuiSnackbarContent-root": {
           p: 0,
@@ -63,7 +70,6 @@ export default function CookieBanner() {
           overflow: "hidden",
         }}
       >
-        
         <Box className="p-4 sm:p-5">
           <Stack direction="row" spacing={1.5} alignItems="flex-start">
             <Box
