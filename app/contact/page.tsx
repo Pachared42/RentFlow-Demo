@@ -2,10 +2,13 @@
 
 import dynamic from "next/dynamic";
 
-const ContactPage = dynamic(() => import("@/components/pages/ContactPage"), {
+const ContactPage = dynamic(
+  () => import("@/src/components/pages/ContactPage"),
+  {
     ssr: false,
-});
+  }
+);
 
 export default function Page() {
-    return <ContactPage />;
+  return <ContactPage />;
 }
