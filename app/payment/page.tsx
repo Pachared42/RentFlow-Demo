@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic";
 
 const PaymentPage = dynamic(
-    () => import("@/components/pages/PaymentPage"),
-    { ssr: false }
+  () => import("@/src/components/pages/PaymentPage"),
+  { ssr: false }
 );
 
 export default function Page() {
-    return <PaymentPage />;
+  return <PaymentPage />;
 }
