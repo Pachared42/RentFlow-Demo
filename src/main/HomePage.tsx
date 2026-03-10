@@ -26,35 +26,16 @@ const HERO_IMAGES = [
 export default function HomePage() {
   const [location, setLocation] = React.useState<LocationValue>("bangkok");
   const [type, setType] = React.useState<Car["type"] | "All">("All");
-  const [grade, setGrade] = React.useState<1 | 2 | 3 | 4 | "All">("All");
   const [pickupDate, setPickupDate] = React.useState("");
   const [returnDate, setReturnDate] = React.useState("");
   const [q, setQ] = React.useState("");
 
-  const filtered = React.useMemo(() => {
-    return CARS.filter((c) => {
-      const matchType = type === "All" ? true : c.type === type;
-      const matchQ = q.trim()
-        ? c.name.toLowerCase().includes(q.trim().toLowerCase())
-        : true;
-      const matchGrade = grade === "All" ? true : c.grade === grade;
-
-      return matchType && matchQ && matchGrade;
-    });
-  }, [type, q, grade]);
-
-  const [heroIndex, setHeroIndex] = React.useState(0);
-
-  React.useEffect(() => {
-    const t = setInterval(() => {
-      setHeroIndex((i) => (i + 1) % HERO_IMAGES.length);
-    }, 3500);
-    return () => clearInterval(t);
+  const recommendedCars = React.useMemo(() => {
+    return CARS.slice(0, 6);
   }, []);
 
   return (
     <Box className="min-h-screen bg-white text-slate-900">
-      {/* Hero */}
       <HeroSection
         heroImages={HERO_IMAGES}
         location={location}
@@ -68,21 +49,14 @@ export default function HomePage() {
         q={q}
         setQ={setQ}
         carTypes={CAR_TYPES}
-        onSearch={() =>
-          console.log({ location, pickupDate, returnDate, type, q })
-        }
       />
 
-      {/* Cars */}
-      <CarsSection cars={filtered} formatTHB={formatTHB} />
+      <CarsSection cars={recommendedCars} formatTHB={formatTHB} />
 
-      {/* CarClasses */}
       <CarClassSection />
 
-      {/* Reviews */}
       <ReviewsSection />
 
-      {/* Benefits + CTA */}
       <BenefitsCTASection />
     </Box>
   );
