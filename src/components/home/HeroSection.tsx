@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Box,
   Container,
@@ -17,7 +17,7 @@ import {
 
 import type { Car } from "@/src/constants/cars";
 import { LOCATIONS, type LocationValue } from "@/src/constants/locations";
-import { textFieldSX } from "@/src/ui/textfield";
+import { Herotextfield } from "@/src/ui/hero/Herotextfield";
 
 type Props = {
   heroImages: readonly string[];
@@ -38,8 +38,6 @@ type Props = {
   setQ: (v: string) => void;
 
   carTypes: readonly Car["type"][];
-
-  onSearch?: () => void;
 };
 
 export default function HeroSection({
@@ -55,20 +53,34 @@ export default function HeroSection({
   q,
   setQ,
   carTypes,
-  onSearch,
 }: Props) {
+  const router = useRouter();
   const [heroIndex, setHeroIndex] = React.useState(0);
 
   React.useEffect(() => {
+    if (!heroImages.length) return;
+
     const t = setInterval(() => {
       setHeroIndex((i) => (i + 1) % heroImages.length);
     }, 3500);
+
     return () => clearInterval(t);
   }, [heroImages.length]);
 
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+
+    if (location) params.set("location", location);
+    if (pickupDate) params.set("pickupDate", pickupDate);
+    if (returnDate) params.set("returnDate", returnDate);
+    if (q.trim()) params.set("q", q.trim());
+    if (type && type !== "All") params.set("type", type);
+
+    router.push(`/cars?${params.toString()}`);
+  };
+
   return (
     <Box className="relative">
-      {/* ชั้นรูป: sticky อยู่ด้านหลัง */}
       <Box className="sticky hero-ipad top-0 h-[30vh] sm:h-[65vh] md:h-[36vh] lg:h-[85vh] overflow-hidden">
         {heroImages.map((src, i) => {
           const active = i === heroIndex;
@@ -107,7 +119,6 @@ export default function HeroSection({
                   filter: "blur(18px)",
                   transform: "scale(1.06)",
                   opacity: 0.95,
-
                   WebkitMaskImage:
                     "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,1) 88%, rgba(0,0,0,1) 100%)",
                   maskImage:
@@ -129,7 +140,7 @@ export default function HeroSection({
           }}
         />
 
-        <Box className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+        <Box className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
           <Typography
             className="text-white font-extrabold! drop-shadow-xl!"
             sx={{
@@ -149,14 +160,12 @@ export default function HeroSection({
         </Box>
       </Box>
 
-      {/* ชั้นคอนเทนต์: เลื่อนทับรูป */}
       <Container
         maxWidth="lg"
-        className="relative z-10 -mt-16 sm:-mt-16 md:-mt-28 lg:-mt-36 pb-12"
+        className="relative z-10 -mt-16 pb-12 sm:-mt-16 md:-mt-28 lg:-mt-36"
       >
-        <Box className="rounded-[28px]! border border-slate-200 bg-white/80! backdrop-blur-xl! p-6 md:p-10">
+        <Box className="rounded-[28px]! border border-slate-200 bg-white/80! p-6 backdrop-blur-xl! md:p-10">
           <Box className="grid items-center gap-10 md:grid-cols-2">
-            {/* Left */}
             <Box>
               <Typography
                 variant="h3"
@@ -173,24 +182,23 @@ export default function HeroSection({
               <Stack direction="row" spacing={1} className="mt-6 flex-wrap">
                 <Chip
                   label="ประกันพื้นฐาน"
-                  className="bg-slate-900/5! text-slate-700! border border-slate-200!"
+                  className="border border-slate-200! bg-slate-900/5! text-slate-700!"
                 />
                 <Chip
                   label="ยกเลิกฟรี (ตามเงื่อนไข)"
-                  className="bg-slate-900/5! text-slate-700! border border-slate-200!"
+                  className="border border-slate-200! bg-slate-900/5! text-slate-700!"
                 />
                 <Chip
                   label="บริการ 24/7"
-                  className="bg-slate-900/5! text-slate-700! border border-slate-200!"
+                  className="border border-slate-200! bg-slate-900/5! text-slate-700!"
                 />
               </Stack>
             </Box>
 
-            {/* Search Card */}
             <Box id="search" className="scroll-mt-36">
               <Card
                 elevation={0}
-                className="bg-white/70! backdrop-blur-xl! border border-slate-200! rounded-2xl!"
+                className="rounded-2xl! border border-slate-200! bg-white/70! backdrop-blur-xl!"
                 sx={{ boxShadow: "none" }}
               >
                 <CardContent className="p-4!">
@@ -213,7 +221,7 @@ export default function HeroSection({
                         setLocation(e.target.value as LocationValue)
                       }
                       fullWidth
-                      sx={textFieldSX}
+                      sx={Herotextfield}
                     >
                       {LOCATIONS.map((loc) => (
                         <MenuItem key={loc.value} value={loc.value}>
@@ -230,7 +238,7 @@ export default function HeroSection({
                         onChange={(e) => setPickupDate(e.target.value)}
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        sx={textFieldSX}
+                        sx={Herotextfield}
                       />
                       <TextField
                         type="date"
@@ -239,7 +247,7 @@ export default function HeroSection({
                         onChange={(e) => setReturnDate(e.target.value)}
                         fullWidth
                         InputLabelProps={{ shrink: true }}
-                        sx={textFieldSX}
+                        sx={Herotextfield}
                       />
                     </Box>
 
@@ -252,7 +260,7 @@ export default function HeroSection({
                           setType(e.target.value as Car["type"] | "All")
                         }
                         fullWidth
-                        sx={textFieldSX}
+                        sx={Herotextfield}
                       >
                         <MenuItem value="All">ทั้งหมด</MenuItem>
                         {carTypes.map((t) => (
@@ -268,7 +276,7 @@ export default function HeroSection({
                         onChange={(e) => setQ(e.target.value)}
                         placeholder="เช่น Yaris, Cross..."
                         fullWidth
-                        sx={textFieldSX}
+                        sx={Herotextfield}
                       />
                     </Box>
 
@@ -279,8 +287,11 @@ export default function HeroSection({
                       sx={{
                         textTransform: "none",
                         backgroundColor: "rgb(15 23 42)",
+                        "&:hover": {
+                          backgroundColor: "rgb(2 6 23)",
+                        },
                       }}
-                      onClick={onSearch}
+                      onClick={handleSearch}
                     >
                       ค้นหารถว่าง
                     </Button>
