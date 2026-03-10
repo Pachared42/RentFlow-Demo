@@ -3,119 +3,161 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 import {
   Box,
   Container,
   Card,
   CardContent,
   Typography,
-  TextField,
-  Button,
   Stack,
   Divider,
-  InputAdornment,
-  IconButton,
   Alert,
   CircularProgress,
+  Button,
 } from "@mui/material";
-import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
-import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 
-const fieldSX = {
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "rgba(255,255,255,0.98)",
-    borderRadius: "14px",
-    transition: "box-shadow .2s ease, transform .06s ease",
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgba(203,213,225,0.9)",
-      borderWidth: 1.5,
-      borderRadius: "14px",
-    },
-    "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgb(148,163,184)",
-    },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "rgb(15 23 42)",
-      borderWidth: 2,
-    },
-    "&.Mui-focused": {
-      boxShadow: "none",
-    },
-  },
-  "& .MuiInputBase-input": { color: "rgb(15,23,42)" },
-  "& .MuiInputLabel-root": { color: "rgb(71,85,105)" },
-  "& .MuiInputLabel-root.Mui-focused": { color: "rgb(15 23 42)" },
-} as const;
-
-function isValidEmail(v: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+declare global {
+  interface Window {
+    google?: any;
+  }
 }
+
+type GoogleUserInfo = {
+  sub: string;
+  name?: string;
+  given_name?: string;
+  family_name?: string;
+  picture?: string;
+  email?: string;
+  email_verified?: boolean;
+};
 
 export default function LoginPage() {
   const router = useRouter();
 
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [showPw, setShowPw] = React.useState(false);
-
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [googleReady, setGoogleReady] = React.useState(false);
 
-  const canSubmit =
-    isValidEmail(email) && password.trim().length >= 6 && !loading;
+  const tokenClientRef = React.useRef<any>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-
-    if (!isValidEmail(email)) {
-      setError("อีเมลไม่ถูกต้อง");
-      return;
-    }
-    if (password.trim().length < 6) {
-      setError("รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร");
-      return;
-    }
-
+  const handleGoogleLogin = React.useCallback(async () => {
     try {
+      setError(null);
+
+      if (!window.google?.accounts?.oauth2 || !tokenClientRef.current) {
+        throw new Error("Google Sign-In ยังไม่พร้อม");
+      }
+
       setLoading(true);
 
-      // TODO: ต่อ API จริง
-      // const res = await fetch("/api/auth/login", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify({ email, password }) })
-      // if (!res.ok) throw new Error("เข้าสู่ระบบไม่สำเร็จ");
-      // const data = await res.json();
-      // store token -> context/localStorage/cookie
-
-      await new Promise((r) => setTimeout(r, 450)); // mock
-      router.push("/"); // TODO: เปลี่ยนเป็น /dashboard ถ้ามี
+      tokenClientRef.current.requestAccessToken();
     } catch (err: any) {
-      setError(err?.message || "เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่");
-    } finally {
       setLoading(false);
+      setError(err?.message || "ไม่สามารถเริ่ม Google Sign-In ได้");
     }
-  };
+  }, []);
+
+  const initGoogle = React.useCallback(() => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+    if (!window.google?.accounts?.oauth2) return;
+
+    if (!clientId) {
+      setError("ยังไม่ได้ตั้งค่า NEXT_PUBLIC_GOOGLE_CLIENT_ID");
+      return;
+    }
+
+    tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: "openid email profile",
+      callback: async (tokenResponse: {
+        access_token?: string;
+        error?: string;
+      }) => {
+        try {
+          if (tokenResponse?.error) {
+            throw new Error("เข้าสู่ระบบด้วย Google ไม่สำเร็จ");
+          }
+
+          const accessToken = tokenResponse?.access_token;
+          if (!accessToken) {
+            throw new Error("ไม่ได้รับ access token จาก Google");
+          }
+
+          const profileRes = await fetch(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+
+          const googleUser: GoogleUserInfo | null = await profileRes
+            .json()
+            .catch(() => null);
+
+          if (!profileRes.ok || !googleUser?.email) {
+            throw new Error("ไม่สามารถดึงข้อมูลผู้ใช้จาก Google ได้");
+          }
+
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/google`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                accessToken,
+                user: googleUser,
+              }),
+            }
+          );
+
+          const data = await res.json().catch(() => null);
+
+          if (!res.ok) {
+            throw new Error(
+              data?.message || "เข้าสู่ระบบด้วย Google ไม่สำเร็จ"
+            );
+          }
+
+          if (data?.token) {
+            localStorage.setItem("token", data.token);
+          }
+
+          router.push("/");
+        } catch (err: any) {
+          setError(err?.message || "เข้าสู่ระบบด้วย Google ไม่สำเร็จ");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+
+    setGoogleReady(true);
+  }, [router]);
+
+  React.useEffect(() => {
+    if (window.google?.accounts?.oauth2) {
+      initGoogle();
+    }
+  }, [initGoogle]);
 
   return (
     <Box>
+      <Script
+        src="https://accounts.google.com/gsi/client"
+        strategy="afterInteractive"
+        onLoad={initGoogle}
+      />
+
       <Box aria-hidden className="pointer-events-none fixed inset-0" />
 
       <Container maxWidth="sm" className="relative py-12">
-        <Stack className="mb-6 items-center text-center">
-          <Box
-            className="mb-3 grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white shadow-sm"
-            sx={{ boxShadow: "none" }}
-          >
-            <Typography className="text-base font-black text-slate-900">
-              CR
-            </Typography>
-          </Box>
-          <Typography className="text-2xl font-extrabold text-slate-900">
-            RentFlow Car
-          </Typography>
-        </Stack>
-
         <Card
           elevation={0}
           className="w-full rounded-2xl! border border-slate-200 bg-white"
@@ -124,16 +166,27 @@ export default function LoginPage() {
             backdropFilter: "blur(6px)",
           }}
         >
-          <CardContent className="p-7">
-            <Stack spacing={1} className="mb-4 items-center text-center">
+          <CardContent className="p-8!">
+            <Stack className="mb-6 items-center text-center">
+              <Box
+                className="mb-3 grid h-12 w-50 place-items-center rounded-2xl border border-slate-200 bg-white shadow-sm"
+                sx={{ boxShadow: "none" }}
+              >
+                <Typography className="text-base font-black text-slate-900">
+                  RentFlow
+                </Typography>
+              </Box>
+            </Stack>
+            <Stack spacing={1} className="mb-3! items-center text-center">
               <Typography
                 variant="h5"
                 className="text-xl font-bold text-slate-900"
               >
                 เข้าสู่ระบบ
               </Typography>
+
               <Typography className="text-sm text-slate-600">
-                ยินดีต้อนรับกลับมา — พร้อมออกเดินทางแล้วใช่ไหม
+                ดำเนินการต่อด้วยบัญชี Google ของคุณ
               </Typography>
             </Stack>
 
@@ -149,122 +202,80 @@ export default function LoginPage() {
               </Alert>
             ) : null}
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              className="mt-3! grid gap-4"
-            >
-              <TextField
-                label="อีเมล"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-                sx={fieldSX}
-                autoComplete="email"
-                inputMode="email"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <EmailRoundedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <TextField
-                label="รหัสผ่าน"
-                type={showPw ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                fullWidth
-                sx={fieldSX}
-                autoComplete="current-password"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockRoundedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        onClick={() => setShowPw((v) => !v)}
-                        aria-label={showPw ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
-                      >
-                        {showPw ? (
-                          <VisibilityOffRoundedIcon fontSize="small" />
-                        ) : (
-                          <VisibilityRoundedIcon fontSize="small" />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
+            <Stack spacing={2} className="items-center">
               <Button
-                type="submit"
-                variant="contained"
-                disabled={!canSubmit}
-                className="rounded-xl! py-3! font-semibold!"
+                fullWidth
+                variant="outlined"
+                onClick={handleGoogleLogin}
+                disabled={!googleReady || loading}
+                className="rounded-xl!"
                 sx={{
+                  minHeight: 52,
+                  borderRadius: "12px",
+                  px: 2,
+                  py: 1.5,
+                  gap: 1.25,
+                  borderColor: "rgb(226 232 240)",
+                  color: "rgb(15 23 42)",
+                  backgroundColor: "#fff",
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
                   textTransform: "none",
-                  backgroundColor: "rgb(15 23 42)",
-                  "&:hover": { backgroundColor: "rgb(2 6 23)" },
+                  boxShadow: "none",
+                  "&:hover": {
+                    borderColor: "rgb(203 213 225)",
+                    backgroundColor: "rgb(248 250 252)",
+                    boxShadow: "none",
+                  },
+                  "&.Mui-disabled": {
+                    borderColor: "rgb(226 232 240)",
+                    backgroundColor: "rgb(248 250 252)",
+                  },
                 }}
               >
                 {loading ? (
-                  <Stack direction="row" className="items-center gap-2">
+                  <>
                     <CircularProgress size={18} />
-                    <span>กำลังเข้าสู่ระบบ...</span>
-                  </Stack>
+                    <span>กำลังดำเนินการ...</span>
+                  </>
                 ) : (
-                  "เข้าสู่ระบบ"
+                  <>
+                    <Box
+                      component="img"
+                      src="/google.svg"
+                      alt="Google"
+                      sx={{
+                        width: 20,
+                        height: 20,
+                        display: "block",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span>ดำเนินการต่อด้วย Google</span>
+                  </>
                 )}
               </Button>
 
-              <Stack
-                direction="row"
-                className="items-center pt-1 gap-6 justify-center"
-              >
-                <Stack direction="row" className="items-center gap-2">
-                  <Typography className="text-xs text-slate-500">
-                    ลืมรหัสผ่าน?
-                  </Typography>
-                  <Link
-                    href="/forgot-password"
-                    className="text-sm font-semibold text-slate-900 underline-offset-2 hover:underline"
-                  >
-                    กดที่นี่
-                  </Link>
-                </Stack>
+              {!googleReady && !loading ? (
+                <Typography className="text-xs text-slate-500">
+                  กำลังโหลด Google Sign-In...
+                </Typography>
+              ) : null}
+            </Stack>
 
-                <Stack direction="row" className="items-center gap-2">
-                  <Typography className="text-xs text-slate-500">
-                    ยังไม่มีบัญชี?
-                  </Typography>
-                  <Link
-                    href="/register"
-                    className="text-sm font-semibold text-slate-900 underline-offset-2 hover:underline"
-                  >
-                    สมัครสมาชิก
-                  </Link>
-                </Stack>
-              </Stack>
-
-              <Typography className="pt-2 text-center text-[16px]! leading-relaxed text-slate-500">
-                การเข้าสู่ระบบถือว่าคุณยอมรับ{" "}
+            <Box className="mt-5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+              <Typography className="text-center text-sm! leading-5 text-slate-600">
+                การดำเนินการต่อถือว่าคุณยอมรับ{" "}
                 <Link
                   href="/terms"
-                  className="font-semibold text-slate-700 underline-offset-2 hover:underline"
+                  className="font-semibold text-slate-900 underline-offset-2 hover:underline"
                 >
                   เงื่อนไขการใช้งาน
                 </Link>{" "}
                 และ{" "}
                 <Link
                   href="/privacy"
-                  className="font-semibold text-slate-700 underline-offset-2 hover:underline"
+                  className="font-semibold text-slate-900 underline-offset-2 hover:underline"
                 >
                   นโยบายความเป็นส่วนตัว
                 </Link>
