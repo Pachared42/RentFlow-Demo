@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   Box,
   Container,
@@ -20,32 +21,104 @@ import {
   CAR_TYPES,
   type Car,
   type CarType,
-  type Badge,
 } from "@/src/constants/cars";
 import { formatTHB } from "@/src/constants/money";
+import { LOCATIONS, type LocationValue } from "@/src/constants/locations";
 
 type SortKey = "price_asc" | "price_desc";
 
 type Props = {};
 
 export default function CarsPage(_props: Props) {
-  const [q, setQ] = React.useState("");
-  const [type, setType] = React.useState<CarType | "all">("all");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const initialQ = searchParams.get("q") ?? "";
+  const initialType = searchParams.get("type") ?? "all";
+  const initialLocation = searchParams.get("location") ?? "";
+  const initialPickupDate = searchParams.get("pickupDate") ?? "";
+  const initialReturnDate = searchParams.get("returnDate") ?? "";
+
+  const [q, setQ] = React.useState(initialQ);
+  const [type, setType] = React.useState<CarType | "all">(
+    initialType === "All" ? "all" : (initialType as CarType | "all")
+  );
   const [sort, setSort] = React.useState<SortKey>("price_asc");
+  const [location, setLocation] = React.useState<LocationValue | "">(
+    initialLocation as LocationValue | ""
+  );
+  const [pickupDate, setPickupDate] = React.useState(initialPickupDate);
+  const [returnDate, setReturnDate] = React.useState(initialReturnDate);
+
+  React.useEffect(() => {
+    const nextQ = searchParams.get("q") ?? "";
+    const nextType = searchParams.get("type") ?? "all";
+    const nextLocation = searchParams.get("location") ?? "";
+    const nextPickupDate = searchParams.get("pickupDate") ?? "";
+    const nextReturnDate = searchParams.get("returnDate") ?? "";
+
+    setQ(nextQ);
+    setType(nextType === "All" ? "all" : (nextType as CarType | "all"));
+    setLocation(nextLocation as LocationValue | "");
+    setPickupDate(nextPickupDate);
+    setReturnDate(nextReturnDate);
+  }, [searchParams]);
+
+  const updateUrl = React.useCallback(
+    (next: {
+      q?: string;
+      type?: CarType | "all";
+      location?: LocationValue | "";
+      pickupDate?: string;
+      returnDate?: string;
+      sort?: SortKey;
+    }) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      const nextQ = next.q ?? q;
+      const nextType = next.type ?? type;
+      const nextLocation = next.location ?? location;
+      const nextPickupDate = next.pickupDate ?? pickupDate;
+      const nextReturnDate = next.returnDate ?? returnDate;
+
+      if (nextQ.trim()) params.set("q", nextQ.trim());
+      else params.delete("q");
+
+      if (nextType && nextType !== "all") params.set("type", nextType);
+      else params.delete("type");
+
+      if (nextLocation) params.set("location", nextLocation);
+      else params.delete("location");
+
+      if (nextPickupDate) params.set("pickupDate", nextPickupDate);
+      else params.delete("pickupDate");
+
+      if (nextReturnDate) params.set("returnDate", nextReturnDate);
+      else params.delete("returnDate");
+
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    },
+    [searchParams, q, type, location, pickupDate, returnDate, router, pathname]
+  );
 
   const filtered = React.useMemo(() => {
     const query = q.trim().toLowerCase();
 
     let items = CARS.filter((c) => {
-      const matchQ = !query || c.name.toLowerCase().includes(query);
+      const matchQ =
+        !query ||
+        c.name.toLowerCase().includes(query) ||
+        c.type.toLowerCase().includes(query);
+
       const matchT = type === "all" ? true : c.type === type;
+
       return matchQ && matchT;
     });
 
     items = [...items].sort((a, b) => {
       if (sort === "price_asc") return a.pricePerDay - b.pricePerDay;
-      if (sort === "price_desc") return b.pricePerDay - a.pricePerDay;
-      return b.grade - a.grade;
+      return b.pricePerDay - a.pricePerDay;
     });
 
     return items;
@@ -66,6 +139,7 @@ export default function CarsPage(_props: Props) {
             พร้อมรายละเอียดครบถ้วน
           </Typography>
         </Box>
+
         <Chip
           size="small"
           label={`${filtered.length} รายการ`}
@@ -74,13 +148,16 @@ export default function CarsPage(_props: Props) {
         />
       </Box>
 
-      {/* Filters */}
-      <Box className="mt-2 rounded-2xl! border border-slate-200 bg-white p-4">
-        <Box className="grid gap-4 md:grid-cols-3">
+      <Box className="mt-4 rounded-2xl! border border-slate-200 bg-white p-4">
+        <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <TextField
             label="ค้นหารถ"
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setQ(value);
+              updateUrl({ q: value });
+            }}
             size="small"
             fullWidth
             variant="outlined"
@@ -95,7 +172,11 @@ export default function CarsPage(_props: Props) {
             select
             label="ประเภทรถ"
             value={type}
-            onChange={(e) => setType(e.target.value as any)}
+            onChange={(e) => {
+              const value = e.target.value as CarType | "all";
+              setType(value);
+              updateUrl({ type: value });
+            }}
             size="small"
             fullWidth
             variant="outlined"
@@ -115,6 +196,74 @@ export default function CarsPage(_props: Props) {
 
           <TextField
             select
+            label="สาขารับรถ"
+            value={location}
+            onChange={(e) => {
+              const value = e.target.value as LocationValue | "";
+              setLocation(value);
+              updateUrl({ location: value });
+            }}
+            size="small"
+            fullWidth
+            variant="outlined"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
+          >
+            <MenuItem value="">ทั้งหมด</MenuItem>
+            {LOCATIONS.map((loc) => (
+              <MenuItem key={loc.value} value={loc.value}>
+                {loc.label}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            type="date"
+            label="วันรับรถ"
+            value={pickupDate}
+            onChange={(e) => {
+              const value = e.target.value;
+              setPickupDate(value);
+              updateUrl({ pickupDate: value });
+            }}
+            size="small"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            variant="outlined"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
+          />
+
+          <TextField
+            type="date"
+            label="วันคืนรถ"
+            value={returnDate}
+            onChange={(e) => {
+              const value = e.target.value;
+              setReturnDate(value);
+              updateUrl({ returnDate: value });
+            }}
+            size="small"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            variant="outlined"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+              },
+            }}
+          />
+        </Box>
+
+        <Box className="mt-4 grid gap-4 md:grid-cols-2">
+          <TextField
+            select
             label="เรียงตาม"
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
@@ -130,10 +279,26 @@ export default function CarsPage(_props: Props) {
             <MenuItem value="price_asc">ราคาต่ำ → สูง</MenuItem>
             <MenuItem value="price_desc">ราคาสูง → ต่ำ</MenuItem>
           </TextField>
+
+          <Button
+            variant="outlined"
+            className="rounded-xl!"
+            sx={{ textTransform: "none" }}
+            onClick={() => {
+              setQ("");
+              setType("all");
+              setSort("price_asc");
+              setLocation("");
+              setPickupDate("");
+              setReturnDate("");
+              router.replace(pathname, { scroll: false });
+            }}
+          >
+            รีเซ็ตตัวกรอง
+          </Button>
         </Box>
       </Box>
 
-      {/* List */}
       {filtered.length === 0 ? (
         <Box className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-10 text-center">
           <Typography className="text-sm font-semibold text-slate-900">
@@ -142,18 +307,6 @@ export default function CarsPage(_props: Props) {
           <Typography className="mt-1 text-sm text-slate-600">
             ลองเปลี่ยนคำค้นหา หรือเลือกประเภทอื่น
           </Typography>
-          <Button
-            variant="outlined"
-            className="mt-5! rounded-xl!"
-            sx={{ textTransform: "none" }}
-            onClick={() => {
-              setQ("");
-              setType("all");
-              setSort("price_asc");
-            }}
-          >
-            รีเซ็ตตัวกรอง
-          </Button>
         </Box>
       ) : (
         <Box className="mt-6 grid gap-4 md:grid-cols-3">
@@ -162,9 +315,8 @@ export default function CarsPage(_props: Props) {
               key={c.id}
               elevation={0}
               sx={{ boxShadow: "none" }}
-              className="group bg-white border border-slate-200 rounded-2xl! transition hover:border-slate-400!"
+              className="group rounded-2xl! border border-slate-200 bg-white transition hover:border-slate-400!"
             >
-              {/* IMAGE */}
               <Box className="relative h-52 w-full overflow-hidden rounded-t-2xl">
                 <Image
                   src={c.image || "/cars/placeholder.jpg"}
@@ -190,7 +342,7 @@ export default function CarsPage(_props: Props) {
                       label={c.badge}
                       size="small"
                       variant="outlined"
-                      className="bg-indigo-500/10! text-indigo-700! border border-indigo-200!"
+                      className="border border-indigo-200! bg-indigo-500/10! text-indigo-700!"
                     />
                   ) : null}
                 </Box>
@@ -233,6 +385,9 @@ export default function CarsPage(_props: Props) {
                   sx={{
                     textTransform: "none",
                     backgroundColor: "rgb(15 23 42)",
+                    "&:hover": {
+                      backgroundColor: "rgb(2 6 23)",
+                    },
                   }}
                 >
                   จองเลย
