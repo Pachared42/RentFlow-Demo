@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 
 import { SEED_REVIEWS, TAGS, Review } from "@/src/constants/review";
-import { Stat } from "@/src/ui/reviews/Stat";
+import { ReviewsStat } from "@/src/ui/reviews/ReviewsStat";
 import { ReviewCard } from "@/src/ui/reviews/ReviewCard";
-import { fieldSX } from "@/src/ui/reviews/fieldSX";
+import { ReviewfieldSX } from "@/src/ui/reviews/ReviewfieldSX";
 
 function formatNowTH() {
   return "วันนี้";
@@ -98,17 +98,17 @@ export default function ReviewsSection() {
         </Box>
 
         <Box className="flex gap-3 overflow-x-auto scrollbar-hide">
-          <Stat
+          <ReviewsStat
             label="คะแนนเฉลี่ย"
             value={avg.toFixed(1)}
             sub="จากผู้ใช้ทั้งหมด"
           />
-          <Stat
+          <ReviewsStat
             label="จำนวนรีวิว"
             value={`${reviews.length}`}
             sub="รีวิวทั้งหมด"
           />
-          <Stat label="การตอบกลับ" value="เร็ว" sub="ภายในเวลาทำการ" />
+          <ReviewsStat label="การตอบกลับ" value="เร็ว" sub="ภายในเวลาทำการ" />
         </Box>
       </Box>
 
@@ -170,14 +170,14 @@ export default function ReviewsSection() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   fullWidth
-                  sx={fieldSX}
+                  sx={ReviewfieldSX}
                 />
                 <TextField
                   label="ประเภทการใช้งาน (ไม่ใส่ก็ได้)"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   fullWidth
-                  sx={fieldSX}
+                  sx={ReviewfieldSX}
                 />
               </Box>
 
@@ -188,7 +188,7 @@ export default function ReviewsSection() {
                   value={tag}
                   onChange={(e) => setTag(e.target.value as any)}
                   fullWidth
-                  sx={fieldSX}
+                  sx={ReviewfieldSX}
                 >
                   <MenuItem value="">ไม่ระบุ</MenuItem>
                   {TAGS.map((t) => (
@@ -224,7 +224,7 @@ export default function ReviewsSection() {
                 multiline
                 minRows={4}
                 placeholder="เช่น รถสะอาด รับรถเร็ว บริการดี..."
-                sx={fieldSX}
+                sx={ReviewfieldSX}
               />
 
               <Stack direction="row" spacing={1.5} className="flex-wrap">
