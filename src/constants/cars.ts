@@ -1,7 +1,6 @@
 export type CarType = "Economy" | "Sedan" | "SUV" | "Van";
 export type Transmission = "Auto" | "Manual";
 export type Fuel = "Gasoline" | "Hybrid" | "EV";
-export type Badge = "Popular" | "New" | "Best value";
 export type Grade = 1 | 2 | 3 | 4;
 
 export type Car = {
@@ -12,7 +11,6 @@ export type Car = {
     transmission: Transmission;
     fuel: Fuel;
     pricePerDay: number;
-    badge?: Badge;
     image?: string;
     grade: Grade;
 };
@@ -33,7 +31,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "Gasoline",
         pricePerDay: 1290,
-        badge: "Best value",
         image: "/cosySec.webp",
         grade: 3,
     },
@@ -45,7 +42,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "Hybrid",
         pricePerDay: 1490,
-        badge: "Popular",
         image: "/cosySec1.webp",
         grade: 4,
     },
@@ -57,7 +53,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "Gasoline",
         pricePerDay: 1990,
-        badge: "Popular",
         image: "/cosySec2.webp",
         grade: 1,
     },
@@ -69,7 +64,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "EV",
         pricePerDay: 1590,
-        badge: "New",
         image: "/cosySec3.webp",
         grade: 2,
     },
@@ -81,7 +75,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "EV",
         pricePerDay: 1790,
-        badge: "Popular",
         image: "/cosySec4.webp",
         grade: 3,
     },
@@ -93,7 +86,6 @@ export const CARS: Car[] = [
         transmission: "Auto",
         fuel: "EV",
         pricePerDay: 1890,
-        badge: "Popular",
         image: "/cosySec5.webp",
         grade: 1,
     },
