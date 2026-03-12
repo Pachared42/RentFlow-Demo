@@ -52,12 +52,6 @@ const BRANCH_POINTS: BranchPoint[] = [
 
 const OTHER_OPTION = "__other__" as const;
 
-function badgeStyle(b: NonNullable<Car["badge"]>) {
-  if (b === "Popular") return "!bg-amber-50 !text-amber-700 !border-amber-200";
-  if (b === "New") return "!bg-emerald-50 !text-emerald-700 !border-emerald-200";
-  return "!bg-slate-50 !text-slate-700 !border-slate-200";
-}
-
 /* -------------------- Date utils -------------------- */
 function parseDateTime(date: string, time: string) {
   if (!date || !time) return null;
@@ -418,10 +412,6 @@ export default function BookingPage() {
                       {car.type} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
                     </Typography>
                   </Box>
-
-                  {car.badge ? (
-                    <Chip size="small" label={car.badge} variant="outlined" className={`border! ${badgeStyle(car.badge)}`} />
-                  ) : null}
                 </Box>
 
                 <Box className="mb-6! space-y-2 text-sm">
@@ -532,7 +522,7 @@ export default function BookingPage() {
                 <TextField label="เบอร์โทร" value={phone} onChange={(e) => setPhone(e.target.value)} fullWidth size="small" sx={fieldSX} />
               </Box>
 
-              {/* -------------------- Hybrid Location UI -------------------- */}
+              {/* Hybrid Location UI */}
               <Box>
                 <Typography className="text-sm font-semibold text-slate-900">
                   จุดรับ-คืนรถ
@@ -646,7 +636,7 @@ export default function BookingPage() {
                 )}
               </Box>
 
-              {/* -------------------- Date/Time -------------------- */}
+              {/* Date/Time */}
               <Box className="grid gap-4 sm:grid-cols-2">
                 <TextField
                   label="วันรับรถ"
@@ -778,7 +768,6 @@ export default function BookingPage() {
 
               {/* Actions */}
               <Box className="mt-6 space-y-4">
-                {/* ===== ทางเลือก: จองผ่านแชท (อยู่ด้านบน) ===== */}
                 {showChatBooking ? (
                   <Box
                     className="rounded-2xl border border-amber-200 bg-amber-50 p-4"
@@ -809,10 +798,10 @@ export default function BookingPage() {
                         className="rounded-xl! font-semibold!"
                         sx={{
                           textTransform: "none",
-                          backgroundColor: "#f59e0b", // amber-500
+                          backgroundColor: "#f59e0b",
                           boxShadow: "none",
                           "&:hover": {
-                            backgroundColor: "#d97706", // amber-600
+                            backgroundColor: "#d97706",
                             boxShadow: "none",
                           },
                           minWidth: { sm: 220 },
@@ -825,7 +814,6 @@ export default function BookingPage() {
                   </Box>
                 ) : null}
 
-                {/* ===== ปุ่มหลัก (Primary) ===== */}
                 <Stack
                   direction={{ xs: "column", sm: "row" }}
                   spacing={1.5}
