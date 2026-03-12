@@ -336,15 +336,6 @@ export default function CarsPage(_props: Props) {
                       {c.type} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
                     </Typography>
                   </Box>
-
-                  {c.badge ? (
-                    <Chip
-                      label={c.badge}
-                      size="small"
-                      variant="outlined"
-                      className="border border-indigo-200! bg-indigo-500/10! text-indigo-700!"
-                    />
-                  ) : null}
                 </Box>
 
                 <Box className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
