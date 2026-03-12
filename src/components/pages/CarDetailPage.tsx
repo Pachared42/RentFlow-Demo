@@ -15,22 +15,10 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import LocalGasStationRoundedIcon from "@mui/icons-material/LocalGasStationRounded";
-import AirlineSeatReclineNormalRoundedIcon from "@mui/icons-material/AirlineSeatReclineNormalRounded";
-import SettingsSuggestRoundedIcon from "@mui/icons-material/SettingsSuggestRounded";
 import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import DoNotDisturbAltRoundedIcon from "@mui/icons-material/DoNotDisturbAltRounded";
-import { type Car, type Badge } from "@/src/constants/cars";
 import { getCarDetail } from "@/src/constants/carDetails";
-
-function badgeStyle(b: Badge) {
-  if (b === "Popular") return "!bg-amber-50 !text-amber-700 !border-amber-200";
-  if (b === "New")
-    return "!bg-emerald-50 !text-emerald-700 !border-emerald-200";
-  return "!bg-slate-50 !text-slate-700 !border-slate-200";
-}
 
 function toTHBText(n: number) {
   return `${Math.max(0, Math.round(n)).toLocaleString("th-TH")} บาท`;
@@ -128,15 +116,6 @@ export default function CarDetailPage({ carId }: { carId: string }) {
                   • {detail.fuel}
                 </Typography>
               </Box>
-
-              {detail.badge ? (
-                <Chip
-                  size="small"
-                  label={detail.badge}
-                  variant="outlined"
-                  className={`border! ${badgeStyle(detail.badge)}`}
-                />
-              ) : null}
             </Box>
 
             <Box className="mt-3 flex items-center gap-2">
