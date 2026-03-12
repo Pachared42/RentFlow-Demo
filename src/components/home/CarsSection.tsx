@@ -69,14 +69,6 @@ export default function CarsSection({ cars, formatTHB }: Props) {
                     {c.type} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
                   </Typography>
                 </Box>
-
-                {c.badge && (
-                  <Chip
-                    label={c.badge}
-                    size="small"
-                    className="bg-indigo-500/10! text-indigo-700! border border-indigo-200!"
-                  />
-                )}
               </Box>
 
               <Box className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
