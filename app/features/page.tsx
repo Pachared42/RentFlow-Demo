@@ -1,14 +1,11 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const FeaturesPage = dynamic(
-  () => import("@/src/components/pages/FeaturesPage"),
-  {
-    ssr: false,
-  }
-);
+import { Suspense } from "react";
+import FeaturesPage from "@/src/components/pages/FeaturesPage";
+import FeaturesPageSkeleton from "@/src/components/feature/FeaturesPageSkeleton";
 
 export default function Page() {
-  return <FeaturesPage />;
+  return (
+    <Suspense fallback={<FeaturesPageSkeleton />}>
+      <FeaturesPage />
+    </Suspense>
+  );
 }
