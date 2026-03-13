@@ -38,6 +38,7 @@ export function useGoogleAuth({
 
     const tokenClientRef = React.useRef<any>(null);
     const initializedRef = React.useRef(false);
+    const initStartedAtRef = React.useRef(Date.now());
 
     const initGoogle = React.useCallback(
         (showSnackbar: ShowSnackbar) => {
@@ -59,6 +60,8 @@ export function useGoogleAuth({
                     access_token?: string;
                     error?: string;
                 }) => {
+                    const startedAt = Date.now();
+
                     try {
                         if (tokenResponse?.error) {
                             throw new Error(authErrorMessage);
@@ -81,21 +84,38 @@ export function useGoogleAuth({
 
                         saveAuthToken(data?.token);
 
-                        showSnackbar(successMessage, "success");
+                        const elapsed = Date.now() - startedAt;
+                        const delay = Math.max(2000 - elapsed, 0);
 
                         setTimeout(() => {
-                            router.push(redirectTo);
-                        }, 700);
+                            showSnackbar(successMessage, "success");
+
+                            setTimeout(() => {
+                                router.push(redirectTo);
+                            }, 700);
+
+                            setLoading(false);
+                        }, delay);
                     } catch (err: any) {
-                        showSnackbar(err?.message || submitErrorMessage, "error");
-                    } finally {
-                        setLoading(false);
+                        const elapsed = Date.now() - startedAt;
+                        const delay = Math.max(2000 - elapsed, 0);
+
+                        setTimeout(() => {
+                            showSnackbar(err?.message || submitErrorMessage, "error");
+                            setLoading(false);
+                        }, delay);
                     }
                 },
             });
 
             initializedRef.current = true;
-            setGoogleReady(true);
+
+            const elapsed = Date.now() - initStartedAtRef.current;
+            const delay = Math.max(1200 - elapsed, 0);
+
+            setTimeout(() => {
+                setGoogleReady(true);
+            }, delay);
         },
         [authErrorMessage, redirectTo, router, submitErrorMessage, successMessage]
     );
