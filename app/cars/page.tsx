@@ -1,11 +1,11 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const CarsPage = dynamic(() => import("@/src/components/pages/CarsPage"), {
-  ssr: false,
-});
+import { Suspense } from "react";
+import CarsPage from "@/src/components/pages/CarsPage";
+import CarsPageSkeleton from "@/src/components/cars/CarsPageSkeleton";
 
 export default function Page() {
-  return <CarsPage />;
+  return (
+    <Suspense fallback={<CarsPageSkeleton />}>
+      <CarsPage />
+    </Suspense>
+  );
 }
