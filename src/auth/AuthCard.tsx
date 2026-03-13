@@ -22,6 +22,7 @@ import {
     useGoogleAuth,
     type SnackbarSeverity,
 } from "@/src/hooks/useGoogleAuth";
+import AuthCardSkeleton from "@/src/components/auth/AuthCardSkeleton";
 
 type SnackbarState = {
     open: boolean;
@@ -92,6 +93,46 @@ export default function AuthCard({
         }
     }, [initGoogle, showSnackbar]);
 
+    if (!googleReady && !loading) {
+        return (
+            <>
+                <Script
+                    src="https://accounts.google.com/gsi/client"
+                    strategy="afterInteractive"
+                    onLoad={() => initGoogle(showSnackbar)}
+                />
+
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={3500}
+                    onClose={closeSnackbar}
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                    TransitionComponent={SlideDownTransition}
+                >
+                    <Alert
+                        onClose={closeSnackbar}
+                        severity={snackbar.severity}
+                        variant="filled"
+                        elevation={0}
+                        sx={{
+                            minWidth: { xs: "calc(100vw - 32px)", sm: 420 },
+                            maxWidth: 520,
+                            borderRadius: "14px",
+                            fontWeight: 600,
+                            boxShadow:
+                                "0 10px 30px rgba(15, 23, 42, 0.10), 0 2px 10px rgba(15, 23, 42, 0.06)",
+                            alignItems: "center",
+                        }}
+                    >
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
+
+                <AuthCardSkeleton />
+            </>
+        );
+    }
+
     return (
         <Box className="relative bg-white">
             <Script
@@ -150,10 +191,7 @@ export default function AuthCard({
                         </Stack>
 
                         <Stack spacing={1} className="mb-4 items-center text-center">
-                            <Typography
-                                variant="h5"
-                                className="text-xl font-bold text-slate-900"
-                            >
+                            <Typography variant="h5" className="text-xl font-bold text-slate-900">
                                 {title}
                             </Typography>
 
