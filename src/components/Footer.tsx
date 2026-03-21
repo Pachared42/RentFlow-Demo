@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Box, Container, Typography, Stack, Divider } from "@mui/material";
-import DirectionsCarRounded from "@mui/icons-material/DirectionsCarRounded";
 import FacebookRounded from "@mui/icons-material/FacebookRounded";
 import EmailRounded from "@mui/icons-material/EmailRounded";
 import PhoneRounded from "@mui/icons-material/PhoneRounded";
@@ -36,22 +36,26 @@ export default function Footer() {
       <Container maxWidth="lg" className="py-10">
         <Box className="grid gap-10 md:grid-cols-3">
           {/* Brand */}
-          <Box>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <DirectionsCarRounded className="text-slate-900!" />
-              <Typography className="font-bold! text-slate-900">
-                {BRAND.name}
-              </Typography>
-            </Stack>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Box className="relative h-10 w-10 shrink-0">
+              <Image
+                src="/RentFlow.svg"
+                alt="RentFlow Logo"
+                fill
+                className="object-contain"
+              />
+            </Box>
 
-            <Typography className="mt-3! text-sm! leading-relaxed text-slate-600">
-              {BRAND.tagline}
+            <Typography className="text-lg font-bold text-slate-900">
+              {BRAND.name}
             </Typography>
-          </Box>
+          </Stack>
 
           {/* Links */}
           <Box component="nav" aria-label="Footer navigation">
-            <Typography className="font-semibold! text-slate-900">เมนู</Typography>
+            <Typography className="font-semibold! text-slate-900">
+              เมนู
+            </Typography>
 
             <Stack spacing={1} className="mt-3">
               {NAV.map((item) => (

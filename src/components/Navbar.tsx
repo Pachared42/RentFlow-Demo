@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   AppBar,
@@ -23,7 +24,6 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import DirectionsCarRounded from "@mui/icons-material/DirectionsCarRounded";
 
 import NavLink from "@/src/ui/NavLink";
 import { NAV } from "@/src/constants/navigation";
@@ -70,7 +70,15 @@ export default function Navbar() {
             href="/"
             className="flex items-center gap-2 no-underline"
           >
-            <DirectionsCarRounded className="text-slate-900!" />
+            <Box className="relative h-9 w-9 shrink-0">
+              <Image
+                src="/RentFlow.svg"
+                alt="RentFlow Logo"
+                fill
+                className="object-contain"
+                priority
+              />
+            </Box>
             <Typography className="font-bold! text-slate-900!">
               RentFlow
             </Typography>
@@ -166,7 +174,7 @@ export default function Navbar() {
             </Box>
           )}
 
-          {/* Mobile hamburger (โชว์เฉพาะจอเล็กจริง ๆ) */}
+          {/* Mobile hamburger */}
           {isCompact && (
             <IconButton
               onClick={toggleDrawer(true)}
@@ -184,9 +192,16 @@ export default function Navbar() {
         <Box className="w-80 bg-white text-slate-900 h-full flex flex-col">
           <Box className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
             <Box className="flex items-center gap-2">
-              <DirectionsCarRounded className="text-slate-900!" />
+              <Box className="relative h-8 w-8 shrink-0">
+                <Image
+                  src="/RentFlow.svg"
+                  alt="RentFlow Logo"
+                  fill
+                  className="object-contain"
+                />
+              </Box>
               <Typography className="font-bold! text-slate-900!">
-                CarRental
+                RentFlow
               </Typography>
             </Box>
             <IconButton onClick={toggleDrawer(false)} className="p-1!">
