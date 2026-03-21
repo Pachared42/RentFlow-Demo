@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { fetchGoogleUserInfo } from "@/src/services/google";
-import { authWithGoogle, saveAuthToken } from "@/src/services/auth";
+import { fetchGoogleUserInfo } from "@/src/services/APIauth/google";
+import { authWithGoogle, saveAuthToken } from "@/src/services/APIauth/auth";
 
 declare global {
     interface Window {
