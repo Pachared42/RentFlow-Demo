@@ -37,7 +37,8 @@ export default function CarDetailPage({ carId }: { carId: string }) {
             ไม่พบรถที่คุณเลือก
           </Typography>
           <Typography className="mt-1 text-sm text-slate-600">
-            รหัส: <span className="font-semibold text-slate-900">{id || "-"}</span>
+            รหัส:{" "}
+            <span className="font-semibold text-slate-900">{id || "-"}</span>
           </Typography>
         </Box>
       </Container>
