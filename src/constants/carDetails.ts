@@ -1,48 +1,48 @@
-import { CARS, type Car } from "./cars";
+import { CARS, type Car, type CarId } from "./cars";
 
 export type Policy = {
-  deposit: number; // มัดจำ
-  mileageLimitPerDay?: number; // จำกัดระยะ/วัน (ถ้าไม่จำกัดไม่ต้องใส่)
+  deposit: number;
+  mileageLimitPerDay?: number;
   fuelPolicy: "Full-to-Full" | "Same-to-Same";
-  lateFeePerHour: number; // ค่าปรับคืนช้า/ชั่วโมง
-  minAge: number; // อายุขั้นต่ำผู้เช่า
-  licenseRequiredYears: number; // ต้องมีใบขับขี่มาแล้วกี่ปี
-  idDocs: string[]; // เอกสารที่ต้องใช้
-  insurance: string[]; // ประกัน/ความคุ้มครอง
+  lateFeePerHour: number;
+  minAge: number;
+  licenseRequiredYears: number;
+  idDocs: string[];
+  insurance: string[];
 };
 
 export type CarSpecs = {
   year: number;
-  engine?: string; // ถ้ามี (รถ EV อาจไม่ใส่)
-  power?: string; // แรงม้า/กำลัง
+  engine?: string;
+  power?: string;
   torque?: string;
   drive: "RWD" | "FWD" | "AWD";
-  consumption?: string; // L/100km หรือ km/L หรือ kWh/100km
+  consumption?: string;
   trunkLiters?: number;
   colorOptions: string[];
 };
 
 export type CarDetail = Car & {
   description: string;
-  highlights: string[]; // จุดเด่นสั้น ๆ
-  features: string[]; // ฟีเจอร์/ออปชัน
-  images: string[]; // หลายรูป
-  pickupLocations: string[]; // จุดรับรถ
+  highlights: string[];
+  features: string[];
+  images: string[];
+  pickupLocations: string[];
   policy: Policy;
   specs: CarSpecs;
-  ratingAvg: number; // 0-5
+  ratingAvg: number;
   reviewsCount: number;
 };
 
-function base(id: string) {
+function base(id: CarId) {
   const car = CARS.find((c) => c.id === id);
   if (!car) throw new Error(`Car not found: ${id}`);
   return car;
 }
 
-export const CAR_DETAILS: Record<string, CarDetail> = {
-  c1: {
-    ...base("c1"),
+export const CAR_DETAILS: Record<CarId, CarDetail> = {
+  "bmw-320d-m-sport": {
+    ...base("bmw-320d-m-sport"),
     description:
       "ซีดานขับสนุก นุ่มเงียบ เหมาะทั้งเดินทางไกลและใช้งานในเมือง มาพร้อมโหมดการขับขี่และระบบช่วยจอดที่ใช้งานง่าย",
     highlights: ["รับรถไว", "ขับนุ่ม", "เหมาะเที่ยว/ทำงาน"],
@@ -88,8 +88,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
     reviewsCount: 128,
   },
 
-  c2: {
-    ...base("c2"),
+  "bmw-330e-m-sport": {
+    ...base("bmw-330e-m-sport"),
     description:
       "รุ่นปลั๊กอินไฮบริด ประหยัดน้ำมัน ใช้งานในเมืองได้ดี มีโหมด EV สำหรับระยะสั้น ๆ ขับสบายและเงียบ",
     highlights: ["ประหยัด", "โหมด EV", "ยอดนิยม"],
@@ -127,8 +127,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
     reviewsCount: 214,
   },
 
-  c3: {
-    ...base("c3"),
+  "bmw-x3-m50": {
+    ...base("bmw-x3-m50"),
     description:
       "สายแรงสำหรับคนชอบสมรรถนะ ช่วงล่างแน่น การตอบสนองไว เหมาะทริปพิเศษและคนอยากได้รถที่มีคาแรกเตอร์",
     highlights: ["แรงจัด", "หล่อ", "ฟีลสปอร์ต"],
@@ -170,8 +170,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
     reviewsCount: 76,
   },
 
-  c4: {
-    ...base("c4"),
+  "bmw-i5-edrive40-m-sport": {
+    ...base("bmw-i5-edrive40-m-sport"),
     description:
       "ไฟฟ้าล้วน ขับเงียบ นุ่มนวล เทคโนโลยีล้ำ เหมาะกับคนอยากลอง EV ใช้ในเมืองและทางไกลแบบสบาย ๆ",
     highlights: ["EV เงียบ", "เทคโนโลยี", "รถใหม่"],
@@ -212,8 +212,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
     reviewsCount: 92,
   },
 
-  c5: {
-    ...base("c5"),
+  "bmw-i5-m60-xdrive": {
+    ...base("bmw-i5-m60-xdrive"),
     description:
       "รุ่นแรงของ i5 ขับสบายแต่พละกำลังจัด เหมาะทริปครอบครัว/เพื่อน พร้อมพื้นที่ใช้สอยเยอะและออปชันแน่น",
     highlights: ["แรง", "หรู", "พื้นที่เยอะ"],
@@ -250,8 +250,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
     reviewsCount: 64,
   },
 
-  c6: {
-    ...base("c6"),
+  "bmw-i7-xdrive60-m-sport": {
+    ...base("bmw-i7-xdrive60-m-sport"),
     description:
       "แฟลกชิประดับผู้บริหาร นั่งสบายสุด ๆ เงียบ หรู ฟีเจอร์เต็ม เหมาะรับแขก/งานสำคัญ/ทริปพรีเมียม",
     highlights: ["หรูมาก", "นั่งสบาย", "พรีเมียม"],
@@ -290,9 +290,8 @@ export const CAR_DETAILS: Record<string, CarDetail> = {
 };
 
 export function getCarDetail(id: string) {
-  const key = decodeURIComponent(String(id ?? "")).trim();
-  return CAR_DETAILS[key];
+  const key = decodeURIComponent(String(id ?? "")).trim() as CarId;
+  return CAR_DETAILS[key] ?? null;
 }
 
-// (optional debug)
 export const __CAR_DETAIL_KEYS__ = Object.keys(CAR_DETAILS);
