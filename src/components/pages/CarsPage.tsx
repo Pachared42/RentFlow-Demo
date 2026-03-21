@@ -5,8 +5,8 @@ import { Box, Container, Typography, Chip, Alert } from "@mui/material";
 import CarsFilterBar from "@/src/components/cars/CarsFilterBar";
 import CarGrid from "@/src/components/cars/CarGrid";
 import CarsPageSkeleton from "@/src/components/cars/CarsPageSkeleton";
-import { useCarsFilters } from "@/src/hooks/useCarsFilters";
-import { useCarsCatalog } from "@/src/hooks/useCarsCatalog";
+import { useCarsFilters } from "@/src/hooks/cars/useCarsFilters";
+import { useCarsCatalog } from "@/src/hooks/cars/useCarsCatalog";
 
 type Props = {};
 
