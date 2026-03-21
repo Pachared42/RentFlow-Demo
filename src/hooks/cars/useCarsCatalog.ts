@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import type { Car } from "@/src/constants/cars";
-import { getCars } from "@/src/services/APIcars/cars.api";
+import { getCars } from "@/src/services/cars/cars.api";
 
 type Params = {
     q: string;
