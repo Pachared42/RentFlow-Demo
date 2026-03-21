@@ -1,17 +1,10 @@
-"use client";
-import dynamic from "next/dynamic";
 import { Suspense } from "react";
-
-const BookingPage = dynamic(
-  () => import("@/src/components/pages/BookingPage"),
-  {
-    ssr: false,
-  }
-);
+import BookingPage from "@/src/components/pages/BookingPage";
+import BookingPageSkeleton from "@/src/components/booking/BookingPageSkeleton";
 
 export default function Page() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<BookingPageSkeleton />}>
       <BookingPage />
     </Suspense>
   );

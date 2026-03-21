@@ -1,12 +1,11 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const PaymentPage = dynamic(
-  () => import("@/src/components/pages/PaymentPage"),
-  { ssr: false }
-);
+import { Suspense } from "react";
+import PaymentPage from "@/src/components/pages/PaymentPage";
+import PaymentPageSkeleton from "@/src/components/payment/PaymentPageSkeleton";
 
 export default function Page() {
-  return <PaymentPage />;
+  return (
+    <Suspense fallback={<PaymentPageSkeleton />}>
+      <PaymentPage />
+    </Suspense>
+  );
 }
