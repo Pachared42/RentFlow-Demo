@@ -16,7 +16,7 @@ export default function ProfileSectionCard({
     <Box className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
       <Box className="mb-4 flex items-center gap-2">
         {icon ? (
-          <Box className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-700">
+          <Box className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700">
             {icon}
           </Box>
         ) : null}

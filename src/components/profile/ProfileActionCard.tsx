@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Divider, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
@@ -10,11 +10,13 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 export default function ProfileActionCard({
   isEditing,
+  emailVerified,
   onStartEdit,
   onSave,
   onCancel,
 }: {
   isEditing: boolean;
+  emailVerified: boolean;
   onStartEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
@@ -24,7 +26,7 @@ export default function ProfileActionCard({
   return (
     <Box className="rounded-3xl border border-slate-200 bg-white p-5">
       <Typography className="text-base font-bold text-slate-900">
-        การดำเนินการ
+        จัดการบัญชี
       </Typography>
 
       <Box className="mt-4 grid gap-3">
@@ -81,6 +83,28 @@ export default function ProfileActionCard({
         >
           กลับหน้าหลัก
         </Button>
+      </Box>
+
+      <Divider className="my-4! border-slate-200!" />
+
+      <Box className="space-y-3">
+        <Box className="flex items-center justify-between">
+          <Typography className="text-sm text-slate-500">อีเมล</Typography>
+          <Typography
+            className={`text-sm font-semibold ${
+              emailVerified ? "text-emerald-600" : "text-amber-600"
+            }`}
+          >
+            {emailVerified ? "ยืนยันแล้ว" : "ยังไม่ยืนยัน"}
+          </Typography>
+        </Box>
+
+        <Box className="flex items-center justify-between">
+          <Typography className="text-sm text-slate-500">บัญชี</Typography>
+          <Typography className="text-sm font-semibold text-slate-900">
+            ใช้งานได้
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

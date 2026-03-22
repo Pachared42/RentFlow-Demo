@@ -1,247 +1,271 @@
 "use client";
 
 import * as React from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Avatar,
-  Chip,
-  Card,
-  CardContent,
-  Stack,
-} from "@mui/material";
-import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
+import { Box, Container } from "@mui/material";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import DriveEtaRoundedIcon from "@mui/icons-material/DriveEtaRounded";
-import GoogleIcon from "@mui/icons-material/Google";
-import VerifiedRoundedIcon from "@mui/icons-material/VerifiedRounded";
+import ContactPhoneRoundedIcon from "@mui/icons-material/ContactPhoneRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 
-import { useProfilePage } from "@/src/hooks/profile/useProfilePage";
-import ProfileSectionCard from "@/src/components/profile/ProfileSectionCard";
-import { InfoField, EditField } from "@/src/components/profile/ProfileField";
 import ProfileActionCard from "@/src/components/profile/ProfileActionCard";
-import ProfileAccountStatusCard from "@/src/components/profile/ProfileAccountStatusCard";
+import ProfilePageSkeleton from "@/src/components/profile/ProfilePageSkeleton";
+import ProfileSectionCard from "@/src/components/profile/ProfileSectionCard";
+import { ProfileField } from "@/src/components/profile/ProfileField";
+
+type ProfileData = {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  lineId: string;
+  emergencyName: string;
+  emergencyPhone: string;
+  address: string;
+  emailVerified: boolean;
+};
+
+type FieldKey = keyof ProfileData | "fullName";
+
+type FieldConfig = {
+  label: string;
+  key: FieldKey;
+  type?: React.InputHTMLAttributes<unknown>["type"];
+  editable?: boolean;
+  placeholder?: string;
+};
+
+const ACCOUNT_FIELDS: FieldConfig[] = [
+  {
+    label: "ชื่อ-นามสกุล",
+    key: "fullName",
+    editable: false,
+  },
+  {
+    label: "ชื่อจริง",
+    key: "firstName",
+    editable: true,
+    placeholder: "กรอกชื่อจริง",
+  },
+  {
+    label: "นามสกุล",
+    key: "lastName",
+    editable: true,
+    placeholder: "กรอกนามสกุล",
+  },
+  {
+    label: "ชื่อที่แสดง",
+    key: "displayName",
+    editable: true,
+    placeholder: "กรอกชื่อที่แสดง",
+  },
+  {
+    label: "อีเมล",
+    key: "email",
+    editable: false,
+    type: "email",
+  },
+  {
+    label: "เบอร์โทรศัพท์",
+    key: "phone",
+    editable: true,
+    placeholder: "กรอกเบอร์โทรศัพท์",
+  },
+  {
+    label: "วันเกิด",
+    key: "birthDate",
+    editable: true,
+    type: "date",
+  },
+];
+
+const CONTACT_FIELDS: FieldConfig[] = [
+  {
+    label: "LINE ID",
+    key: "lineId",
+    editable: true,
+    placeholder: "กรอก LINE ID",
+  },
+  {
+    label: "ชื่อผู้ติดต่อฉุกเฉิน",
+    key: "emergencyName",
+    editable: true,
+    placeholder: "กรอกชื่อผู้ติดต่อ",
+  },
+  {
+    label: "เบอร์ผู้ติดต่อฉุกเฉิน",
+    key: "emergencyPhone",
+    editable: true,
+    placeholder: "กรอกเบอร์โทรศัพท์",
+  },
+];
+
+const ADDRESS_FIELDS: FieldConfig[] = [
+  {
+    label: "ที่อยู่",
+    key: "address",
+    editable: true,
+    placeholder: "กรอกที่อยู่",
+  },
+];
+
+function getFullName(data: Pick<ProfileData, "firstName" | "lastName">) {
+  return `${data.firstName} ${data.lastName}`.replace(/\s+/g, " ").trim();
+}
+
+function ProfileFieldsGrid({
+  fields,
+  profile,
+  draft,
+  isEditing,
+  onDraftChange,
+  columns = "md:grid-cols-2",
+}: {
+  fields: FieldConfig[];
+  profile: ProfileData;
+  draft: ProfileData;
+  isEditing: boolean;
+  onDraftChange: (key: keyof ProfileData, value: string) => void;
+  columns?: string;
+}) {
+  return (
+    <Box className={`grid gap-3 ${columns}`}>
+      {fields.map((field) => {
+        const currentValue =
+          field.key === "fullName"
+            ? getFullName(isEditing ? draft : profile)
+            : String(isEditing ? draft[field.key] ?? "" : profile[field.key] ?? "");
+
+        const mode =
+          field.key === "fullName"
+            ? "view"
+            : isEditing && field.editable !== false
+            ? "edit"
+            : "view";
+
+        return (
+          <ProfileField
+            key={String(field.key)}
+            label={field.label}
+            value={currentValue}
+            mode={mode}
+            type={field.type}
+            disabled={field.key === "fullName" || field.editable === false}
+            placeholder={field.placeholder}
+            onChange={(value) => {
+              if (field.key !== "fullName") {
+                onDraftChange(field.key, value);
+              }
+            }}
+          />
+        );
+      })}
+    </Box>
+  );
+}
 
 export default function ProfilePage() {
-  const {
-    profile,
-    draft,
-    isEditing,
-    startEdit,
-    cancelEdit,
-    saveEdit,
-    updateDraft,
-  } = useProfilePage();
+  const [loading] = React.useState(false);
+
+  const [profile, setProfile] = React.useState<ProfileData>({
+    firstName: "Pachara",
+    lastName: "S.",
+    displayName: "Pachara",
+    email: "pachara@example.com",
+    phone: "0812345678",
+    birthDate: "2004-01-01",
+    lineId: "pachara.line",
+    emergencyName: "Somchai",
+    emergencyPhone: "0899999999",
+    address: "Bangkok, Thailand",
+    emailVerified: true,
+  });
+
+  const [draft, setDraft] = React.useState<ProfileData>(profile);
+  const [isEditing, setIsEditing] = React.useState(false);
+
+  const handleStartEdit = () => {
+    setDraft(profile);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setDraft(profile);
+    setIsEditing(false);
+  };
+
+  const handleSave = () => {
+    setProfile(draft);
+    setIsEditing(false);
+  };
+
+  const handleDraftChange = (key: keyof ProfileData, value: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  if (loading) {
+    return <ProfilePageSkeleton />;
+  }
 
   return (
-    <Box className="min-h-screen">
-      <Container maxWidth="lg" className="py-12">
-        <Card
-          elevation={0}
-          className="overflow-hidden rounded-3xl! border border-slate-200 bg-white"
-          sx={{ boxShadow: "none" }}
-        >
-          <Box className="bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 px-6 py-8 text-white sm:px-8">
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              spacing={3}
-              alignItems={{ xs: "center", sm: "center" }}
+    <Box className="bg-white py-6 md:py-8">
+      <Container maxWidth="lg">
+        <Box className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <Box className="grid gap-5">
+            <ProfileSectionCard
+              title="ข้อมูลบัญชี"
+              icon={<PersonRoundedIcon fontSize="small" />}
             >
-              <Avatar
-                src={profile.avatarUrl || undefined}
-                sx={{ width: 88, height: 88 }}
-                className="border-4 border-white/20 bg-white! text-3xl! font-bold! text-slate-900!"
-              >
-                {profile.displayName?.[0]?.toUpperCase() || "P"}
-              </Avatar>
+              <ProfileFieldsGrid
+                fields={ACCOUNT_FIELDS}
+                profile={profile}
+                draft={draft}
+                isEditing={isEditing}
+                onDraftChange={handleDraftChange}
+              />
+            </ProfileSectionCard>
 
-              <Box className="min-w-0 flex-1 text-center sm:text-left">
-                <Typography className="text-2xl font-bold text-white sm:text-3xl">
-                  {profile.displayName}
-                </Typography>
+            <ProfileSectionCard
+              title="ข้อมูลติดต่อ"
+              icon={<ContactPhoneRoundedIcon fontSize="small" />}
+            >
+              <ProfileFieldsGrid
+                fields={CONTACT_FIELDS}
+                profile={profile}
+                draft={draft}
+                isEditing={isEditing}
+                onDraftChange={handleDraftChange}
+              />
+            </ProfileSectionCard>
 
-                <Box className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                  <Chip
-                    size="small"
-                    icon={<GoogleIcon fontSize="small" />}
-                    label={profile.provider}
-                    className="bg-white/12! text-white!"
-                    sx={{
-                      "& .MuiChip-icon": { color: "white" },
-                      borderRadius: "999px",
-                    }}
-                  />
-
-                  {profile.emailVerified ? (
-                    <Chip
-                      size="small"
-                      icon={<VerifiedRoundedIcon fontSize="small" />}
-                      label="ยืนยันแล้ว"
-                      className="bg-emerald-500/18! text-white!"
-                      sx={{
-                        "& .MuiChip-icon": { color: "white" },
-                        borderRadius: "999px",
-                      }}
-                    />
-                  ) : null}
-                </Box>
-              </Box>
-            </Stack>
+            <ProfileSectionCard
+              title="ที่อยู่"
+              icon={<HomeRoundedIcon fontSize="small" />}
+            >
+              <ProfileFieldsGrid
+                fields={ADDRESS_FIELDS}
+                profile={profile}
+                draft={draft}
+                isEditing={isEditing}
+                onDraftChange={handleDraftChange}
+                columns="grid-cols-1"
+              />
+            </ProfileSectionCard>
           </Box>
 
-          <CardContent className="p-5! sm:p-6!">
-            <Box className="grid gap-6 lg:grid-cols-12">
-              <Box className="space-y-6 lg:col-span-8">
-                <ProfileSectionCard
-                  title="ข้อมูลบัญชี"
-                  icon={<EmailRoundedIcon fontSize="small" />}
-                >
-                  {isEditing ? (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <EditField
-                        label="ชื่อที่แสดง"
-                        value={draft.displayName}
-                        onChange={updateDraft("displayName")}
-                      />
-                      <EditField
-                        label="อีเมล"
-                        value={draft.email}
-                        disabled
-                        onChange={() => {}}
-                      />
-                      <EditField
-                        label="ผู้ให้บริการ"
-                        value={draft.provider}
-                        disabled
-                        onChange={() => {}}
-                      />
-                      <EditField
-                        label="สถานะอีเมล"
-                        value={
-                          draft.emailVerified ? "ยืนยันแล้ว" : "ยังไม่ยืนยัน"
-                        }
-                        disabled
-                        onChange={() => {}}
-                      />
-                    </Box>
-                  ) : (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <InfoField
-                        label="ชื่อที่แสดง"
-                        value={profile.displayName}
-                      />
-                      <InfoField label="อีเมล" value={profile.email} />
-                      <InfoField
-                        label="ผู้ให้บริการ"
-                        value={profile.provider}
-                      />
-                      <InfoField
-                        label="สถานะอีเมล"
-                        value={
-                          profile.emailVerified ? "ยืนยันแล้ว" : "ยังไม่ยืนยัน"
-                        }
-                      />
-                    </Box>
-                  )}
-                </ProfileSectionCard>
-
-                <ProfileSectionCard
-                  title="ข้อมูลส่วนตัว"
-                  icon={<PersonRoundedIcon fontSize="small" />}
-                >
-                  {isEditing ? (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <EditField
-                        label="ชื่อจริง"
-                        value={draft.firstName}
-                        onChange={updateDraft("firstName")}
-                      />
-                      <EditField
-                        label="นามสกุล"
-                        value={draft.lastName}
-                        onChange={updateDraft("lastName")}
-                      />
-                      <EditField
-                        label="เบอร์โทร"
-                        value={draft.phone}
-                        placeholder="08x-xxx-xxxx"
-                        onChange={updateDraft("phone")}
-                      />
-                      <EditField
-                        label="วันเกิด"
-                        type="date"
-                        value={draft.birthDate}
-                        onChange={updateDraft("birthDate")}
-                      />
-                    </Box>
-                  ) : (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <InfoField label="ชื่อจริง" value={profile.firstName} />
-                      <InfoField label="นามสกุล" value={profile.lastName} />
-                      <InfoField label="เบอร์โทร" value={profile.phone} />
-                      <InfoField label="วันเกิด" value={profile.birthDate} />
-                    </Box>
-                  )}
-                </ProfileSectionCard>
-
-                <ProfileSectionCard
-                  title="ข้อมูลการเช่ารถ"
-                  icon={<DriveEtaRoundedIcon fontSize="small" />}
-                >
-                  {isEditing ? (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <EditField
-                        label="เลขบัตรประชาชน"
-                        value={draft.nationalId}
-                        onChange={updateDraft("nationalId")}
-                      />
-                      <EditField
-                        label="เลขใบขับขี่"
-                        value={draft.licenseNo}
-                        onChange={updateDraft("licenseNo")}
-                      />
-                      <EditField
-                        label="วันหมดอายุใบขับขี่"
-                        type="date"
-                        value={draft.licenseExpiry}
-                        onChange={updateDraft("licenseExpiry")}
-                      />
-                    </Box>
-                  ) : (
-                    <Box className="grid gap-3 sm:grid-cols-2">
-                      <InfoField
-                        label="เลขบัตรประชาชน"
-                        value={profile.nationalId}
-                      />
-                      <InfoField
-                        label="เลขใบขับขี่"
-                        value={profile.licenseNo}
-                      />
-                      <InfoField
-                        label="วันหมดอายุใบขับขี่"
-                        value={profile.licenseExpiry}
-                      />
-                    </Box>
-                  )}
-                </ProfileSectionCard>
-              </Box>
-
-              <Box className="space-y-6 lg:col-span-4">
-                <ProfileActionCard
-                  isEditing={isEditing}
-                  onStartEdit={startEdit}
-                  onSave={saveEdit}
-                  onCancel={cancelEdit}
-                />
-
-                <ProfileAccountStatusCard
-                  emailVerified={profile.emailVerified}
-                />
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
+          <Box>
+            <ProfileActionCard
+              isEditing={isEditing}
+              emailVerified={profile.emailVerified}
+              onStartEdit={handleStartEdit}
+              onSave={handleSave}
+              onCancel={handleCancel}
+            />
+          </Box>
+        </Box>
       </Container>
     </Box>
   );
