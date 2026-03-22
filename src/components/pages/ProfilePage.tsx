@@ -213,8 +213,8 @@ export default function ProfilePage() {
   return (
     <Box className="bg-white py-6 md:py-8">
       <Container maxWidth="lg">
-        <Box className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <Box className="grid gap-5">
+        <Box className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <Box className="grid gap-4">
             <ProfileSectionCard
               title="ข้อมูลบัญชี"
               icon={<PersonRoundedIcon fontSize="small" />}

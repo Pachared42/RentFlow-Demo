@@ -24,7 +24,7 @@ export default function ProfileActionCard({
   const router = useRouter();
 
   return (
-    <Box className="rounded-3xl border border-slate-200 bg-white p-5">
+    <Box className="rounded-2xl border border-slate-200 bg-white p-4">
       <Typography className="text-base font-bold text-slate-900">
         จัดการบัญชี
       </Typography>
