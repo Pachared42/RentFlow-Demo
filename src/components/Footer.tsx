@@ -36,8 +36,8 @@ export default function Footer() {
       <Container maxWidth="lg" className="py-10">
         <Box className="grid gap-10 md:grid-cols-3">
           {/* Brand */}
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <Box className="relative h-8 w-8 shrink-0">
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Box className="relative h-4 w-4 shrink-0">
               <Image
                 src="/RentFlow.png"
                 alt="RentFlow Logo"
