@@ -71,7 +71,7 @@ export default function Navbar() {
           <Box
             component={Link}
             href="/"
-            className="flex items-center no-underline"
+            className="flex items-center gap-2 no-underline"
           >
             <Box className="relative h-8 w-8 shrink-0">
               <Image
@@ -82,6 +82,7 @@ export default function Navbar() {
                 priority
               />
             </Box>
+
             <Typography className="font-bold! text-slate-900!">
               RentFlow
             </Typography>
