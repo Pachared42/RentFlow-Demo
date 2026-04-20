@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getErrorMessage } from "@/src/lib/api-error";
+import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
 import {
   BRANCH_POINTS,
   CHAT_CHANNEL_URL,
@@ -49,6 +49,7 @@ export default function useBooking() {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const [ready, setReady] = React.useState(false);
+  const [checkingAuth, setCheckingAuth] = React.useState(true);
   const [pricing, setPricing] = React.useState<{
     discountPct: number;
     subTotal: number;
@@ -161,10 +162,30 @@ export default function useBooking() {
 
       if (profileResult.status === "fulfilled") {
         const user = profileResult.value.data;
-        setFullName((prev) => prev || user.name || "");
-        setEmail((prev) => prev || user.email || "");
+        const displayName =
+          user.name ||
+          [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          user.username ||
+          "";
+        const contactEmail = user.email?.includes("@") ? user.email : "";
+
+        setFullName((prev) => prev || displayName);
+        setEmail((prev) => prev || contactEmail);
         setPhone((prev) => prev || user.phone || "");
+        setCheckingAuth(false);
+        return;
       }
+
+      if (getErrorStatus(profileResult.reason) === 401) {
+        const redirectPath = carId
+          ? `/booking?carId=${encodeURIComponent(carId)}`
+          : "/booking";
+
+        router.replace(`/login?redirect=${encodeURIComponent(redirectPath)}`);
+        return;
+      }
+
+      setCheckingAuth(false);
     }
 
     loadInitialData();
@@ -172,7 +193,7 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [carId]);
+  }, [carId, router]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -434,7 +455,7 @@ export default function useBooking() {
     error,
     setError,
     loading,
-    ready,
+    ready: ready && !checkingAuth,
     fieldSX,
     startDT,
     endDT,

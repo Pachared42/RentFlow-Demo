@@ -53,7 +53,7 @@ export default function BookingLocation({
 
           <Box className="mt-4 grid gap-4 sm:grid-cols-2">
             <TextField
-              label="สถานที่รับรถ (Optional)"
+              label="สถานที่รับรถ (ไม่บังคับ)"
               value={pickupFreeText}
               onChange={(e) => setPickupFreeText(e.target.value)}
               fullWidth
@@ -69,7 +69,7 @@ export default function BookingLocation({
               }
             />
             <TextField
-              label="สถานที่คืนรถ (Optional)"
+              label="สถานที่คืนรถ (ไม่บังคับ)"
               value={returnFreeText}
               onChange={(e) => setReturnFreeText(e.target.value)}
               fullWidth

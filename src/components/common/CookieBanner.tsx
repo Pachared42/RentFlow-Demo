@@ -57,7 +57,7 @@ export default function CookieBanner() {
     >
       <Box
         role="dialog"
-        aria-label="Cookie consent"
+        aria-label="การยินยอมใช้คุกกี้"
         className="rounded-2xl border border-slate-200 bg-white"
         sx={{
           width: { xs: "calc(100vw - 24px)", sm: 720 },

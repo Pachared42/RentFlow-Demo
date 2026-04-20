@@ -4,6 +4,10 @@ type ErrorPayload = {
   message?: string;
 };
 
+function hasThaiText(value: string) {
+  return /[\u0E00-\u0E7F]/.test(value);
+}
+
 export function getErrorMessage(error: unknown, fallbackMessage: string) {
   if (axios.isAxiosError(error)) {
     const responseMessage =
@@ -11,11 +15,15 @@ export function getErrorMessage(error: unknown, fallbackMessage: string) {
         ? (error.response.data as ErrorPayload).message
         : undefined;
 
-    return responseMessage || error.message || fallbackMessage;
+    return responseMessage || fallbackMessage;
   }
 
   if (error instanceof Error) {
-    return error.message || fallbackMessage;
+    if (hasThaiText(error.message)) {
+      return error.message;
+    }
+
+    return fallbackMessage;
   }
 
   return fallbackMessage;

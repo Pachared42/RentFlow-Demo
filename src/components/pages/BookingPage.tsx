@@ -27,8 +27,8 @@ export default function BookingPage() {
           โหมดจุดรับ-คืนรถ:{" "}
           <span className="font-semibold text-slate-900">
             {booking.merchantBranchesEnabled
-              ? "มีสาขา (Enterprise)"
-              : "ไม่มีสาขา (SME)"}
+              ? "มีสาขาให้บริการ"
+              : "รับ-คืนตามสถานที่ที่ระบุ"}
           </span>
         </Typography>
       </Box>

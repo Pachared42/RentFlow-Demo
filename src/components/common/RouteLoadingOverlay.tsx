@@ -92,7 +92,7 @@ export default function RouteLoadingOverlay() {
 
 function BoxOverlay({ children }: { children: React.ReactNode }) {
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-0 z-[9999] h-1 bg-slate-200/70">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-9999 h-1 bg-slate-200/70">
       {children}
     </div>
   );

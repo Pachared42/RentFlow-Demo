@@ -4,7 +4,6 @@ import * as React from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -12,25 +11,23 @@ import {
   CircularProgress,
   Container,
   Divider,
-  Snackbar,
-  Slide,
   Stack,
   TextField,
   Typography,
-  type SlideProps,
 } from "@mui/material";
+import AppSnackbar, {
+  type AppSnackbarSeverity,
+} from "@/src/components/common/AppSnackbar";
 import { getErrorMessage } from "@/src/lib/api-error";
 import {
   loginWithPassword,
   registerWithPassword,
 } from "@/src/services/auth/auth.api";
 
-type SnackbarSeverity = "success" | "error" | "info" | "warning";
-
 type SnackbarState = {
   open: boolean;
   message: string;
-  severity: SnackbarSeverity;
+  severity: AppSnackbarSeverity;
 };
 
 type AuthCardProps = {
@@ -42,10 +39,6 @@ type AuthCardProps = {
   agreementText: React.ReactNode;
   redirectTo?: string;
 };
-
-function SlideDownTransition(props: SlideProps) {
-  return <Slide {...props} direction="down" />;
-}
 
 const fieldSX = {
   "& .MuiOutlinedInput-root": { borderRadius: "12px" },
@@ -94,7 +87,7 @@ export default function AuthCard({
   );
 
   const showSnackbar = React.useCallback(
-    (message: string, severity: SnackbarSeverity = "info") => {
+    (message: string, severity: AppSnackbarSeverity = "info") => {
       setSnackbar({ open: true, message, severity });
     },
     []
@@ -157,31 +150,12 @@ export default function AuthCard({
 
   return (
     <Box className="relative bg-white">
-      <Snackbar
+      <AppSnackbar
         open={snackbar.open}
-        autoHideDuration={3500}
+        message={snackbar.message}
+        severity={snackbar.severity}
         onClose={closeSnackbar}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        TransitionComponent={SlideDownTransition}
-      >
-        <Alert
-          onClose={closeSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-          elevation={0}
-          sx={{
-            minWidth: { xs: "calc(100vw - 32px)", sm: 420 },
-            maxWidth: 520,
-            borderRadius: "14px",
-            fontWeight: 600,
-            boxShadow:
-              "0 10px 30px rgba(15, 23, 42, 0.10), 0 2px 10px rgba(15, 23, 42, 0.06)",
-            alignItems: "center",
-          }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      />
 
       <Container maxWidth="sm" className="relative py-12">
         <Card
@@ -242,7 +216,7 @@ export default function AuthCard({
               ) : null}
 
               <TextField
-                label="Username"
+                label="ชื่อผู้ใช้"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 autoComplete="username"
@@ -251,7 +225,7 @@ export default function AuthCard({
               />
 
               <TextField
-                label="Password"
+                label="รหัสผ่าน"
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
@@ -263,7 +237,7 @@ export default function AuthCard({
 
               {isRegister ? (
                 <TextField
-                  label="ยืนยัน Password"
+                  label="ยืนยันรหัสผ่าน"
                   type="password"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
@@ -272,7 +246,7 @@ export default function AuthCard({
                   error={!!confirmPassword && password !== confirmPassword}
                   helperText={
                     confirmPassword && password !== confirmPassword
-                      ? "Password ไม่ตรงกัน"
+                      ? "รหัสผ่านไม่ตรงกัน"
                       : " "
                   }
                   sx={fieldSX}
