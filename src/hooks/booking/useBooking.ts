@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { branchesApi } from "@/src/services/branches/branches.service";
 import {
   BRANCH_POINTS,
   CHAT_CHANNEL_URL,
@@ -14,18 +16,22 @@ import { DEFAULT_ADDONS, type AddonKey } from "@/src/constants/booking.addons";
 import { parseDateTime, diffDaysCeil } from "@/src/utils/booking/booking.date";
 import { buildChatHref, buildChatMessage } from "@/src/utils/booking/booking.format";
 import { getSelectedAddonTitles } from "@/src/utils/booking/booking.pricing";
-import { bookingApi } from "@/src/services/booking/booking.api";
-import { getCarById } from "@/src/services/cars/cars.api";
+import { bookingApi } from "@/src/services/booking/booking.service";
+import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
-import { usersApi } from "@/src/services/users/users.api";
+import { usersApi } from "@/src/services/users/users.service";
 import useBookingValidation from "./useBookingValidation";
 
 export default function useBooking() {
   const params = useSearchParams();
   const router = useRouter();
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
 
   const carId = params.get("carId") || "";
+  const tenantSlugFromUrl = params.get("tenant") || "";
   const [car, setCar] = React.useState<Car | null>(null);
+  const [branchOptions, setBranchOptions] =
+    React.useState<string[]>(BRANCH_POINTS);
 
   const [fullName, setFullName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -124,6 +130,10 @@ export default function useBooking() {
   }, [addons, days]);
 
   const amount = pricing?.total ?? 0;
+  const effectiveTenantSlug = React.useMemo(
+    () => car?.domainSlug || tenantSlugFromUrl || undefined,
+    [car?.domainSlug, tenantSlugFromUrl]
+  );
 
   const { locationOk, canSubmit } = useBookingValidation({
     carExists: !!car,
@@ -148,7 +158,12 @@ export default function useBooking() {
 
     async function loadInitialData() {
       const tasks = await Promise.allSettled([
-        carId ? getCarById(carId) : Promise.resolve(null),
+        carId
+          ? getCarById(carId, {
+              marketplace: siteMode === "marketplace",
+              tenantSlug: tenantSlugFromUrl || undefined,
+            })
+          : Promise.resolve(null),
         usersApi.getMe(),
       ]);
 
@@ -193,7 +208,53 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [carId, router]);
+  }, [carId, router, siteMode, tenantSlugFromUrl]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadBranches() {
+      if (!merchantBranchesEnabled) return;
+      if (!effectiveTenantSlug) {
+        setBranchOptions(BRANCH_POINTS);
+        return;
+      }
+
+      try {
+        const res = await branchesApi.getBranches({
+          tenantSlug: effectiveTenantSlug,
+        });
+        if (cancelled) return;
+
+        const options = Array.from(
+          new Set(
+            (res.data ?? [])
+              .map((branch) => branch.name?.trim())
+              .filter((value): value is string => Boolean(value))
+          )
+        );
+
+        if (!options.length) {
+          setBranchOptions(BRANCH_POINTS);
+          return;
+        }
+
+        setBranchOptions(options);
+        setPickupBranch((prev) => (options.includes(prev) ? prev : options[0]));
+        setReturnBranch((prev) => (options.includes(prev) ? prev : options[0]));
+      } catch {
+        if (!cancelled) {
+          setBranchOptions(BRANCH_POINTS);
+        }
+      }
+    }
+
+    loadBranches();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [effectiveTenantSlug]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -211,6 +272,8 @@ export default function useBooking() {
           returnDate,
           pickupLocation: finalPickupPoint || undefined,
           returnLocation: finalReturnPoint || undefined,
+        }, {
+          tenantSlug: effectiveTenantSlug,
         });
 
         if (cancelled) return;
@@ -246,6 +309,7 @@ export default function useBooking() {
     returnDate,
     finalPickupPoint,
     finalReturnPoint,
+    effectiveTenantSlug,
     timeInvalid,
   ]);
 
@@ -288,8 +352,12 @@ export default function useBooking() {
   ]);
 
   const chatHref = React.useMemo(() => {
-    return buildChatHref(CHAT_CHANNEL_URL, chatMessage);
-  }, [chatMessage]);
+    const channelUrl =
+      car?.lineOfficialAccount?.chatUrl ||
+      car?.lineOfficialAccount?.shareUrl ||
+      CHAT_CHANNEL_URL;
+    return buildChatHref(channelUrl, chatMessage);
+  }, [car?.lineOfficialAccount?.chatUrl, car?.lineOfficialAccount?.shareUrl, chatMessage]);
 
   const handleAddonChange = React.useCallback((key: AddonKey, checked: boolean) => {
     setAddons((prev) => ({
@@ -352,6 +420,8 @@ export default function useBooking() {
           note: selectedAddonTitles.length
             ? `บริการเสริมที่เลือก: ${selectedAddonTitles.join(", ")}`
             : undefined,
+        }, {
+          tenantSlug: effectiveTenantSlug,
         });
 
         const booking = res.data;
@@ -374,6 +444,9 @@ export default function useBooking() {
             `&subtotal=${encodeURIComponent(String(booking.subtotal))}` +
             `&discount=${encodeURIComponent(String(booking.discount))}` +
             `&extraCharge=${encodeURIComponent(String(booking.extraCharge))}` +
+            (effectiveTenantSlug
+              ? `&tenant=${encodeURIComponent(effectiveTenantSlug)}`
+              : "") +
             `&addons=${encodeURIComponent(
               JSON.stringify(
                 Object.entries(addons)
@@ -407,6 +480,7 @@ export default function useBooking() {
       pickupBranch,
       returnBranch,
       selectedAddonTitles,
+      effectiveTenantSlug,
       router,
     ]
   );
@@ -421,6 +495,7 @@ export default function useBooking() {
 
   return {
     merchantBranchesEnabled,
+    branchOptions,
     carId,
     car,
     fullName,

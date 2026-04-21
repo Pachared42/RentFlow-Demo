@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getCars } from "@/src/services/cars/cars.api";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
 type Params = {
@@ -15,8 +16,9 @@ type Params = {
 };
 
 export function useCarsCatalog(params: Params) {
-    const { q, type, sort, location, pickupDate, returnDate } = params;
-    const [cars, setCars] = React.useState<Car[]>([]);
+  const { q, type, sort, location, pickupDate, returnDate } = params;
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const [cars, setCars] = React.useState<Car[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
 
@@ -37,6 +39,8 @@ export function useCarsCatalog(params: Params) {
                     location,
                     pickupDate,
                     returnDate,
+                }, {
+                    marketplace: siteMode === "marketplace",
                 });
                 const elapsed = Date.now() - start;
                 const delay = Math.max(1000 - elapsed, 0);
@@ -67,6 +71,7 @@ export function useCarsCatalog(params: Params) {
         pickupDate,
         q,
         returnDate,
+        siteMode,
         sort,
         type,
     ]);

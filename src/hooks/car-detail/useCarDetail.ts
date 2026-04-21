@@ -1,13 +1,18 @@
 "use client";
 
 import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { normCarId } from "@/src/utils/car-detail/carDetail.format";
 import usePageReady from "@/src/hooks/usePageReady";
-import { getCarById } from "@/src/services/cars/cars.api";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
 export default function useCarDetail(carId: string) {
   const ready = usePageReady();
+  const searchParams = useSearchParams();
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const tenantSlug = searchParams.get("tenant") || undefined;
 
   const id = React.useMemo(() => normCarId(carId), [carId]);
   const [detail, setDetail] = React.useState<Car | null>(null);
@@ -22,7 +27,10 @@ export default function useCarDetail(carId: string) {
       }
 
       try {
-        const car = await getCarById(id);
+        const car = await getCarById(id, {
+          marketplace: siteMode === "marketplace",
+          tenantSlug,
+        });
         if (!cancelled) {
           setDetail(car);
         }
@@ -38,7 +46,7 @@ export default function useCarDetail(carId: string) {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, siteMode, tenantSlug]);
 
   return {
     ready,

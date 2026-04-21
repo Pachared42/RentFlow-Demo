@@ -1,9 +1,14 @@
+import type {
+  LineOfficialAccountSummary,
+  TenantSummary,
+} from "../types/types";
+
 export type CarType = "Economy" | "Sedan" | "SUV" | "Van";
 export type Transmission = "Auto" | "Manual";
 export type Fuel = "Gasoline" | "Hybrid" | "EV";
 export type Grade = 1 | 2 | 3 | 4;
 
-export type Car = {
+export type Car = TenantSummary & {
   id: string;
   name: string;
   brand: string;
@@ -23,6 +28,7 @@ export type Car = {
   isAvailable: boolean;
   createdAt: string;
   updatedAt: string;
+  lineOfficialAccount?: LineOfficialAccountSummary;
 };
 
 export type CarsQuery = {
@@ -55,4 +61,29 @@ export type CarImageUploadItem = {
 export type CarImagesUploadResponse = {
   items: CarImageUploadItem[];
   total: number;
+};
+
+export type SortKey = "price_asc" | "price_desc";
+
+export type GetCarsParams = {
+  q?: string;
+  type?: string;
+  location?: string;
+  pickupDate?: string;
+  returnDate?: string;
+  sort?: SortKey;
+};
+
+export type GetCarsResponse = {
+  items: Car[];
+  total: number;
+};
+
+export type CarsApiResponse = {
+  items: Array<Partial<Car> & { id: string; name: string }>;
+  total: number;
+};
+
+export type RawCarImageUploadItem = Omit<CarImageUploadItem, "imageUrl"> & {
+  imageUrl?: string;
 };

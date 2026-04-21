@@ -23,11 +23,17 @@ type Props = {
     transmission: string;
     fuel: string;
     pricePerDay: number;
+    shopName?: string;
+    domainSlug?: string;
+    publicDomain?: string;
   };
 };
 
 export default function CarDetailSummaryCard({ detail }: Props) {
   const router = useRouter();
+  const bookingHref = detail.domainSlug
+    ? `/booking?carId=${encodeURIComponent(detail.id)}&tenant=${encodeURIComponent(detail.domainSlug)}`
+    : `/booking?carId=${encodeURIComponent(detail.id)}`;
 
   return (
     <Card
@@ -41,6 +47,11 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             <Typography className="truncate text-xl font-bold text-slate-900">
               {detail.name}
             </Typography>
+            {detail.shopName ? (
+              <Typography className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                โดย {detail.shopName}
+              </Typography>
+            ) : null}
             <Typography className="mt-2 text-sm text-slate-600">
               {detail.type} • {detail.seats} ที่นั่ง • {detail.transmission} •{" "}
               {detail.fuel}
@@ -81,9 +92,7 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             variant="contained"
             className="rounded-xl! py-2.5! font-semibold!"
             sx={{ textTransform: "none", backgroundColor: "rgb(15 23 42)" }}
-            onClick={() =>
-              router.push(`/booking?carId=${encodeURIComponent(detail.id)}`)
-            }
+            onClick={() => router.push(bookingHref)}
           >
             จองคันนี้
           </Button>

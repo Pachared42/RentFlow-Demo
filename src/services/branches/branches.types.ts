@@ -1,5 +1,7 @@
 // src/services/branches/branches.types.ts
-export type Branch = {
+import type { TenantSummary } from "../types/types";
+
+export type Branch = TenantSummary & {
   id: string;
   name: string;
   address: string;

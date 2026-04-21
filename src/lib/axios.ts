@@ -14,7 +14,9 @@ api.interceptors.request.use((config) => {
   const headers = AxiosHeaders.from(config.headers);
 
   for (const [key, value] of Object.entries(getRentFlowTenantHeaders())) {
-    headers.set(key, value);
+    if (!headers.has(key)) {
+      headers.set(key, value);
+    }
   }
 
   config.headers = headers;

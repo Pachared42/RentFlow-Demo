@@ -17,8 +17,10 @@ import RateReviewRoundedIcon from "@mui/icons-material/RateReviewRounded";
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import SectionHeading from "@/src/components/common/SectionHeading";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { reviewsApi } from "@/src/services/reviews/reviews.api";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { reviewsApi } from "@/src/services/reviews/reviews.service";
 import type { Review } from "@/src/services/reviews/reviews.types";
 
 type SnackbarState = {
@@ -39,6 +41,7 @@ function formatReviewDate(value: string) {
 }
 
 export default function ReviewsSection() {
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -64,9 +67,11 @@ export default function ReviewsSection() {
 
     async function loadReviews() {
       try {
-        const res = await reviewsApi.getReviews();
+        const scoped = await reviewsApi.getReviews({
+          marketplace: siteMode === "marketplace",
+        });
         if (!cancelled) {
-          setReviews(res.data.items);
+          setReviews(scoped.data.items);
         }
       } catch (err: unknown) {
         if (!cancelled) {
@@ -84,9 +89,10 @@ export default function ReviewsSection() {
     return () => {
       cancelled = true;
     };
-  }, [showSnackbar]);
+  }, [showSnackbar, siteMode]);
 
   const canSubmit =
+    siteMode !== "marketplace" &&
     firstName.trim().length >= 2 &&
     lastName.trim().length >= 2 &&
     (rating ?? 0) > 0 &&
@@ -139,21 +145,22 @@ export default function ReviewsSection() {
         onClose={closeSnackbar}
       />
 
-      <Box className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <Box>
-          <Typography
-            variant="h4"
-            className="text-base font-semibold text-slate-900"
-          >
-            รีวิวจากผู้ใช้งาน
-          </Typography>
-          <Typography className="mt-1 text-sm text-slate-600">
-            แบ่งปันประสบการณ์ของคุณได้ทันที
-          </Typography>
-        </Box>
-      </Box>
+      <SectionHeading
+        eyebrow={siteMode === "marketplace" ? "เสียงจากหลายร้าน" : "เสียงจากลูกค้า"}
+        title={
+          siteMode === "marketplace"
+            ? "รีวิวล่าสุดจากลูกค้าหลายร้าน"
+            : "รีวิวจากผู้ใช้งานของร้านนี้"
+        }
+        description={
+          siteMode === "marketplace"
+            ? "ดูความเห็นล่าสุดจากลูกค้าที่ใช้บริการแต่ละร้าน เพื่อช่วยตัดสินใจก่อนเลือกคันที่ใช่"
+            : "ใครใช้งานแล้วสามารถเขียนรีวิวได้ทันทีโดยไม่ต้องเข้าสู่ระบบ"
+        }
+        tone={siteMode === "marketplace" ? "marketplace" : "default"}
+      />
 
-      <Box className="mt-4 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+      <Box className="mt-8 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
         <Card
           elevation={0}
           sx={{ boxShadow: "none" }}
@@ -166,87 +173,100 @@ export default function ReviewsSection() {
               </Box>
               <Box>
                 <Typography className="text-sm font-semibold text-slate-900">
-                  เขียนรีวิว
+                  {siteMode === "marketplace" ? "รีวิวใน marketplace" : "เขียนรีวิว"}
                 </Typography>
                 <Typography className="text-xs text-slate-500">
-                  ไม่ต้องเข้าสู่ระบบหรือมีรายการจอง
+                  {siteMode === "marketplace"
+                    ? "หน้าเว็บรวมจะแสดงรีวิวล่าสุดจากทุกร้าน และให้เขียนรีวิวผ่านหน้าร้านหรือหน้ารถของร้านนั้น"
+                    : "ไม่ต้องเข้าสู่ระบบหรือมีรายการจอง"}
                 </Typography>
               </Box>
             </Box>
 
-            <Box
-              component="form"
-              onSubmit={handleSubmit}
-              className="mt-5 grid gap-4"
-            >
-              <Box className="grid gap-4 sm:grid-cols-2">
-                <TextField
-                  label="ชื่อจริง"
-                  value={firstName}
-                  onChange={(event) => setFirstName(event.target.value)}
-                  fullWidth
-                  size="small"
-                  autoComplete="given-name"
-                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
-                />
-                <TextField
-                  label="นามสกุล"
-                  value={lastName}
-                  onChange={(event) => setLastName(event.target.value)}
-                  fullWidth
-                  size="small"
-                  autoComplete="family-name"
-                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
-                />
+            {siteMode === "marketplace" ? (
+              <Box className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                <Typography className="text-sm font-semibold text-slate-900">
+                  ต้องการเขียนรีวิวให้ร้านไหน
+                </Typography>
+                <Typography className="mt-2 text-sm leading-6 text-slate-600">
+                  ให้เข้าไปที่หน้ารถหรือหน้าร้านของร้านนั้นโดยตรง ระบบจะผูกร้านให้ถูกต้องอัตโนมัติ
+                </Typography>
               </Box>
-
-              <Box className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                <Box className="flex flex-wrap items-center gap-3">
-                  <Typography className="text-xs text-slate-600">
-                    คะแนน
-                  </Typography>
-                  <Rating
-                    value={rating}
-                    precision={1}
-                    onChange={(_, value) => setRating(value)}
+            ) : (
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                className="mt-5 grid gap-4"
+              >
+                <Box className="grid gap-4 sm:grid-cols-2">
+                  <TextField
+                    label="ชื่อจริง"
+                    value={firstName}
+                    onChange={(event) => setFirstName(event.target.value)}
+                    fullWidth
                     size="small"
+                    autoComplete="given-name"
+                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
+                  />
+                  <TextField
+                    label="นามสกุล"
+                    value={lastName}
+                    onChange={(event) => setLastName(event.target.value)}
+                    fullWidth
+                    size="small"
+                    autoComplete="family-name"
+                    sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
                   />
                 </Box>
-              </Box>
 
-              <TextField
-                label="รีวิวของคุณ"
-                value={comment}
-                onChange={(event) => setComment(event.target.value)}
-                fullWidth
-                multiline
-                minRows={4}
-                placeholder="เล่าประสบการณ์ที่อยากแบ่งปัน"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={!canSubmit}
-                className="rounded-xl! font-semibold!"
-                sx={{
-                  minHeight: 44,
-                  textTransform: "none",
-                  backgroundColor: "rgb(15 23 42)",
-                  "&:hover": { backgroundColor: "rgb(2 6 23)" },
-                }}
-              >
-                {submitting ? (
-                  <Box className="flex items-center gap-2">
-                    <CircularProgress size={16} color="inherit" />
-                    <span>กำลังส่งรีวิว...</span>
+                <Box className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <Box className="flex flex-wrap items-center gap-3">
+                    <Typography className="text-xs text-slate-600">
+                      คะแนน
+                    </Typography>
+                    <Rating
+                      value={rating}
+                      precision={1}
+                      onChange={(_, value) => setRating(value)}
+                      size="small"
+                    />
                   </Box>
-                ) : (
-                  "ส่งรีวิว"
-                )}
-              </Button>
-            </Box>
+                </Box>
+
+                <TextField
+                  label="รีวิวของคุณ"
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
+                  fullWidth
+                  multiline
+                  minRows={4}
+                  placeholder="เล่าประสบการณ์ที่อยากแบ่งปัน"
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: "10px" } }}
+                />
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!canSubmit}
+                  className="rounded-xl! font-semibold!"
+                  sx={{
+                    minHeight: 44,
+                    textTransform: "none",
+                    backgroundColor: "rgb(15 23 42)",
+                    "&:hover": { backgroundColor: "rgb(2 6 23)" },
+                  }}
+                >
+                  {submitting ? (
+                    <Box className="flex items-center gap-2">
+                      <CircularProgress size={16} color="inherit" />
+                      <span>กำลังส่งรีวิว...</span>
+                    </Box>
+                  ) : (
+                    "ส่งรีวิว"
+                  )}
+                </Button>
+              </Box>
+            )}
           </CardContent>
         </Card>
 
@@ -273,6 +293,11 @@ export default function ReviewsSection() {
                         <Typography className="text-sm font-semibold text-slate-900">
                           {review.firstName} {review.lastName}
                         </Typography>
+                        {review.shopName ? (
+                          <Typography className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                            {review.shopName}
+                          </Typography>
+                        ) : null}
                         <Typography className="text-xs text-slate-500">
                           {formatReviewDate(review.createdAt)}
                         </Typography>

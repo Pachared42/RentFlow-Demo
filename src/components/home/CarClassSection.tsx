@@ -13,6 +13,7 @@ import {
   Divider,
 } from "@mui/material";
 
+import SectionHeading from "@/src/components/common/SectionHeading";
 import type { CatalogCarClass } from "@/src/lib/rentflow-catalog";
 
 export default function CarClassSection({
@@ -24,24 +25,19 @@ export default function CarClassSection({
 }) {
   return (
     <Box className="mb-8">
-      <Container maxWidth="lg" className="py-2">
-        <Box className="flex items-end justify-between gap-4">
-          <Box>
-            <Typography variant="h4" className="font-bold text-slate-900">
-              เลือกตามคลาสรถ
-            </Typography>
-            <Typography className="text-sm text-slate-600">
-              กดการ์ดเพื่อไปหน้ารถตามคลาส
-            </Typography>
-          </Box>
-        </Box>
+      <Container maxWidth="lg" className="py-4">
+        <SectionHeading
+          eyebrow="จัดกลุ่มตามคลาส"
+          title="เริ่มต้นจากคลาสรถที่ตรงกับงบและสไตล์ทริป"
+          description="ถ้ายังไม่รู้จะเลือกคันไหน ลองเริ่มจากคลาสรถก่อน แล้วค่อยดูรายการในหมวดนั้นต่อ"
+        />
 
-        <Box className="mt-4 grid gap-4 rounded-2xl border border-slate-200 p-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Box className="mt-8 grid gap-4 rounded-[32px] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.04)] sm:grid-cols-2 lg:grid-cols-4">
           {loading && !classes.length ? (
             Array.from({ length: 4 }).map((_, index) => (
               <Box
                 key={`class-skeleton-${index}`}
-                className="h-56 rounded-xl border border-slate-200 bg-slate-50"
+                className="h-56 rounded-[24px] border border-slate-200 bg-slate-50"
               />
             ))
           ) : classes.length ? (
@@ -52,7 +48,7 @@ export default function CarClassSection({
                 href={`/classes/${x.slug}`}
                 elevation={0}
                 sx={{ boxShadow: "none" }}
-                className="group cursor-pointer overflow-hidden rounded-xl! border border-slate-200! bg-white! hover:border-slate-400!"
+                className="group cursor-pointer overflow-hidden rounded-[24px]! border border-slate-200! bg-white! hover:border-slate-300!"
               >
                 <Box className="relative h-36 w-full overflow-hidden">
                   <Image
@@ -89,7 +85,7 @@ export default function CarClassSection({
               </Card>
             ))
           ) : (
-            <Box className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600 sm:col-span-2 lg:col-span-4">
+            <Box className="rounded-[24px] border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600 sm:col-span-2 lg:col-span-4">
               ยังไม่มีการจัดกลุ่มคลาสจากข้อมูลรถในฐานข้อมูล
             </Box>
           )}

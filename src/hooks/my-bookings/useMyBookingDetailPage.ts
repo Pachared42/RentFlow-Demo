@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
-import { bookingApi } from "@/src/services/booking/booking.api";
-import { getCarById } from "@/src/services/cars/cars.api";
+import { bookingApi } from "@/src/services/booking/booking.service";
+import { getCarById } from "@/src/services/cars/cars.service";
 
 export type BookingStatus =
   | "pending"
@@ -36,9 +36,11 @@ export type Booking = {
 export default function useMyBookingDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const ready = usePageReady({ minDelay: 1000 });
 
   const id = typeof params?.id === "string" ? params.id : "";
+  const tenantSlug = searchParams.get("tenant") || undefined;
   const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [openCancel, setOpenCancel] = React.useState(false);
@@ -54,9 +56,9 @@ export default function useMyBookingDetailPage() {
       }
 
       try {
-        const bookingRes = await bookingApi.getBookingById(id);
+        const bookingRes = await bookingApi.getBookingById(id, { tenantSlug });
         const booking = bookingRes.data;
-        const car = await getCarById(booking.carId);
+        const car = await getCarById(booking.carId, { tenantSlug });
 
         if (cancelled) return;
 
@@ -84,7 +86,11 @@ export default function useMyBookingDetailPage() {
 
         if (getErrorStatus(err) === 401) {
           router.replace(
-            `/login?redirect=${encodeURIComponent(`/my-bookings/${id}`)}`
+            `/login?redirect=${encodeURIComponent(
+              tenantSlug
+                ? `/my-bookings/${id}?tenant=${tenantSlug}`
+                : `/my-bookings/${id}`
+            )}`
           );
           return;
         }
@@ -103,7 +109,7 @@ export default function useMyBookingDetailPage() {
     return () => {
       cancelled = true;
     };
-  }, [id, router]);
+  }, [id, router, tenantSlug]);
 
   const canCancel =
     local?.status === "pending" ||
@@ -124,7 +130,9 @@ export default function useMyBookingDetailPage() {
     if (!local) return;
 
     try {
-      const res = await bookingApi.cancelBooking(local.bookingRef);
+      const res = await bookingApi.cancelBooking(local.bookingRef, {
+        tenantSlug,
+      });
       setLocal((prev) =>
         prev
           ? {
@@ -137,7 +145,7 @@ export default function useMyBookingDetailPage() {
     } catch {
       setOpenCancel(false);
     }
-  }, [local]);
+  }, [local, tenantSlug]);
 
   return {
     ready,

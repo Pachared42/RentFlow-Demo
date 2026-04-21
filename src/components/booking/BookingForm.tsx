@@ -20,6 +20,7 @@ type Props = {
   setPhone: (value: string) => void;
 
   merchantBranchesEnabled: boolean;
+  branchOptions: string[];
   pickupBranch: string;
   setPickupBranch: (value: string) => void;
   returnBranch: string;
@@ -69,6 +70,7 @@ export default function BookingForm({
   phone,
   setPhone,
   merchantBranchesEnabled,
+  branchOptions,
   pickupBranch,
   setPickupBranch,
   returnBranch,
@@ -132,6 +134,7 @@ export default function BookingForm({
 
       <BookingLocation
         merchantBranchesEnabled={merchantBranchesEnabled}
+        branchOptions={branchOptions}
         fieldSX={fieldSX}
         pickupBranch={pickupBranch}
         setPickupBranch={setPickupBranch}

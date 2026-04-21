@@ -4,6 +4,7 @@ export type NavItem = {
 };
 
 export const NAV: NavItem[] = [
+    { label: "AI ช่วยเลือก", href: "/assistant" },
     { label: "ดูรถทั้งหมด", href: "/cars" },
     { label: "ทำไมต้องเรา", href: "/features" },
     { label: "การจองของฉัน", href: "/my-bookings" },

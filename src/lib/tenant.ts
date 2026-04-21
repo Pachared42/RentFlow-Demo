@@ -1,4 +1,9 @@
 const DEFAULT_ROOT_DOMAIN = "rentflow.com";
+export type RentFlowSiteMode = "marketplace" | "storefront";
+export type RentFlowRequestScope = {
+  host?: string;
+  tenantSlug?: string;
+};
 
 function normalizeHost(value?: string) {
   const rawValue = value?.trim().toLowerCase() || "";
@@ -16,6 +21,17 @@ function normalizeHost(value?: string) {
   }
 }
 
+function getRentFlowRootDomain() {
+  return normalizeHost(
+    process.env.NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN || DEFAULT_ROOT_DOMAIN
+  );
+}
+
+function getRentFlowRootLabel() {
+  const rootDomain = getRentFlowRootDomain();
+  return rootDomain.split(".")[0] || "rentflow";
+}
+
 export function getRentFlowTenantHost() {
   if (typeof window !== "undefined") {
     return normalizeHost(window.location.host);
@@ -24,14 +40,46 @@ export function getRentFlowTenantHost() {
   return normalizeHost(process.env.NEXT_PUBLIC_RENTFLOW_TENANT_HOST);
 }
 
+export function isRentFlowMarketplaceHost(host = getRentFlowTenantHost()) {
+  const normalizedHost = normalizeHost(host);
+  const rootDomain = getRentFlowRootDomain();
+  const rootLabel = getRentFlowRootLabel();
+  const fallbackTenant = process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
+
+  if (!normalizedHost) {
+    return !fallbackTenant;
+  }
+
+  if (normalizedHost === rootDomain) {
+    return true;
+  }
+
+  if (
+    normalizedHost === "localhost" ||
+    normalizedHost === "127.0.0.1" ||
+    normalizedHost === "::1"
+  ) {
+    return !fallbackTenant;
+  }
+
+  if (normalizedHost.endsWith(".localhost")) {
+    const labels = normalizedHost.replace(".localhost", "").split(".");
+    return labels.length === 1 && labels[0] === rootLabel;
+  }
+
+  return false;
+}
+
 export function getRentFlowTenantSlug(host = getRentFlowTenantHost()) {
   const normalizedHost = normalizeHost(host);
-  const rootDomain = normalizeHost(
-    process.env.NEXT_PUBLIC_RENTFLOW_ROOT_DOMAIN || DEFAULT_ROOT_DOMAIN
-  );
+  const rootDomain = getRentFlowRootDomain();
 
   if (!normalizedHost) {
     return process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
+  }
+
+  if (isRentFlowMarketplaceHost(normalizedHost)) {
+    return "";
   }
 
   if (
@@ -55,9 +103,16 @@ export function getRentFlowTenantSlug(host = getRentFlowTenantHost()) {
   return process.env.NEXT_PUBLIC_RENTFLOW_TENANT || "";
 }
 
-export function getRentFlowTenantHeaders() {
-  const host = getRentFlowTenantHost();
-  const slug = getRentFlowTenantSlug(host);
+export function getRentFlowSiteMode(host = getRentFlowTenantHost()): RentFlowSiteMode {
+  return isRentFlowMarketplaceHost(host) ? "marketplace" : "storefront";
+}
+
+export function getRentFlowTenantHeaders(scope?: RentFlowRequestScope) {
+  const host = normalizeHost(scope?.host) || getRentFlowTenantHost();
+  const slug =
+    scope?.tenantSlug !== undefined
+      ? scope.tenantSlug.trim().toLowerCase()
+      : getRentFlowTenantSlug(host);
 
   return {
     ...(host ? { "X-RentFlow-Host": host } : {}),

@@ -26,10 +26,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { NAV } from "@/src/constants/navigation";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import {
   getSessionUser,
   logout as logoutRequest,
-} from "@/src/services/auth/auth.api";
+} from "@/src/services/auth/auth.service";
 
 type User = {
   name: string;
@@ -51,6 +52,7 @@ function getDisplayName(user: {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
 
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = (v: boolean) => () => setOpen(v);
@@ -117,37 +119,51 @@ export default function Navbar() {
     <AppBar
       position="sticky"
       elevation={0}
-      className="bg-white/80! backdrop-blur-xl! border-b border-slate-200/80"
+      className="bg-white/88! backdrop-blur-xl! border-b border-slate-200/80"
     >
       <Container maxWidth="lg">
-        <Toolbar className="px-0! min-h-18.5! flex justify-between gap-4">
+        <Toolbar className="px-0! min-h-[82px]! flex justify-between gap-4">
           <Box
             component={Link}
             href="/"
-            className="flex items-center gap-2 no-underline"
+            className="flex items-center gap-3 no-underline"
           >
-            <Box className="relative h-8 w-8">
+            <Box className="relative h-10 w-10 rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
               <Image
                 src="/RentFlow.png"
                 alt="RentFlow Logo"
                 fill
-                className="object-contain"
+                className="object-contain p-1"
                 priority
               />
             </Box>
 
             <Box className="flex flex-col">
-              <Typography className="font-black! tracking-[-0.02em] text-slate-900! leading-none!">
-                RentFlow
+              <Typography className="font-black! tracking-[-0.03em] text-slate-900! leading-none!">
+                {siteMode === "marketplace" ? "RentFlow Marketplace" : "RentFlow"}
               </Typography>
-              <Typography className="text-[11px]! font-medium! text-slate-500! leading-none! mt-1!">
-                Smart Car Rental
-              </Typography>
+              <Box className="mt-1 flex items-center gap-2">
+                <Typography className="text-[11px]! font-medium! text-slate-500! leading-none!">
+                  {siteMode === "marketplace"
+                    ? "Multi-store booking"
+                    : "Single-store storefront"}
+                </Typography>
+                <Box
+                  className={[
+                    "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em]",
+                    siteMode === "marketplace"
+                      ? "bg-amber-50 text-amber-800"
+                      : "bg-sky-50 text-sky-800",
+                  ].join(" ")}
+                >
+                  {siteMode === "marketplace" ? "marketplace" : "storefront"}
+                </Box>
+              </Box>
             </Box>
           </Box>
 
           {!isCompact && (
-            <Box className="flex items-center gap-2">
+            <Box className="flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 p-1">
               {NAV.map((n) => {
                 const active = isActive(n.href);
 
@@ -157,23 +173,23 @@ export default function Navbar() {
                     component={Link}
                     href={n.href}
                     disableElevation
-                    className="rounded-xl! px-4! py-2! min-w-0!"
+                    className="rounded-full! px-4! py-2! min-w-0!"
                     sx={{
                       textTransform: "none",
                       fontWeight: 600,
                       color: active ? "rgb(15 23 42)" : "rgb(71 85 105)",
                       backgroundColor: active
-                        ? "rgb(226 232 240)"
+                        ? "white"
                         : "transparent",
                       "&:hover": {
                         backgroundColor: active
-                          ? "rgb(226 232 240)"
-                          : "rgb(226 232 240)",
+                          ? "white"
+                          : "rgba(255,255,255,0.8)",
                       },
+                      boxShadow: active
+                        ? "0 6px 20px rgba(15,23,42,0.08)"
+                        : "none",
                       transition: "all .12s ease-out",
-                      "&:active": {
-                        transform: "scale(0.96)",
-                      },
                     }}
                   >
                     {n.label}
@@ -191,8 +207,8 @@ export default function Navbar() {
                     component={Link}
                     href="/login"
                     variant="outlined"
-                    className="rounded-xl! border-slate-300! text-slate-900! hover:border-slate-400!"
-                    sx={{ textTransform: "none", px: 2.2 }}
+                    className="rounded-full! border-slate-300! text-slate-900! hover:border-slate-400!"
+                    sx={{ textTransform: "none", px: 2.6 }}
                   >
                     เข้าสู่ระบบ
                   </Button>
@@ -201,13 +217,15 @@ export default function Navbar() {
                     component={Link}
                     href="/register"
                     variant="contained"
-                    className="rounded-xl! font-semibold!"
+                    className="rounded-full! font-semibold!"
                     sx={{
                       textTransform: "none",
-                      px: 2.4,
+                      px: 2.8,
                       background:
-                        "linear-gradient(135deg, rgb(15 23 42), rgb(30 41 59))",
-                      boxShadow: "0 10px 20px rgba(15,23,42,.15)",
+                        siteMode === "marketplace"
+                          ? "linear-gradient(135deg, rgb(146 64 14), rgb(217 119 6))"
+                          : "linear-gradient(135deg, rgb(15 23 42), rgb(30 41 59))",
+                      boxShadow: "0 10px 24px rgba(15,23,42,.15)",
                     }}
                   >
                     สมัครสมาชิก
@@ -219,7 +237,7 @@ export default function Navbar() {
                     onClick={handleOpenMenu}
                     disableRipple
                     disableTouchRipple
-                    className="rounded-2xl! px-2! py-1! border border-slate-200!"
+                    className="rounded-full! px-2! py-1! border border-slate-200!"
                     sx={{
                       textTransform: "none",
                       "&:hover": {
@@ -401,7 +419,7 @@ export default function Navbar() {
             <IconButton
               onClick={toggleDrawer(true)}
               aria-label="Open menu"
-              className="text-slate-900! rounded-xl! border border-slate-200!"
+              className="text-slate-900! rounded-2xl! border border-slate-200! bg-white!"
             >
               <MenuIcon />
             </IconButton>
@@ -413,7 +431,7 @@ export default function Navbar() {
         <Box className="w-80 bg-white text-slate-900 h-full flex flex-col">
           <Box className="px-4 py-4 border-b border-slate-200 flex items-center justify-between">
             <Box className="flex items-center gap-3">
-              <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
+              <Box className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-200 bg-white">
                 <Box className="relative h-8 w-8">
                   <Image
                     src="/RentFlow.png"
@@ -426,11 +444,11 @@ export default function Navbar() {
 
               <Box>
                 <Typography className="font-black! tracking-[-0.02em] text-slate-900! leading-none!">
-                  RentFlow
+                  {siteMode === "marketplace" ? "RentFlow Marketplace" : "RentFlow"}
                 </Typography>
-                <Typography className="text-[11px]! font-medium! text-slate-500! mt-1! leading-none!">
-                  Smart Car Rental
-                </Typography>
+                <Box className="mt-1 inline-flex rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                  {siteMode === "marketplace" ? "marketplace" : "storefront"}
+                </Box>
               </Box>
             </Box>
 

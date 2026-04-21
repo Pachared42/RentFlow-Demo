@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { branchesApi } from "@/src/services/branches/branches.api";
+import { branchesApi } from "@/src/services/branches/branches.service";
 import type { Branch } from "@/src/services/branches/branches.types";
 
 export function useBranchDirectory() {

@@ -2,119 +2,62 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Box,
   Container,
-  Typography,
-  Card,
-  CardContent,
-  CardActions,
   Button,
   Chip,
   Divider,
 } from "@mui/material";
 
+import SectionHeading from "@/src/components/common/SectionHeading";
+import CarCard from "@/src/components/cars/CarCard";
 import type { Car } from "@/src/services/cars/cars.types";
 
 type Props = {
   cars: Car[];
-  formatTHB: (n: number) => string;
+  siteMode?: "marketplace" | "storefront";
 };
 
-export default function CarsSection({ cars, formatTHB }: Props) {
+export default function CarsSection({
+  cars,
+  siteMode = "storefront",
+}: Props) {
   return (
-    <Container maxWidth="lg" className="py-2">
-      <Box className="flex items-end justify-between gap-4">
-        <Box>
-          <Typography variant="h4" className="font-bold text-slate-900">
-            รถแนะนำ
-          </Typography>
-          <Typography className="text-slate-600">
-            เลือกคันที่ใช่ แล้วกดจองได้เลย
-          </Typography>
-        </Box>
-
-        <Chip
-          label={`${cars.length} คัน`}
-          className="bg-slate-900/5! text-slate-700! border border-slate-200!"
-        />
-      </Box>
-
-      <Box className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cars.length ? (
-          cars.map((c) => (
-            <Card
-              key={c.id}
-              elevation={0}
-              sx={{ boxShadow: "none" }}
-              className="group bg-white border border-slate-200 rounded-2xl! transition hover:border-slate-400!"
+    <Container maxWidth="lg" className="py-4">
+      <SectionHeading
+        eyebrow={siteMode === "marketplace" ? "รายการเด่นจากหลายร้าน" : "รถแนะนำของร้าน"}
+        title={siteMode === "marketplace" ? "เริ่มดูรถยอดนิยมจากหน้า marketplace" : "เลือกรถที่เหมาะกับทริปของคุณ"}
+        description={
+          siteMode === "marketplace"
+            ? "การ์ดทุกใบจะแสดงชื่อร้านชัดเจน เพื่อให้เปรียบเทียบแล้วกดจองต่อได้ทันที"
+            : "หน้า storefront จะเน้นรถของร้านเดียว เพื่อให้ตัดสินใจและเริ่มจองได้เร็วขึ้น"
+        }
+        tone={siteMode === "marketplace" ? "marketplace" : "default"}
+        action={
+          <Box className="flex items-center gap-2">
+            <Chip
+              label={`${cars.length} คัน`}
+              className="bg-slate-900/5! text-slate-700! border border-slate-200!"
+            />
+            <Button
+              component={Link}
+              href="/cars"
+              variant="outlined"
+              className="rounded-full! border-slate-300! text-slate-900!"
+              sx={{ textTransform: "none" }}
             >
-              <Box className="relative h-52 w-full overflow-hidden rounded-t-2xl">
-                <Image
-                  src={c.image || "/RentFlow.png"}
-                  alt={c.name}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </Box>
+              ดูทั้งหมด
+            </Button>
+          </Box>
+        }
+      />
 
-              <CardContent className="p-6">
-                <Box className="flex items-start justify-between gap-3">
-                  <Box>
-                    <Typography className="text-lg font-semibold text-slate-900">
-                      {c.name}
-                    </Typography>
-                    <Typography className="text-sm text-slate-600">
-                      {c.type} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <Box className="flex items-end gap-2">
-                    <Typography className="text-sm text-slate-600">
-                      ราคาเริ่มต้น
-                    </Typography>
-
-                    <Typography className="text-2xl font-extrabold text-slate-900">
-                      {formatTHB(c.pricePerDay)}
-                    </Typography>
-
-                    <Typography className="text-sm text-slate-600">
-                      /วัน
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-
-              <CardActions sx={{ p: "0px 16px 16px" }} className="gap-2">
-                <Button
-                  component={Link}
-                  href={`/cars/${c.id}`}
-                  variant="outlined"
-                  fullWidth
-                  className="rounded-xl! border-slate-300! text-slate-900!"
-                  sx={{ textTransform: "none" }}
-                >
-                  ดูรายละเอียด
-                </Button>
-
-                <Button
-                  component={Link}
-                  href={`/booking?carId=${c.id}`}
-                  variant="contained"
-                  fullWidth
-                  className="rounded-xl! font-semibold!"
-                  sx={{ textTransform: "none", backgroundColor: "rgb(15 23 42)" }}
-                >
-                  จองเลย
-                </Button>
-              </CardActions>
-            </Card>
-          ))
+      <Box className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {cars.length ? (
+          cars.map((car) => <CarCard key={car.id} car={car} />)
         ) : (
-          <Box className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600 md:col-span-2 lg:col-span-3">
+          <Box className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-600 md:col-span-2 xl:col-span-3">
             ยังไม่มีรถแนะนำจากฐานข้อมูลในตอนนี้
           </Box>
         )}

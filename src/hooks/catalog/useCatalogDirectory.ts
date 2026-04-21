@@ -2,17 +2,19 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import {
   buildCarClasses,
   buildCarTypes,
   buildLocationOptions,
 } from "@/src/lib/rentflow-catalog";
-import { branchesApi } from "@/src/services/branches/branches.api";
+import { branchesApi } from "@/src/services/branches/branches.service";
 import type { Branch } from "@/src/services/branches/branches.types";
-import { getCars } from "@/src/services/cars/cars.api";
+import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
 export function useCatalogDirectory() {
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
   const [cars, setCars] = React.useState<Car[]>([]);
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -26,8 +28,12 @@ export function useCatalogDirectory() {
       setError(null);
 
       const [carsResult, branchesResult] = await Promise.allSettled([
-        getCars(),
-        branchesApi.getBranches(),
+        getCars(undefined, {
+          marketplace: siteMode === "marketplace",
+        }),
+        branchesApi.getBranches({
+          marketplace: siteMode === "marketplace",
+        }),
       ]);
 
       if (cancelled) return;
@@ -59,9 +65,10 @@ export function useCatalogDirectory() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [siteMode]);
 
   return {
+    siteMode,
     cars,
     branches,
     carTypes: React.useMemo(() => buildCarTypes(cars), [cars]),

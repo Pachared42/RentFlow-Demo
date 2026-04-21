@@ -11,7 +11,7 @@ import ProfileActionCard from "@/src/components/profile/ProfileActionCard";
 import ProfilePageSkeleton from "@/src/components/profile/ProfilePageSkeleton";
 import ProfileSectionCard from "@/src/components/profile/ProfileSectionCard";
 import { ProfileField } from "@/src/components/profile/ProfileField";
-import { usersApi } from "@/src/services/users/users.api";
+import { usersApi } from "@/src/services/users/users.service";
 
 type ProfileData = {
   avatarUrl: string;

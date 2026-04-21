@@ -10,6 +10,7 @@ type Props = {
     seats: number;
     transmission: string;
     fuel: string;
+    shopName?: string;
   };
 };
 
@@ -33,7 +34,18 @@ export default function CarDetailOverview({ detail }: Props) {
           {detail.transmission}
         </span>{" "}
         และเชื้อเพลิง{" "}
-        <span className="font-semibold text-slate-900">{detail.fuel}</span>.
+        <span className="font-semibold text-slate-900">{detail.fuel}</span>
+        {detail.shopName ? (
+          <>
+            {" "}ให้บริการโดย{" "}
+            <span className="font-semibold text-slate-900">
+              {detail.shopName}
+            </span>
+            .
+          </>
+        ) : (
+          "."
+        )}
       </Typography>
     </Box>
   );

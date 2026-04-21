@@ -22,7 +22,7 @@ import { getErrorMessage } from "@/src/lib/api-error";
 import {
   loginWithPassword,
   registerWithPassword,
-} from "@/src/services/auth/auth.api";
+} from "@/src/services/auth/auth.service";
 
 type SnackbarState = {
   open: boolean;

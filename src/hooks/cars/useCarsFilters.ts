@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import type { SortKey } from "@/src/services/cars/cars.api";
-import type { CarType } from "@/src/services/cars/cars.types";
+import type { SortKey, CarType } from "@/src/services/cars/cars.types";
 
 export function useCarsFilters() {
   const searchParams = useSearchParams();

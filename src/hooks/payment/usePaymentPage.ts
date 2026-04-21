@@ -4,10 +4,10 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getCarById } from "@/src/services/cars/cars.api";
+import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
-import { paymentsApi } from "@/src/services/payments/payments.api";
-import { usersApi } from "@/src/services/users/users.api";
+import { paymentsApi } from "@/src/services/payments/payments.service";
+import { usersApi } from "@/src/services/users/users.service";
 import {
   type Method,
   safeParseAddons,
@@ -23,6 +23,7 @@ export default function usePaymentPage() {
   const bookingId = params.get("bookingId") || "BK-XXXX";
   const bookingRef = params.get("bookingRef") || "";
   const carId = params.get("carId") || "";
+  const tenantSlug = params.get("tenant") || undefined;
   const days = Number(params.get("days") || "0") || 0;
 
   const pickupDate = params.get("pickupDate") || "";
@@ -95,7 +96,7 @@ export default function usePaymentPage() {
 
     async function loadData() {
       const tasks = await Promise.allSettled([
-        carId ? getCarById(carId) : Promise.resolve(null),
+        carId ? getCarById(carId, { tenantSlug }) : Promise.resolve(null),
         usersApi.getMe(),
       ]);
 
@@ -120,7 +121,7 @@ export default function usePaymentPage() {
     return () => {
       cancelled = true;
     };
-  }, [carId]);
+  }, [carId, tenantSlug]);
 
   const handleConfirm = React.useCallback(async () => {
     if (!canPay) return;
@@ -131,15 +132,23 @@ export default function usePaymentPage() {
       await paymentsApi.createPayment({
         bookingId: bookingRef || bookingId,
         method: method === "transfer" ? "bank_transfer" : method,
+      }, {
+        tenantSlug,
       });
       setDone(true);
-      setTimeout(() => router.push("/my-bookings"), 800);
+      setTimeout(() => {
+        router.push(
+          tenantSlug
+            ? `/my-bookings?tenant=${encodeURIComponent(tenantSlug)}`
+            : "/my-bookings"
+        );
+      }, 800);
     } catch (err: unknown) {
       setError(getErrorMessage(err, "ไม่สามารถยืนยันการชำระเงินได้"));
     } finally {
       setLoading(false);
     }
-  }, [bookingId, bookingRef, canPay, method, router]);
+  }, [bookingId, bookingRef, canPay, method, router, tenantSlug]);
 
   const roundedFieldSX = React.useMemo(
     () => ({
@@ -153,6 +162,7 @@ export default function usePaymentPage() {
     bookingId,
     bookingRef,
     carId,
+    tenantSlug,
     days,
     pickupDate,
     returnDate,

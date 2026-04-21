@@ -17,3 +17,24 @@ export type PaginatedResponse<T> = {
   data: T[];
   meta: PaginationMeta;
 };
+
+export type TenantSummary = {
+  tenantId?: string;
+  shopName?: string;
+  domainSlug?: string;
+  publicDomain?: string;
+};
+
+export type LineOfficialAccountSummary = {
+  displayName?: string;
+  basicId?: string;
+  pictureUrl?: string;
+  chatUrl?: string;
+  shareUrl?: string;
+  isConnected?: boolean;
+};
+
+export type RentFlowRequestOptions = {
+  tenantSlug?: string;
+  marketplace?: boolean;
+};

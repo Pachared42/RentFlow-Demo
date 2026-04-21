@@ -38,6 +38,14 @@ export default function MyBookingsList({ data, onReset }: Props) {
   return (
     <Box className="space-y-4">
       {data.map((b) => (
+        (() => {
+          const detailHref = b.tenantSlug
+            ? `/my-bookings/${encodeURIComponent(b.id)}?tenant=${encodeURIComponent(
+                b.tenantSlug
+              )}`
+            : `/my-bookings/${encodeURIComponent(b.id)}`;
+
+          return (
         <Box
           key={b.id}
           className="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-slate-400"
@@ -48,6 +56,12 @@ export default function MyBookingsList({ data, onReset }: Props) {
                 {b.carName} <span className="text-slate-400">•</span>{" "}
                 <span className="text-slate-600">{b.id}</span>
               </Typography>
+
+              {b.shopName ? (
+                <Typography className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                  {b.shopName}
+                </Typography>
+              ) : null}
 
               <Typography className="mt-1 text-xs text-slate-600">
                 รับรถ:{" "}
@@ -75,7 +89,7 @@ export default function MyBookingsList({ data, onReset }: Props) {
 
               <Button
                 component={Link}
-                href={`/my-bookings/${encodeURIComponent(b.id)}`}
+                href={detailHref}
                 variant="outlined"
                 className="rounded-xl!"
                 sx={{ textTransform: "none" }}
@@ -85,6 +99,8 @@ export default function MyBookingsList({ data, onReset }: Props) {
             </Box>
           </Box>
         </Box>
+          );
+        })()
       ))}
     </Box>
   );

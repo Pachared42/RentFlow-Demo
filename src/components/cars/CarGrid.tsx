@@ -24,7 +24,7 @@ export default function CarGrid({ cars }: Props) {
     }
 
     return (
-        <Box className="mt-6 grid gap-4 md:grid-cols-3">
+        <Box className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {cars.map((car) => (
                 <CarCard key={car.id} car={car} />
             ))}

@@ -86,11 +86,16 @@ export default function BookingSummaryCard({
               />
             </Box>
 
-            <Box className="mt-3 flex items-start justify-between gap-3">
+              <Box className="mt-3 flex items-start justify-between gap-3">
               <Box className="min-w-0">
                 <Typography className="truncate text-base font-semibold text-slate-900">
                   {car.name}
                 </Typography>
+                {car.shopName ? (
+                  <Typography className="mt-1 text-xs font-medium text-slate-500">
+                    โดย {car.shopName}
+                  </Typography>
+                ) : null}
                 <Typography className="mt-1 text-xs text-slate-600">
                   {car.type} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
                 </Typography>

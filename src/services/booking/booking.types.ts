@@ -1,4 +1,6 @@
 // src/services/booking/booking.types.ts
+import type { TenantSummary } from "../types/types";
+
 export type BookingStatus =
   | "pending"
   | "confirmed"
@@ -9,7 +11,7 @@ export type BookingStatus =
 export type PickupMethod = "branch" | "custom";
 export type ReturnMethod = "branch" | "custom";
 
-export type Booking = {
+export type Booking = TenantSummary & {
   id: string;
   bookingCode: string;
   userId: string;
@@ -32,6 +34,7 @@ export type Booking = {
   customerPhone: string;
   createdAt: string;
   updatedAt: string;
+  tenantId?: string;
 };
 
 export type CreateBookingPayload = {

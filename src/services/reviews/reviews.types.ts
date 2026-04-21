@@ -1,4 +1,6 @@
-export type Review = {
+import type { TenantSummary } from "../types/types";
+
+export type Review = TenantSummary & {
   id: string;
   firstName: string;
   lastName: string;

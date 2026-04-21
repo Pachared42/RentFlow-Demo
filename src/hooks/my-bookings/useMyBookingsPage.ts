@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
-import { bookingApi } from "@/src/services/booking/booking.api";
-import { getCars } from "@/src/services/cars/cars.api";
+import { bookingApi } from "@/src/services/booking/booking.service";
+import { getCars } from "@/src/services/cars/cars.service";
 
 export type BookingStatus =
   | "pending"
@@ -18,6 +18,8 @@ export type Booking = {
   id: string;
   carId: string;
   carName: string;
+  shopName?: string;
+  tenantSlug?: string;
   pickupDate: string;
   returnDate: string;
   totalPrice: number;
@@ -26,7 +28,9 @@ export type Booking = {
 
 export default function useMyBookingsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const ready = usePageReady();
+  const tenantSlug = searchParams.get("tenant") || undefined;
 
   const [isCheckingAuth, setIsCheckingAuth] = React.useState(true);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -41,8 +45,8 @@ export default function useMyBookingsPage() {
     async function loadBookings() {
       try {
         const [bookingsRes, carsRes] = await Promise.all([
-          bookingApi.getMyBookings(),
-          getCars(),
+          bookingApi.getMyBookings({ tenantSlug }),
+          getCars(undefined, { tenantSlug }),
         ]);
 
         if (cancelled) return;
@@ -54,6 +58,11 @@ export default function useMyBookingsPage() {
             id: booking.bookingCode,
             carId: booking.carId,
             carName: carMap.get(booking.carId)?.name || booking.carId,
+            shopName: carMap.get(booking.carId)?.shopName || booking.shopName,
+            tenantSlug:
+              carMap.get(booking.carId)?.domainSlug ||
+              booking.domainSlug ||
+              tenantSlug,
             pickupDate: booking.pickupDate,
             returnDate: booking.returnDate,
             totalPrice: booking.totalAmount,
@@ -65,7 +74,11 @@ export default function useMyBookingsPage() {
         if (cancelled) return;
 
         if (getErrorStatus(err) === 401) {
-          router.replace("/login?redirect=/my-bookings");
+          router.replace(
+            `/login?redirect=${encodeURIComponent(
+              tenantSlug ? `/my-bookings?tenant=${tenantSlug}` : "/my-bookings"
+            )}`
+          );
           return;
         }
 
@@ -83,7 +96,7 @@ export default function useMyBookingsPage() {
     return () => {
       cancelled = true;
     };
-  }, [router]);
+  }, [router, tenantSlug]);
 
   const data = React.useMemo(() => {
     return rows.filter((b) => {
