@@ -23,15 +23,6 @@ export default function BookingPage() {
           เลือกจุดรับ-คืนรถ + วันเวลา แล้วไปชำระเงิน
         </Typography>
 
-        {booking.car?.shopName ? (
-          <Typography className="text-xs text-slate-500">
-            ร้านผู้ให้บริการ:{" "}
-            <span className="font-semibold text-slate-900">
-              {booking.car.shopName}
-            </span>
-          </Typography>
-        ) : null}
-
         <Typography className="text-xs text-slate-500">
           โหมดจุดรับ-คืนรถ:{" "}
           <span className="font-semibold text-slate-900">
@@ -85,7 +76,6 @@ export default function BookingPage() {
               phone={booking.phone}
               setPhone={booking.setPhone}
               merchantBranchesEnabled={booking.merchantBranchesEnabled}
-              branchOptions={booking.branchOptions}
               pickupBranch={booking.pickupBranch}
               setPickupBranch={booking.setPickupBranch}
               returnBranch={booking.returnBranch}

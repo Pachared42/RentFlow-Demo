@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Box,
@@ -12,6 +14,8 @@ import {
 } from "@mui/material";
 import PrivacyTableOfContents from "@/src/components/privacy/PrivacyTableOfContents";
 import PrivacyContent from "@/src/components/privacy/PrivacyContent";
+import PrivacyPageSkeleton from "@/src/components/privacy/PrivacyPageSkeleton";
+import usePageReady from "@/src/hooks/usePageReady";
 
 const sections = [
   { id: "overview", title: "1) ภาพรวม" },
@@ -26,7 +30,12 @@ const sections = [
 ];
 
 export default function PrivacyPage() {
+  const ready = usePageReady();
   const updatedAt = "22 กุมภาพันธ์ 2569";
+
+  if (!ready) {
+    return <PrivacyPageSkeleton />;
+  }
 
   return (
     <Box className="min-h-screen">

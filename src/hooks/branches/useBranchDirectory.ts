@@ -14,6 +14,8 @@ export function useBranchDirectory() {
     let cancelled = false;
 
     async function loadBranches() {
+      const start = Date.now();
+
       try {
         setLoading(true);
         setError(null);
@@ -28,6 +30,12 @@ export function useBranchDirectory() {
           setError(getErrorMessage(err, "โหลดข้อมูลสาขาไม่สำเร็จ"));
         }
       } finally {
+        if (!cancelled) {
+          const elapsed = Date.now() - start;
+          const delay = Math.max(2000 - elapsed, 0);
+          await new Promise((resolve) => window.setTimeout(resolve, delay));
+        }
+
         if (!cancelled) {
           setLoading(false);
         }

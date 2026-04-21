@@ -6,6 +6,7 @@ import { Alert, Box, CircularProgress, Container } from "@mui/material";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
+import usePageReady from "@/src/hooks/usePageReady";
 
 import ProfileActionCard from "@/src/components/profile/ProfileActionCard";
 import ProfilePageSkeleton from "@/src/components/profile/ProfilePageSkeleton";
@@ -149,6 +150,7 @@ function ProfileFieldsGrid({
 
 export default function ProfilePage() {
   const router = useRouter();
+  const ready = usePageReady();
 
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -258,7 +260,7 @@ export default function ProfilePage() {
     []
   );
 
-  if (loading || !profile || !draft) {
+  if (!ready || loading || !profile || !draft) {
     return <ProfilePageSkeleton />;
   }
 

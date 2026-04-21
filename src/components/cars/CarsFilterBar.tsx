@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Box, TextField, MenuItem, Button } from "@mui/material";
 import type { LocationOption } from "@/src/lib/rentflow-catalog";
-import type { SortKey, CarType } from "@/src/services/cars/cars.types";
+import type { CarType, SortKey } from "@/src/services/cars/cars.types";
 
 type Props = {
   q: string;
@@ -41,7 +41,7 @@ export default function CarsFilterBar({
   onReset,
 }: Props) {
   return (
-    <Box className="mt-6 rounded-[32px]! border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.04)]">
+    <Box className="mt-4 rounded-2xl! border border-slate-200 bg-white p-4">
       <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
         <TextField
           label="ค้นหารถ"
@@ -134,7 +134,7 @@ export default function CarsFilterBar({
         />
       </Box>
 
-      <Box className="mt-4 grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
+      <Box className="mt-4 grid gap-4 md:grid-cols-2">
         <TextField
           select
           label="เรียงตาม"
@@ -155,8 +155,8 @@ export default function CarsFilterBar({
 
         <Button
           variant="outlined"
-          className="rounded-2xl! px-5"
-          sx={{ minHeight: 42, textTransform: "none" }}
+          className="rounded-xl!"
+          sx={{ textTransform: "none" }}
           onClick={onReset}
         >
           รีเซ็ตตัวกรอง

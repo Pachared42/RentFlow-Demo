@@ -107,6 +107,39 @@ export function getRentFlowSiteMode(host = getRentFlowTenantHost()): RentFlowSit
   return isRentFlowMarketplaceHost(host) ? "marketplace" : "storefront";
 }
 
+export function getRentFlowStorefrontHref(tenantSlug?: string) {
+  const slug = tenantSlug?.trim().toLowerCase();
+  if (!slug) {
+    return "";
+  }
+
+  const rootDomain = getRentFlowRootDomain();
+
+  if (typeof window !== "undefined") {
+    const protocol = window.location.protocol || "https:";
+    const hostname = window.location.hostname.toLowerCase().replace(/\.$/, "");
+    const port = window.location.port ? `:${window.location.port}` : "";
+
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "::1" ||
+      hostname.endsWith(".localhost")
+    ) {
+      return `${protocol}//${slug}.localhost${port}`;
+    }
+
+    if (
+      rootDomain &&
+      (hostname === rootDomain || hostname.endsWith(`.${rootDomain}`))
+    ) {
+      return `${protocol}//${slug}.${rootDomain}`;
+    }
+  }
+
+  return `https://${slug}.${rootDomain}`;
+}
+
 export function getRentFlowTenantHeaders(scope?: RentFlowRequestScope) {
   const host = normalizeHost(scope?.host) || getRentFlowTenantHost();
   const slug =

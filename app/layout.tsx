@@ -6,6 +6,7 @@ import Providers from "./providers";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
 import CookieBanner from "@/src/components/common/CookieBanner";
+import FloatingAiChat from "@/src/components/ai/FloatingAiChat";
 
 const notoThai = Noto_Sans_Thai({
   subsets: ["thai"],
@@ -44,6 +45,7 @@ export default function RootLayout({
           {children}
           <Footer />
           <CookieBanner />
+          <FloatingAiChat />
         </Providers>
       </body>
     </html>

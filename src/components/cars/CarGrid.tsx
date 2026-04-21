@@ -7,9 +7,10 @@ import CarCard from "./CarCard";
 
 type Props = {
     cars: Car[];
+    showShop?: boolean;
 };
 
-export default function CarGrid({ cars }: Props) {
+export default function CarGrid({ cars, showShop = false }: Props) {
     if (cars.length === 0) {
         return (
             <Box className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-10 text-center">
@@ -24,9 +25,9 @@ export default function CarGrid({ cars }: Props) {
     }
 
     return (
-        <Box className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <Box className="mt-6 grid gap-4 md:grid-cols-3">
             {cars.map((car) => (
-                <CarCard key={car.id} car={car} />
+                <CarCard key={car.id} car={car} showShop={showShop} />
             ))}
         </Box>
     );

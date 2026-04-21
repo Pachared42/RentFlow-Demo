@@ -7,7 +7,7 @@ type Options = {
 };
 
 export default function usePageReady(options?: Options) {
-  const minDelay = options?.minDelay ?? 1000;
+  const minDelay = options?.minDelay ?? 2000;
   const [ready, setReady] = React.useState(false);
 
   React.useEffect(() => {

@@ -18,7 +18,9 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import AuthCardSkeleton from "@/src/components/auth/AuthCardSkeleton";
 import { getErrorMessage } from "@/src/lib/api-error";
+import usePageReady from "@/src/hooks/usePageReady";
 import {
   loginWithPassword,
   registerWithPassword,
@@ -55,6 +57,7 @@ export default function AuthCard({
 }: AuthCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const ready = usePageReady();
   const redirect = searchParams.get("redirect") || redirectTo;
 
   const [username, setUsername] = React.useState("");
@@ -147,6 +150,10 @@ export default function AuthCard({
       username,
     ]
   );
+
+  if (!ready) {
+    return <AuthCardSkeleton />;
+  }
 
   return (
     <Box className="relative bg-white">

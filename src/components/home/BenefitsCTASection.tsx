@@ -16,88 +16,49 @@ import VerifiedOutlinedIcon from "@mui/icons-material/VerifiedOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 
-type SiteMode = "marketplace" | "storefront";
-
 type Benefit = {
     title: string;
     desc: string;
     Icon: typeof PaidOutlinedIcon;
 };
 
-const BENEFITS_BY_MODE: Record<SiteMode, Benefit[]> = {
-    marketplace: [
-        {
-            title: "เทียบหลายร้านได้ง่าย",
-            desc: "เห็นชื่อร้าน ราคา และเงื่อนไขจากหลายร้านในหน้าเดียว",
-            Icon: PaidOutlinedIcon,
-        },
-        {
-            title: "เลือกตามสไตล์ทริป",
-            desc: "ใช้ร้าน พื้นที่ และประเภทรถมาช่วยตัดสินใจก่อนจอง",
-            Icon: VerifiedOutlinedIcon,
-        },
-        {
-            title: "flow เดียวทั้งระบบ",
-            desc: "แม้รถมาจากคนละร้าน แต่ลูกค้ายังจองผ่านประสบการณ์เดียวกัน",
-            Icon: SupportAgentOutlinedIcon,
-        },
-    ],
-    storefront: [
-        {
-            title: "ราคาชัดเจน",
-            desc: "แสดงราคารวมก่อนจอง ลดปัญหาค่าใช้จ่ายแอบแฝง",
-            Icon: PaidOutlinedIcon,
-        },
-        {
-            title: "รถสภาพดี",
-            desc: "ตรวจเช็คและทำความสะอาดก่อนส่งมอบทุกครั้ง",
-            Icon: VerifiedOutlinedIcon,
-        },
-        {
-            title: "ซัพพอร์ต 24/7",
-            desc: "มีทีมช่วยเหลือกรณีฉุกเฉินตลอดการเช่า",
-            Icon: SupportAgentOutlinedIcon,
-        },
-    ],
-};
+const BENEFITS: Benefit[] = [
+    {
+        title: "ราคาชัดเจน",
+        desc: "แสดงราคารวมก่อนจอง ลดปัญหาค่าใช้จ่ายแอบแฝง",
+        Icon: PaidOutlinedIcon,
+    },
+    {
+        title: "รถสภาพดี",
+        desc: "ตรวจเช็คและทำความสะอาดก่อนส่งมอบทุกครั้ง",
+        Icon: VerifiedOutlinedIcon,
+    },
+    {
+        title: "ซัพพอร์ต 24/7",
+        desc: "มีทีมช่วยเหลือกรณีฉุกเฉินตลอดการเช่า",
+        Icon: SupportAgentOutlinedIcon,
+    },
+];
 
-export default function BenefitsCTASection({
-    siteMode = "storefront",
-}: {
-    siteMode?: SiteMode;
-}) {
+export default function BenefitsCTASection() {
     const scrollToSearch = () => {
         document.getElementById("search")?.scrollIntoView({ behavior: "smooth", block: "start" })
     };
-    const benefits = BENEFITS_BY_MODE[siteMode];
-    const isMarketplace = siteMode === "marketplace";
 
     return (
         <Container maxWidth="lg" className="py-2">
             {/* Benefits */}
             <Box className="grid gap-4 md:grid-cols-3">
-                {benefits.map((b) => (
+                {BENEFITS.map((b) => (
                     <Card
                         key={b.title}
                         elevation={0}
                         sx={{ boxShadow: "none" }}
-                        className={[
-                            "group rounded-2xl! border transition hover:border-slate-400!",
-                            isMarketplace
-                                ? "border-amber-100 bg-amber-50/40"
-                                : "border-slate-200 bg-white",
-                        ].join(" ")}
+                        className="group rounded-2xl! border border-slate-200 bg-white transition hover:border-slate-400!"
                     >
                         <CardContent className="p-4!">
                             <Box className="flex items-start gap-4">
-                                <Box
-                                    className={[
-                                        "grid h-10 w-10 place-items-center rounded-lg! border",
-                                        isMarketplace
-                                            ? "border-amber-200 bg-white"
-                                            : "border-slate-200 bg-white",
-                                    ].join(" ")}
-                                >
+                                <Box className="grid h-10 w-10 place-items-center rounded-lg! border border-slate-200 bg-white">
                                     <b.Icon className="text-slate-900" fontSize="small" />
                                 </Box>
 
@@ -116,43 +77,26 @@ export default function BenefitsCTASection({
             </Box>
 
             {/* CTA */}
-            <Box
-                className={[
-                    "mt-8 overflow-hidden! rounded-2xl! border hover:border-slate-400!",
-                    isMarketplace ? "border-amber-200!" : "border-slate-200!",
-                ].join(" ")}
-                sx={
-                    isMarketplace
-                        ? {
-                            background:
-                                "linear-gradient(135deg, rgba(255, 251, 235, 1), rgba(255, 255, 255, 1))",
-                        }
-                        : undefined
-                }
-            >
+            <Box className="mt-8 overflow-hidden! rounded-2xl! border border-slate-200! hover:border-slate-400!">
                 <Box className="p-4">
                     <Box className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <Box className="max-w-2xl">
                             <Typography className="text-xl font-bold text-slate-900">
-                                {isMarketplace
-                                    ? "อยากดูตัวเลือกจากหลายร้านต่อใช่ไหม?"
-                                    : "พร้อมจองรถสำหรับทริปถัดไปแล้วใช่ไหม?"}
+                                พร้อมจองรถสำหรับทริปถัดไปแล้วใช่ไหม?
                             </Typography>
                             <Typography className="mt-1 text-sm text-slate-600">
-                                {isMarketplace
-                                    ? "ไปที่หน้ารถรวมเพื่อเปรียบเทียบร้าน ราคา และประเภทรถก่อนตัดสินใจ"
-                                    : "เลือกช่วงวันและรุ่นรถที่ต้องการ แล้วเริ่มจองได้ทันที"}
+                                เลือกช่วงวันและรุ่นรถที่ต้องการ แล้วเริ่มจองได้ทันที
                             </Typography>
 
                             <Box className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-600">
                                 <span className="rounded-full border border-slate-200 bg-white px-3 py-2">
-                                    {isMarketplace ? "เปรียบเทียบหลายร้าน" : "ยกเลิกฟรี (ตามเงื่อนไข)"}
+                                    ยกเลิกฟรี (ตามเงื่อนไข)
                                 </span>
                                 <span className="rounded-full border border-slate-200 bg-white px-3 py-2">
-                                    {isMarketplace ? "เห็นชื่อร้านชัดเจน" : "บริการ 24/7"}
+                                    บริการ 24/7
                                 </span>
                                 <span className="rounded-full border border-slate-200 bg-white px-3 py-2">
-                                    {isMarketplace ? "จองผ่าน flow เดียว" : "รถพร้อมใช้งาน"}
+                                    รถพร้อมใช้งาน
                                 </span>
                             </Box>
                         </Box>

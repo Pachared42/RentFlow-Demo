@@ -45,7 +45,7 @@ export default function ClassPage({ slug }: { slug: string }) {
               รถ{meta.title}
             </Typography>
             <Typography className="text-sm text-slate-600">
-              รถในฐานข้อมูลที่อยู่ในคลาสนี้ {cars.length} คัน
+              มีรถในคลาสนี้ {cars.length} คัน
             </Typography>
           </Box>
         </Box>
@@ -141,7 +141,7 @@ export default function ClassPage({ slug }: { slug: string }) {
             ))
           ) : (
             <Box className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center text-sm text-slate-600 md:col-span-2 lg:col-span-3">
-              ยังไม่มีรถในคลาสนี้จากฐานข้อมูล
+              ยังไม่มีรถในคลาสนี้
             </Box>
           )}
         </Box>

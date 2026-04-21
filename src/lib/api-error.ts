@@ -24,7 +24,7 @@ export function getErrorMessage(error: unknown, fallbackMessage: string) {
     }
 
     if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
-      return "เชื่อมต่อ API ไม่สำเร็จ กรุณาตรวจสอบว่า API เปิดใช้งานอยู่";
+      return "เชื่อมต่อระบบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง";
     }
 
     return fallbackMessage;

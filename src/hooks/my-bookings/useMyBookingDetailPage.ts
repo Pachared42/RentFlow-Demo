@@ -37,7 +37,7 @@ export default function useMyBookingDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const searchParams = useSearchParams();
-  const ready = usePageReady({ minDelay: 1000 });
+  const ready = usePageReady();
 
   const id = typeof params?.id === "string" ? params.id : "";
   const tenantSlug = searchParams.get("tenant") || undefined;

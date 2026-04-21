@@ -58,7 +58,7 @@ export default function ContactPage() {
               className="text-emerald-500! ml-2!"
             />
           }
-          label={`${phoneReadyCount} เบอร์โทรจากฐานข้อมูล`}
+          label={`${phoneReadyCount} เบอร์โทรพร้อมติดต่อ`}
           variant="outlined"
           className="bg-slate-900/5! text-slate-700!"
         />

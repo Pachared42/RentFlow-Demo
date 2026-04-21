@@ -26,6 +26,7 @@ export function useCatalogDirectory() {
     async function loadDirectory() {
       setLoading(true);
       setError(null);
+      const start = Date.now();
 
       const [carsResult, branchesResult] = await Promise.allSettled([
         getCars(undefined, {
@@ -57,6 +58,10 @@ export function useCatalogDirectory() {
       }
 
       setError(messages.length ? messages.join(" • ") : null);
+      const elapsed = Date.now() - start;
+      const delay = Math.max(2000 - elapsed, 0);
+      await new Promise((resolve) => window.setTimeout(resolve, delay));
+      if (cancelled) return;
       setLoading(false);
     }
 

@@ -135,7 +135,7 @@ export default function ContactInfoCard({
           </Box>
         ) : (
           <Box className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-600">
-            ยังไม่พบข้อมูลสาขาในฐานข้อมูล
+            ยังไม่พบสาขาให้ติดต่อในตอนนี้
           </Box>
         )}
 
@@ -147,7 +147,7 @@ export default function ContactInfoCard({
           </Typography>
           <Typography className="mt-1 text-xs text-slate-600">
             หากติดต่อเรื่องการจอง แนะนำแนบรหัสการจอง วันรับ-คืนรถ
-            และสาขาที่เกี่ยวข้อง จะช่วยให้ทีมงานตรวจสอบจากฐานข้อมูลได้เร็วขึ้น
+            และสาขาที่เกี่ยวข้อง จะช่วยให้ทีมงานดูแลได้เร็วขึ้น
           </Typography>
         </Box>
       </CardContent>

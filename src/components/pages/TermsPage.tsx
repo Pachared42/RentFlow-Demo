@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Box,
@@ -12,6 +14,8 @@ import {
 } from "@mui/material";
 import TermsTableOfContents from "@/src/components/terms/TermsTableOfContents";
 import TermsContent from "@/src/components/terms/TermsContent";
+import TermsPageSkeleton from "@/src/components/terms/TermsPageSkeleton";
+import usePageReady from "@/src/hooks/usePageReady";
 
 const sections = [
   { id: "intro", title: "1) ข้อตกลงเบื้องต้น" },
@@ -25,7 +29,12 @@ const sections = [
 ];
 
 export default function TermsPage() {
+  const ready = usePageReady();
   const updatedAt = "22 กุมภาพันธ์ 2569";
+
+  if (!ready) {
+    return <TermsPageSkeleton />;
+  }
 
   return (
     <Box className="min-h-screen bg-slate-50">

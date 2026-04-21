@@ -153,9 +153,39 @@ function CarsFilterBarSkeleton() {
     );
 }
 
-function PriceBoxSkeleton() {
+function ShopBoxSkeleton() {
     return (
         <Box className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <Box className="flex items-end gap-2">
+                <Skeleton
+                    variant="text"
+                    animation="wave"
+                    sx={{
+                        width: 82,
+                        height: 24,
+                        borderRadius: "6px",
+                        transform: "none",
+                    }}
+                />
+
+                <Skeleton
+                    variant="text"
+                    animation="wave"
+                    sx={{
+                        width: 118,
+                        height: 32,
+                        borderRadius: "8px",
+                        transform: "none",
+                    }}
+                />
+            </Box>
+        </Box>
+    );
+}
+
+function PriceBoxSkeleton() {
+    return (
+        <Box className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
             <Box className="flex items-end gap-2">
                 <Skeleton
                     variant="text"
@@ -173,7 +203,7 @@ function PriceBoxSkeleton() {
                     animation="wave"
                     sx={{
                         width: 96,
-                        height: 22,
+                        height: 30,
                         borderRadius: "8px",
                         transform: "none",
                     }}
@@ -194,7 +224,7 @@ function PriceBoxSkeleton() {
     );
 }
 
-function CarCardSkeleton() {
+function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
     return (
         <Card
             elevation={0}
@@ -213,7 +243,7 @@ function CarCardSkeleton() {
                 />
             </Box>
 
-            <CardContent className="p-4!">
+            <CardContent className="p-6!">
                 <Box className="flex items-start justify-between gap-3">
                     <Box className="min-w-0 w-full">
                         <Typography className="truncate text-lg font-semibold text-slate-900">
@@ -245,6 +275,8 @@ function CarCardSkeleton() {
                     </Box>
                 </Box>
 
+                {showShop ? <ShopBoxSkeleton /> : null}
+
                 <PriceBoxSkeleton />
             </CardContent>
 
@@ -272,7 +304,7 @@ function CarCardSkeleton() {
     );
 }
 
-export default function CarsPageSkeleton() {
+export default function CarsPageSkeleton({ showShop = false }: { showShop?: boolean }) {
     return (
         <Container maxWidth="lg" className="py-12">
             <HeaderSkeleton />
@@ -280,7 +312,7 @@ export default function CarsPageSkeleton() {
 
             <Box className="mt-6 grid gap-4 md:grid-cols-3">
                 {Array.from({ length: 6 }).map((_, index) => (
-                    <CarCardSkeleton key={index} />
+                    <CarCardSkeleton key={index} showShop={showShop} />
                 ))}
             </Box>
         </Container>
