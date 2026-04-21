@@ -2,8 +2,8 @@ import axios, { AxiosHeaders } from "axios";
 import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 10000,
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  timeout: 30000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

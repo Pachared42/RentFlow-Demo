@@ -15,7 +15,19 @@ export function getErrorMessage(error: unknown, fallbackMessage: string) {
         ? (error.response.data as ErrorPayload).message
         : undefined;
 
-    return responseMessage || fallbackMessage;
+    if (responseMessage) {
+      return responseMessage;
+    }
+
+    if (error.code === "ECONNABORTED") {
+      return "การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง";
+    }
+
+    if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+      return "เชื่อมต่อ API ไม่สำเร็จ กรุณาตรวจสอบว่า API เปิดใช้งานอยู่";
+    }
+
+    return fallbackMessage;
   }
 
   if (error instanceof Error) {

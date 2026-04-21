@@ -21,6 +21,7 @@ import ArrowOutwardRoundedIcon from "@mui/icons-material/ArrowOutwardRounded";
 
 import SectionHeading from "@/src/components/common/SectionHeading";
 import { formatTHB } from "@/src/constants/money";
+import { getErrorMessage } from "@/src/lib/api-error";
 import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import { aiService } from "@/src/services/ai/ai.service";
 import type {
@@ -186,9 +187,7 @@ export default function StorefrontAiAssistantPanel({
       const response = await aiService.askStorefrontAssistant(trimmed);
       setResult(response);
     } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "ยังไม่สามารถเรียกผู้ช่วยเลือกได้"
-      );
+      setError(getErrorMessage(err, "ยังไม่สามารถเรียกผู้ช่วยเลือกได้"));
     } finally {
       setLoading(false);
     }

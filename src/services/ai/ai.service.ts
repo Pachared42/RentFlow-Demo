@@ -16,6 +16,7 @@ export const aiService = {
       "/ai/storefront-assistant",
       { query },
       {
+        timeout: 60000,
         headers:
           siteMode === "marketplace"
             ? { "X-RentFlow-Marketplace": "true" }
