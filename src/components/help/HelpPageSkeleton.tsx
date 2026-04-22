@@ -1,45 +1,116 @@
 "use client";
 
 import * as React from "react";
-import { Box, Container, Skeleton } from "@mui/material";
+import { Box, Container, Divider, Skeleton } from "@mui/material";
 
 function HeaderSkeleton() {
   return (
-    <Box className="flex flex-col gap-2">
+    <Box className="mx-auto max-w-3xl text-center">
+      <Box className="flex flex-col gap-3">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mx: "auto",
+            width: { xs: 220, md: 360 },
+            height: { xs: 56, md: 78 },
+            borderRadius: "16px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mx: "auto",
+            width: { xs: "100%", sm: 620 },
+            maxWidth: "100%",
+            height: 28,
+            borderRadius: "12px",
+            transform: "none",
+          }}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+function ChipsSkeleton() {
+  return (
+    <Box className="mt-8 flex flex-wrap justify-center gap-3">
       <Skeleton
-        variant="text"
+        variant="rounded"
         animation="wave"
-        sx={{
-          width: 180,
-          height: 40,
-          borderRadius: "8px",
-          transform: "none",
-        }}
+        sx={{ width: 158, height: 32, borderRadius: "999px" }}
       />
       <Skeleton
-        variant="text"
+        variant="rounded"
         animation="wave"
-        sx={{
-          width: { xs: "100%", sm: 480 },
-          maxWidth: "100%",
-          height: 22,
-          borderRadius: "8px",
-          transform: "none",
-        }}
+        sx={{ width: 164, height: 32, borderRadius: "999px" }}
       />
     </Box>
   );
 }
 
-function ChatbotSuggestionSkeleton() {
+function StepCardSkeleton() {
   return (
-    <Box className="rounded-[18px] bg-white p-3">
-      <Box className="flex flex-col gap-1.5">
+    <Box className="apple-card apple-card-no-hover p-5">
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: "56%",
+          height: 22,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+      <Box className="mt-2 space-y-1.5">
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: "44%",
+            width: "96%",
+            height: 18,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: "72%",
+            height: 18,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+function BranchInfoRowSkeleton() {
+  return (
+    <Box className="flex items-start gap-3">
+      <Skeleton
+        variant="rounded"
+        animation="wave"
+        sx={{
+          width: 36,
+          height: 36,
+          borderRadius: "999px",
+          flexShrink: 0,
+        }}
+      />
+
+      <Box className="min-w-0 flex-1 space-y-1.5">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 72,
             height: 16,
             borderRadius: "8px",
             transform: "none",
@@ -49,150 +120,7 @@ function ChatbotSuggestionSkeleton() {
           variant="text"
           animation="wave"
           sx={{
-            width: "88%",
-            height: 22,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
-    </Box>
-  );
-}
-
-function ChatbotSkeleton() {
-  return (
-    <Box className="apple-card apple-card-no-hover mt-6 p-5">
-      <Box className="flex items-start gap-3">
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: 40,
-            height: 40,
-            borderRadius: "12px",
-            flexShrink: 0,
-          }}
-        />
-
-        <Box className="flex flex-1 flex-col gap-1.5">
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: 220,
-              height: 22,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: { xs: "100%", sm: 300 },
-              maxWidth: "100%",
-              height: 18,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-        </Box>
-      </Box>
-
-      <Box className="mt-4 grid gap-4 md:grid-cols-[1fr_auto]">
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            height: 40,
-            borderRadius: "18px",
-          }}
-        />
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: 88,
-            height: 40,
-            borderRadius: "12px",
-          }}
-        />
-      </Box>
-
-      <Box className="mt-4 flex flex-col gap-2">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 120,
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-
-        <Box className="mt-1 grid gap-2 md:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <ChatbotSuggestionSkeleton key={i} />
-          ))}
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
-function FiltersSkeleton() {
-  return (
-    <Box className="apple-card apple-card-no-hover mt-6 p-5">
-      <Box className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            height: 40,
-            borderRadius: "18px",
-          }}
-        />
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            height: 40,
-            borderRadius: "18px",
-          }}
-        />
-        <Box className="flex items-end justify-end">
-          <Skeleton
-            variant="rounded"
-            animation="wave"
-            sx={{
-              width: 96,
-              height: 40,
-              borderRadius: "999px",
-            }}
-          />
-        </Box>
-      </Box>
-
-      <Box className="my-5 h-px bg-black/10" />
-
-      <Box className="flex flex-wrap items-center gap-4">
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: 90,
-            height: 28,
-            borderRadius: "999px",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: { xs: "100%", sm: 300 },
-            maxWidth: "100%",
+            width: "90%",
             height: 18,
             borderRadius: "8px",
             transform: "none",
@@ -203,53 +131,123 @@ function FiltersSkeleton() {
   );
 }
 
-function FaqItemSkeleton() {
+function DirectoryCardSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-4">
-      <Box className="flex flex-col gap-2.5">
-        <Box className="flex flex-wrap items-center gap-3">
+    <Box className="apple-card apple-card-no-hover p-4!">
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: 146,
+          height: 24,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          mt: 1,
+          width: 260,
+          maxWidth: "100%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+
+      <Divider className="my-5! border-black/10!" />
+
+      <Box className="space-y-4">
+        {Array.from({ length: 2 }).map((_, index) => (
+          <Box
+            key={`help-branch-skeleton-${index}`}
+            className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
+          >
+            <Box className="flex flex-wrap items-start justify-between gap-3">
+              <Box className="space-y-1">
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: 118,
+                    height: 20,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: 82,
+                    height: 16,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+              </Box>
+
+              <Box className="flex flex-wrap gap-2">
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  sx={{ width: 86, height: 24, borderRadius: "999px" }}
+                />
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  sx={{ width: 104, height: 24, borderRadius: "999px" }}
+                />
+              </Box>
+            </Box>
+
+            <Box className="mt-4 space-y-3">
+              <BranchInfoRowSkeleton />
+              <BranchInfoRowSkeleton />
+              <BranchInfoRowSkeleton />
+            </Box>
+          </Box>
+        ))}
+      </Box>
+
+      <Divider className="my-5! border-black/10!" />
+
+      <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 28,
+            height: 16,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Box className="mt-1.5 space-y-1.5">
           <Skeleton
-            variant="rounded"
+            variant="text"
             animation="wave"
             sx={{
-              width: 90,
-              height: 24,
-              borderRadius: "999px",
+              width: "100%",
+              height: 16,
+              borderRadius: "8px",
+              transform: "none",
             }}
           />
           <Skeleton
             variant="text"
             animation="wave"
             sx={{
-              width: { xs: "100%", sm: "56%" },
-              height: 22,
+              width: "84%",
+              height: 16,
               borderRadius: "8px",
               transform: "none",
             }}
           />
         </Box>
-
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: { xs: "72%", sm: "36%" },
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
       </Box>
-    </Box>
-  );
-}
-
-function FaqListSkeleton() {
-  return (
-    <Box className="mt-6 space-y-4">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <FaqItemSkeleton key={i} />
-      ))}
     </Box>
   );
 }
@@ -257,40 +255,41 @@ function FaqListSkeleton() {
 function CtaSkeleton() {
   return (
     <Box className="apple-card apple-card-no-hover mt-10 p-5">
-      <Box className="flex flex-col gap-1.5">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 150,
-            height: 22,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: { xs: "100%", sm: "70%" },
-            maxWidth: "100%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
-
       <Skeleton
-        variant="rounded"
+        variant="text"
         animation="wave"
         sx={{
-          mt: 2,
-          width: 110,
-          height: 36,
-          borderRadius: "999px",
+          width: 168,
+          height: 22,
+          borderRadius: "8px",
+          transform: "none",
         }}
       />
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          mt: 1,
+          width: 320,
+          maxWidth: "100%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+
+      <Box className="mt-4 flex flex-wrap gap-2">
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ width: 118, height: 38, borderRadius: "999px" }}
+        />
+        <Skeleton
+          variant="rounded"
+          animation="wave"
+          sx={{ width: 104, height: 38, borderRadius: "999px" }}
+        />
+      </Box>
     </Box>
   );
 }
@@ -300,9 +299,18 @@ export default function HelpPageSkeleton() {
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
         <HeaderSkeleton />
-        <ChatbotSkeleton />
-        <FiltersSkeleton />
-        <FaqListSkeleton />
+        <ChipsSkeleton />
+
+        <Box className="mt-6 grid gap-4 md:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <StepCardSkeleton key={`help-step-skeleton-${index}`} />
+          ))}
+        </Box>
+
+        <Box className="mt-6">
+          <DirectoryCardSkeleton />
+        </Box>
+
         <CtaSkeleton />
       </Container>
     </Box>

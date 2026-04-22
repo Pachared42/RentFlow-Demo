@@ -23,6 +23,8 @@ type Props = {
     transmission: string;
     fuel: string;
     pricePerDay: number;
+    isAvailable: boolean;
+    domainSlug?: string;
   };
 };
 
@@ -80,11 +82,20 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             fullWidth
             variant="contained"
             className="rounded-full! py-2.5! font-semibold!"
+            disabled={!detail.isAvailable}
             onClick={() =>
-              router.push(`/booking?carId=${encodeURIComponent(detail.id)}`)
+              detail.isAvailable
+                ? router.push(
+                    `/booking?carId=${encodeURIComponent(detail.id)}${
+                      detail.domainSlug
+                        ? `&tenant=${encodeURIComponent(detail.domainSlug)}`
+                        : ""
+                    }`
+                  )
+                : undefined
             }
           >
-            จองคันนี้
+            {detail.isAvailable ? "จองคันนี้" : "มีการจองแล้ว"}
           </Button>
 
           <Button
@@ -96,6 +107,12 @@ export default function CarDetailSummaryCard({ detail }: Props) {
             ดูรถคันอื่น
           </Button>
         </Box>
+
+        {!detail.isAvailable ? (
+          <Typography className="mt-3 text-sm font-medium text-[var(--rf-apple-muted)]">
+            รถคันนี้มีการจองแล้ว กรุณาเลือกรถคันอื่นหรือกลับมาตรวจสอบอีกครั้งภายหลัง
+          </Typography>
+        ) : null}
       </CardContent>
     </Card>
   );

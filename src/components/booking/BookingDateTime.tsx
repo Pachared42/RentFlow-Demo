@@ -29,6 +29,13 @@ export default function BookingDateTime({
 }: Props) {
   return (
     <Box className="grid gap-4 sm:grid-cols-2">
+      {(() => {
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+        const minReturnDate = pickupDate && pickupDate > today ? pickupDate : today;
+
+        return (
+          <>
       <TextField
         label="วันรับรถ"
         type="date"
@@ -38,6 +45,7 @@ export default function BookingDateTime({
         size="small"
         sx={fieldSX}
         InputLabelProps={{ shrink: true }}
+        inputProps={{ min: today }}
       />
 
       <TextField
@@ -61,7 +69,7 @@ export default function BookingDateTime({
         size="small"
         sx={fieldSX}
         InputLabelProps={{ shrink: true }}
-        inputProps={{ min: pickupDate || undefined }}
+        inputProps={{ min: minReturnDate }}
         error={!!pickupDate && !!returnDate && timeInvalid}
         helperText={
           pickupDate && returnDate && timeInvalid
@@ -82,6 +90,9 @@ export default function BookingDateTime({
         inputProps={{ step: 300 }}
         error={!!pickupDate && !!returnDate && timeInvalid}
       />
+          </>
+        );
+      })()}
     </Box>
   );
 }

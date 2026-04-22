@@ -51,7 +51,11 @@ export default function CarDetailPage({ carId }: { carId: string }) {
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
         <Box className="mt-5 grid gap-6 lg:grid-cols-12">
-          <CarDetailHero image={detail.image} name={detail.name} />
+          <CarDetailHero
+            image={detail.image}
+            name={detail.name}
+            isAvailable={detail.isAvailable}
+          />
           <CarDetailSummaryCard detail={detail} />
         </Box>
 

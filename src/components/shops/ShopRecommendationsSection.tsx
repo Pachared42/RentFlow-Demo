@@ -28,12 +28,13 @@ type Props = {
 };
 
 function getShopHref(shop: ShopSummary) {
-  if (shop.firstCarId) {
-    const tenantQuery = shop.domainSlug
-      ? `?tenant=${encodeURIComponent(shop.domainSlug)}`
-      : "";
-
-    return `/cars/${encodeURIComponent(shop.firstCarId)}${tenantQuery}`;
+  const tenantSlug = shop.domainSlug || shop.key;
+  if (tenantSlug) {
+    const params = new URLSearchParams({
+      tenant: tenantSlug,
+      shopName: shop.name,
+    });
+    return `/cars?${params.toString()}`;
   }
 
   return "/cars";
@@ -91,7 +92,7 @@ export default function ShopRecommendationsSection({
                     src={shop.heroImage}
                     alt={shop.name}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />
                 ) : (
                   <Box className="grid h-full place-items-center text-[var(--rf-apple-muted)]">

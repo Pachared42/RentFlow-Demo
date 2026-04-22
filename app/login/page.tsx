@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import Login from "@/src/auth/Login";
-import AuthCardSkeleton from "@/src/components/auth/AuthCardSkeleton";
+import LoginCardSkeleton from "@/src/components/auth/LoginCardSkeleton";
 
 export default function Page() {
   return (
-    <Suspense fallback={<AuthCardSkeleton />}>
+    <Suspense fallback={<LoginCardSkeleton />}>
       <Login />
     </Suspense>
   );

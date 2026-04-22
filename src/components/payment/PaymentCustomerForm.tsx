@@ -24,8 +24,11 @@ export default function PaymentCustomerForm({
 }: Props) {
   return (
     <>
-      <Typography className="text-sm font-semibold text-slate-900">
+      <Typography className="text-sm font-semibold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
         ข้อมูลผู้ชำระเงิน
+      </Typography>
+      <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+        กรอกข้อมูลติดต่อสำหรับยืนยันรายการและการประสานงานกรณีจำเป็น
       </Typography>
 
       <Box className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -47,12 +50,19 @@ export default function PaymentCustomerForm({
 
       <Box className="mt-4">
         <TextField
-          label="อีเมล"
+          label="อีเมล (ถ้ามี)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           sx={roundedFieldSX}
         />
+      </Box>
+
+      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
+        <Typography className="text-xs leading-6 text-[var(--rf-apple-muted)]">
+          ใช้สำหรับอ้างอิงการชำระเงินและการติดต่อกลับ
+          หากไม่ต้องการรับรายละเอียดทางอีเมลสามารถเว้นช่องอีเมลไว้ได้
+        </Typography>
       </Box>
     </>
   );

@@ -80,6 +80,17 @@ export default function MyBookingsList({ data, onReset }: Props) {
               >
                 ดูรายละเอียด
               </Button>
+
+              {b.resumeHref ? (
+                <Button
+                  component={Link}
+                  href={b.resumeHref}
+                  variant="contained"
+                  className="rounded-full! font-semibold!"
+                >
+                  กลับไปที่การจอง
+                </Button>
+              ) : null}
             </Box>
           </Box>
         </Box>

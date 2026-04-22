@@ -9,7 +9,7 @@ export default function RegisterPage() {
     <AuthCard
       mode="register"
       title="สมัครสมาชิก"
-      subtitle="สร้างบัญชีด้วย username, password, ชื่อจริง และนามสกุล"
+      subtitle="สร้างบัญชีด้วยชื่อผู้ใช้ รหัสผ่าน ชื่อจริง และนามสกุล"
       successMessage="สมัครสมาชิกสำเร็จ กำลังพาไปหน้าหลัก..."
       submitErrorMessage="สมัครสมาชิกไม่สำเร็จ"
       agreementText={

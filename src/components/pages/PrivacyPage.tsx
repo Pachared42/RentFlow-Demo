@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Box,
   Container,
@@ -8,9 +7,7 @@ import {
   CardContent,
   Typography,
   Divider,
-  Stack,
   Chip,
-  Button,
 } from "@mui/material";
 import PrivacyTableOfContents from "@/src/components/privacy/PrivacyTableOfContents";
 import PrivacyContent from "@/src/components/privacy/PrivacyContent";
@@ -41,41 +38,51 @@ export default function PrivacyPage() {
     <Box className="apple-page">
       <Box aria-hidden className="pointer-events-none fixed inset-0" />
 
-      <Container maxWidth="md" className="relative py-10">
-        <Stack spacing={1} className="mb-6">
-          <Stack direction="row" className="items-center justify-between gap-3">
-            <Stack>
-              <Typography
-                className="apple-heading"
-                sx={{ fontSize: { xs: 34, md: 48 } }}
-              >
-                นโยบายความเป็นส่วนตัว (Privacy Policy)
-              </Typography>
+      <Container maxWidth="lg" className="apple-section relative">
+        <Box className="mx-auto max-w-3xl text-center">
+          <Box className="flex flex-col gap-4">
+            <Typography
+              className="apple-heading"
+              sx={{ fontSize: { xs: 38, md: 56 } }}
+            >
+              นโยบายความเป็นส่วนตัว
+            </Typography>
+            <Typography className="apple-subtitle text-lg">
+              แนวทางการดูแล การใช้ และการคุ้มครองข้อมูลส่วนบุคคลของผู้ใช้งาน RentFlow
+            </Typography>
+          </Box>
 
-              <Stack direction="row" className="items-center gap-2">
-                <Chip size="small" label={`อัปเดตล่าสุด: ${updatedAt}`} />
-                <Typography className="text-xs text-[var(--rf-apple-muted)]">
-                  รายละเอียดการดูแลข้อมูลส่วนบุคคลของผู้ใช้งาน
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Link href="/" style={{ textDecoration: "none" }}>
-              <Button
-                variant="outlined"
-                className="rounded-full!"
-              >
-                กลับหน้าแรก
-              </Button>
-            </Link>
-          </Stack>
-        </Stack>
+          <Box className="mt-6 flex flex-wrap justify-center gap-3">
+            <Chip
+              size="small"
+              label={`อัปเดตล่าสุด: ${updatedAt}`}
+              className="apple-pill text-[var(--rf-apple-muted)]!"
+            />
+            <Chip
+              size="small"
+              label="ครอบคลุมการใช้งานบัญชี การจอง และข้อมูลการติดต่อ"
+              className="apple-pill text-[var(--rf-apple-muted)]!"
+            />
+          </Box>
+        </Box>
 
         <Card
           elevation={0}
-          className="apple-card"
+          className="apple-card mt-10"
         >
-          <CardContent className="p-7">
+          <CardContent className="p-5! md:p-7!">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
+              <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                สรุปสั้น ๆ
+              </Typography>
+              <Typography className="mt-2 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                เราเก็บและใช้ข้อมูลเท่าที่จำเป็นต่อการให้บริการ การยืนยันตัวตน การจอง
+                การติดต่อช่วยเหลือ และการดูแลความปลอดภัยของระบบ
+              </Typography>
+            </Box>
+
+            <Divider className="my-6! border-black/10!" />
+
             <PrivacyTableOfContents sections={sections} />
 
             <Divider className="my-6! border-black/10!" />

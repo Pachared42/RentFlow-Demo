@@ -83,7 +83,7 @@ export default function HeroSection({
 
   return (
     <Box component="section" className="bg-[var(--rf-apple-bg)]">
-      <Container maxWidth="lg" className="apple-section pt-10! md:pt-14!">
+      <Container maxWidth="lg" className="apple-section pt-[56px]!">
         <Box className="mx-auto max-w-4xl text-center">
           <Typography
             className="apple-heading"
@@ -93,16 +93,24 @@ export default function HeroSection({
           >
             รถที่ใช่ สำหรับทุกการเดินทาง
           </Typography>
-          <Typography
-            className="apple-subtitle mx-auto mt-4 block max-w-2xl text-center"
+          <Box
+            className="apple-subtitle mt-4 flex flex-col items-center justify-center text-center"
             sx={{
+              width: "100vw",
+              ml: "calc(50% - 50vw)",
               fontSize: { xs: 18, md: 24 },
               lineHeight: 1.35,
               textAlign: "center",
+              textWrap: "balance",
             }}
           >
-            เลือกรถ เช็กราคา และจองได้ในหน้าเดียว พร้อมประสบการณ์ที่เรียบง่ายเหมือนเลือกผลิตภัณฑ์ที่คุณชอบ
-          </Typography>
+            <Box component="span" sx={{ display: "block", width: "100%", textAlign: "center" }}>
+              เลือกรถ เช็กราคา และจองได้ในหน้าเดียว
+            </Box>
+            <Box component="span" sx={{ display: "block", width: "100%", textAlign: "center" }}>
+              พร้อมประสบการณ์ที่เรียบง่ายเหมือนเลือกผลิตภัณฑ์ที่คุณชอบ
+            </Box>
+          </Box>
 
           <Stack
             direction="row"
@@ -149,12 +157,13 @@ export default function HeroSection({
 
             <Box className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
             <Box className="absolute bottom-6 left-6 right-6 text-white md:bottom-8 md:left-8 md:right-8">
-              <Typography className="text-sm font-semibold text-white/70">
-                RentFlow
-              </Typography>
               <Typography
-                className="mt-2 font-black tracking-[-0.05em]"
-                sx={{ fontSize: { xs: "38px", md: "56px" }, lineHeight: 0.95 }}
+                className="font-black tracking-[-0.05em]"
+                sx={{
+                  fontSize: { xs: "34px", md: "48px", lg: "52px" },
+                  lineHeight: 0.98,
+                  whiteSpace: { md: "nowrap" },
+                }}
               >
                 พร้อมออกเดินทาง ในไม่กี่คลิก
               </Typography>

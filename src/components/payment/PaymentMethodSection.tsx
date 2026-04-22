@@ -26,8 +26,11 @@ export default function PaymentMethodSection({
 }: Props) {
   return (
     <>
-      <Typography className="text-sm font-semibold text-slate-900">
+      <Typography className="text-sm font-semibold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
         วิธีชำระเงิน
+      </Typography>
+      <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+        เลือกช่องทางที่สะดวกที่สุดสำหรับการชำระรายการนี้
       </Typography>
 
       <Box className="mt-4">
@@ -97,7 +100,7 @@ export default function PaymentMethodSection({
               fullWidth
               sx={roundedFieldSX}
             />
-            <Typography className="text-xs text-slate-500 sm:col-span-2">
+            <Typography className="text-xs leading-6 text-slate-500 sm:col-span-2">
               * ข้อมูลบัตรจะถูกดูแลผ่านผู้ให้บริการชำระเงินที่ปลอดภัย
             </Typography>
           </Box>
@@ -126,7 +129,7 @@ export default function PaymentMethodSection({
             <Button
               component="label"
               variant="outlined"
-              className="rounded-full!"
+              className="rounded-full! sm:w-fit"
               startIcon={<UploadFileRoundedIcon />}
             >
               {slipFile ? "เปลี่ยนไฟล์สลิป" : "แนบสลิปโอนเงิน"}
@@ -152,6 +155,13 @@ export default function PaymentMethodSection({
             )}
           </Box>
         ) : null}
+      </Box>
+
+      <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
+        <Typography className="text-xs leading-6 text-[var(--rf-apple-muted)]">
+          เมื่อชำระเงินแล้ว กรุณาตรวจสอบความถูกต้องของยอดและหลักฐานให้ครบถ้วน
+          เพื่อช่วยให้การตรวจสอบสถานะเป็นไปได้รวดเร็วขึ้น
+        </Typography>
       </Box>
     </>
   );

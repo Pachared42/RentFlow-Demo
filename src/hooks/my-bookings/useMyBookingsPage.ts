@@ -6,6 +6,7 @@ import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import { getCars } from "@/src/services/cars/cars.service";
+import { ADDONS, type AddonKey } from "@/src/constants/booking.addons";
 
 export type BookingStatus =
   | "pending"
@@ -24,7 +25,98 @@ export type Booking = {
   returnDate: string;
   totalPrice: number;
   status: BookingStatus;
+  pickupLocation?: string;
+  returnLocation?: string;
+  pickupMethod?: "branch" | "custom";
+  returnMethod?: "branch" | "custom";
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  note?: string;
+  resumeHref?: string;
 };
+
+function extractAddonKeysFromNote(note?: string): AddonKey[] {
+  if (!note) return [];
+
+  return ADDONS.filter((addon) => note.includes(addon.title)).map(
+    (addon) => addon.key
+  );
+}
+
+function normalizeDateForInput(value?: string) {
+  if (!value) return "";
+  const match = value.match(/^\d{4}-\d{2}-\d{2}/);
+  if (match) return match[0];
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function buildResumeBookingHref(booking: {
+  carId: string;
+  tenantSlug?: string;
+  pickupDate: string;
+  returnDate: string;
+  pickupLocation?: string;
+  returnLocation?: string;
+  pickupMethod?: "branch" | "custom";
+  returnMethod?: "branch" | "custom";
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  note?: string;
+}) {
+  const params = new URLSearchParams();
+
+  params.set("carId", booking.carId);
+  params.set("pickupDate", normalizeDateForInput(booking.pickupDate));
+  params.set("returnDate", normalizeDateForInput(booking.returnDate));
+
+  if (booking.tenantSlug) {
+    params.set("tenant", booking.tenantSlug);
+  }
+
+  if (booking.pickupLocation) {
+    params.set("pickupLocation", booking.pickupLocation);
+  }
+
+  if (booking.returnLocation) {
+    params.set("returnLocation", booking.returnLocation);
+  }
+
+  if (booking.pickupMethod) {
+    params.set("pickupMethod", booking.pickupMethod);
+  }
+
+  if (booking.returnMethod) {
+    params.set("returnMethod", booking.returnMethod);
+  }
+
+  if (booking.customerName) {
+    params.set("fullName", booking.customerName);
+  }
+
+  if (booking.customerEmail) {
+    params.set("email", booking.customerEmail);
+  }
+
+  if (booking.customerPhone) {
+    params.set("phone", booking.customerPhone);
+  }
+
+  const addonKeys = extractAddonKeysFromNote(booking.note);
+  if (addonKeys.length) {
+    params.set("addons", JSON.stringify(addonKeys));
+  }
+
+  return `/booking?${params.toString()}`;
+}
 
 export default function useMyBookingsPage() {
   const router = useRouter();
@@ -67,6 +159,34 @@ export default function useMyBookingsPage() {
             returnDate: booking.returnDate,
             totalPrice: booking.totalAmount,
             status: booking.status,
+            pickupLocation: booking.pickupLocation,
+            returnLocation: booking.returnLocation,
+            pickupMethod: booking.pickupMethod,
+            returnMethod: booking.returnMethod,
+            customerName: booking.customerName,
+            customerEmail: booking.customerEmail,
+            customerPhone: booking.customerPhone,
+            note: booking.note,
+            resumeHref:
+              booking.status === "pending"
+                ? buildResumeBookingHref({
+                    carId: booking.carId,
+                    tenantSlug:
+                      carMap.get(booking.carId)?.domainSlug ||
+                      booking.domainSlug ||
+                      tenantSlug,
+                    pickupDate: booking.pickupDate,
+                    returnDate: booking.returnDate,
+                    pickupLocation: booking.pickupLocation,
+                    returnLocation: booking.returnLocation,
+                    pickupMethod: booking.pickupMethod,
+                    returnMethod: booking.returnMethod,
+                    customerName: booking.customerName,
+                    customerEmail: booking.customerEmail,
+                    customerPhone: booking.customerPhone,
+                    note: booking.note,
+                  })
+                : undefined,
           }))
         );
         setIsAuthenticated(true);

@@ -157,7 +157,7 @@ export default function Navbar() {
                         color: "var(--rf-apple-ink)",
                       },
                       transition:
-                        "background-color .2s ease, color .2s ease, opacity .2s ease",
+                        "background-color .32s ease, color .32s ease, opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
                     }}
                   >
                     {n.label}
@@ -215,7 +215,8 @@ export default function Navbar() {
                       "&:focus-visible": {
                         outline: "none",
                       },
-                      transition: "opacity 180ms ease",
+                      transition:
+                        "opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
                     }}
                   >
                     <Box className="flex items-center gap-2.5">
@@ -354,9 +355,11 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     sx={{
                       display: "block",
-                      transition: "opacity .2s ease",
+                      transition:
+                        "opacity .32s ease, transform .86s cubic-bezier(0.18,0.9,0.22,1)",
                       "&:hover": {
                         backgroundColor: "transparent",
+                        transform: "scale(1.006)",
                       },
                     }}
                   >

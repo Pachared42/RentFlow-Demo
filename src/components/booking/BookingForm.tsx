@@ -52,6 +52,9 @@ type Props = {
 
   showChatBooking: boolean;
   chatHref: string;
+  carAvailable: boolean;
+  checkingAvailability: boolean;
+  availabilityMessage: string | null;
   canSubmit: boolean;
   loading: boolean;
   carExists: boolean;
@@ -97,6 +100,9 @@ export default function BookingForm({
   timeInvalid,
   showChatBooking,
   chatHref,
+  carAvailable,
+  checkingAvailability,
+  availabilityMessage,
   canSubmit,
   loading,
   carExists,
@@ -113,7 +119,7 @@ export default function BookingForm({
           sx={fieldSX}
         />
         <TextField
-          label="อีเมล"
+          label="อีเมล (ถ้ามี)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
@@ -180,6 +186,10 @@ export default function BookingForm({
         </Alert>
       ) : null}
 
+      {availabilityMessage ? (
+        <Alert severity="warning">{availabilityMessage}</Alert>
+      ) : null}
+
       <Box className="mt-6 space-y-4">
         {showChatBooking ? (
           <Box
@@ -235,7 +245,7 @@ export default function BookingForm({
           <Button
             type="submit"
             variant="contained"
-            disabled={!canSubmit || loading}
+            disabled={!canSubmit || loading || checkingAvailability || !carAvailable}
             className="rounded-xl! px-6! py-3! font-semibold!"
             sx={{
               textTransform: "none",
@@ -252,7 +262,11 @@ export default function BookingForm({
               },
             }}
           >
-            {loading ? "กำลังไปหน้าชำระเงิน..." : "จองและไปชำระเงินทันที"}
+            {checkingAvailability
+              ? "กำลังตรวจสอบสถานะรถ..."
+              : loading
+                ? "กำลังไปหน้าชำระเงิน..."
+                : "จองและไปชำระเงินทันที"}
           </Button>
 
           <Typography className="text-xs text-slate-500 sm:pl-1">
@@ -260,6 +274,12 @@ export default function BookingForm({
           </Typography>
         </Stack>
       </Box>
+
+      {carExists && !carAvailable ? (
+        <Alert severity="info">
+          รถคันนี้มีการจองแล้ว ไม่สามารถดำเนินการจองซ้ำได้ในตอนนี้
+        </Alert>
+      ) : null}
 
       {!carExists ? (
         <Alert severity="info">

@@ -243,7 +243,7 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
 
             <CardContent className="p-6!">
                 <Box className="flex items-start justify-between gap-3">
-                    <Box className="min-w-0 w-full">
+                    <Box className="min-w-0 w-full space-y-1.5">
                         <Typography className="truncate text-lg font-semibold text-slate-900">
                             <Skeleton
                                 variant="text"
@@ -257,7 +257,7 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
                             />
                         </Typography>
 
-                        <Typography className="text-sm text-slate-600">
+                        <Typography className="block text-sm text-slate-600">
                             <Skeleton
                                 variant="text"
                                 animation="wave"
@@ -278,7 +278,7 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
                 <PriceBoxSkeleton />
             </CardContent>
 
-            <CardActions sx={{ p: "0px 16px 16px" }} className="gap-2">
+            <CardActions sx={{ p: "0px 16px 16px" }} className="mt-1 gap-2">
                 <Skeleton
                     variant="rounded"
                     animation="wave"

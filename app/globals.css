@@ -10,10 +10,18 @@
   --rf-apple-blue-hover: #0077ed;
   --rf-apple-border: rgba(0, 0, 0, 0.08);
   --rf-apple-border-strong: rgba(0, 0, 0, 0.14);
-  --rf-apple-shadow: 2px 10px 28px rgba(0, 0, 0, 0.12);
-  --rf-apple-shadow-soft: 2px 4px 12px rgba(0, 0, 0, 0.08);
+  --rf-apple-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 10px 30px rgba(0, 0, 0, 0.08);
+  --rf-apple-shadow-soft: 0 0 0 1px rgba(0, 0, 0, 0.035),
+    0 8px 24px rgba(0, 0, 0, 0.075);
   --rf-apple-card-radius: 24px;
   --rf-apple-card-radius-sm: 18px;
+  --rf-apple-hover-duration: 920ms;
+  --rf-apple-hover-ease: cubic-bezier(0.18, 0.9, 0.22, 1);
+  --rf-apple-hover-scale: 1.006;
+  --rf-apple-hover-media-scale: 1.012;
+  --rf-booking-step-current: #4f46e5;
+  --rf-booking-step-complete: oklch(72.3% 0.219 149.579);
 }
 
 * {
@@ -63,7 +71,8 @@ a {
 }
 
 .apple-section {
-  padding-block: clamp(48px, 7vw, 88px);
+  padding-top: 56px;
+  padding-bottom: clamp(48px, 7vw, 88px);
 }
 
 .apple-card {
@@ -72,16 +81,22 @@ a {
   border-radius: var(--rf-apple-card-radius) !important;
   background: var(--rf-apple-surface);
   box-shadow: var(--rf-apple-shadow-soft) !important;
-  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  transform: scale3d(1, 1, 1);
+  transform-origin: center center;
   transition:
-    transform 520ms cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 520ms cubic-bezier(0.16, 1, 0.3, 1);
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
   will-change: transform;
 }
 
 .apple-card:hover {
-  box-shadow: var(--rf-apple-shadow) !important;
-  transform: translate3d(0, -4px, 0);
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
 }
 
 .apple-card-muted {
@@ -93,7 +108,7 @@ a {
 
 .apple-card-no-hover:hover {
   box-shadow: var(--rf-apple-shadow-soft) !important;
-  transform: translate3d(0, 0, 0);
+  transform: scale3d(1, 1, 1);
 }
 
 .apple-heading {
@@ -119,6 +134,9 @@ a {
 .apple-blue-link {
   color: var(--rf-apple-blue);
   font-weight: 600;
+  transition:
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    opacity var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
 }
 
 .apple-blue-link:hover {
@@ -130,11 +148,58 @@ a {
   text-transform: none !important;
   font-weight: 700 !important;
   box-shadow: none !important;
+  transform: scale3d(1, 1, 1);
+  transform-origin: center center;
   transition:
-    background-color 260ms ease,
-    border-color 260ms ease,
-    color 260ms ease,
-    opacity 260ms ease !important;
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    opacity var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease) !important;
+}
+
+.MuiButton-root:not(.Mui-disabled):hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
+}
+
+.apple-page [class*="hover:scale"][class*="transition"],
+.apple-page [class*="group-hover:scale"][class*="transition"] {
+  transition-duration: var(--rf-apple-hover-duration) !important;
+  transition-timing-function: var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page [class*="hover:bg"],
+.apple-page [class*="hover:text"],
+.apple-page [class*="hover:border"],
+.apple-page [class*="hover:shadow"],
+.apple-page [class*="hover:opacity"],
+.apple-page [class*="hover:underline"] {
+  transition-property:
+    background-color,
+    border-color,
+    color,
+    box-shadow,
+    text-decoration-color,
+    opacity,
+    transform !important;
+  transition-duration: var(--rf-apple-hover-duration) !important;
+  transition-timing-function: var(--rf-apple-hover-ease) !important;
+}
+
+.apple-page [class*="hover:scale"]:hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  ) !important;
+}
+
+.apple-page .group:hover [class*="group-hover:scale"] {
+  transform: scale(var(--rf-apple-hover-media-scale)) !important;
 }
 
 .MuiButton-contained:not(.Mui-disabled) {
@@ -166,10 +231,52 @@ a {
   border-radius: var(--rf-apple-card-radius) !important;
 }
 
+.MuiIconButton-root,
+.MuiChip-root {
+  transition:
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    transform var(--rf-apple-hover-duration) var(--rf-apple-hover-ease) !important;
+}
+
+.MuiIconButton-root:not(.Mui-disabled):hover,
+.MuiChip-clickable:not(.Mui-disabled):hover {
+  transform: scale3d(
+    var(--rf-apple-hover-scale),
+    var(--rf-apple-hover-scale),
+    1
+  );
+}
+
 .MuiCard-root:not(.apple-card) {
   border-color: var(--rf-apple-border) !important;
   background-color: var(--rf-apple-surface) !important;
-  box-shadow: none !important;
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+}
+
+.MuiPaper-root {
+  box-shadow: var(--rf-apple-shadow-soft) !important;
+}
+
+.MuiPaper-root.MuiAppBar-root,
+.MuiPaper-root.MuiDrawer-paper,
+.MuiPaper-root.MuiMenu-paper,
+.MuiPaper-root.MuiDialog-paper,
+.MuiPaper-root.MuiSnackbarContent-root {
+  box-shadow: initial !important;
+}
+
+.apple-page [class*="rounded-[24px]"][class*="bg-white"],
+.apple-page [class*="rounded-[26px]"][class*="bg-white"],
+.apple-page [class*="rounded-[30px]"][class*="bg-white"],
+.apple-page [class*="rounded-[34px]"][class*="bg-white"],
+.apple-page [class*="rounded-[24px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[26px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[30px]"][class*="bg-[var(--rf-apple-surface-soft)]"],
+.apple-page [class*="rounded-[34px]"][class*="bg-[var(--rf-apple-surface-soft)]"] {
+  box-shadow: var(--rf-apple-shadow-soft);
 }
 
 .MuiChip-root {
@@ -180,10 +287,16 @@ a {
 .MuiOutlinedInput-root {
   border-radius: 18px !important;
   background: rgba(255, 255, 255, 0.78);
+  transition:
+    background-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
 }
 
 .MuiOutlinedInput-notchedOutline {
   border-color: var(--rf-apple-border) !important;
+  transition:
+    border-color var(--rf-apple-hover-duration) var(--rf-apple-hover-ease),
+    box-shadow var(--rf-apple-hover-duration) var(--rf-apple-hover-ease);
 }
 
 .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
@@ -245,6 +358,16 @@ a {
   }
 }
 
+@supports (view-transition-name: root) {
+  html.rf-booking-flow-transition::view-transition-old(root) {
+    animation: booking-flow-old 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  html.rf-booking-flow-transition::view-transition-new(root) {
+    animation: booking-flow-new 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
 @keyframes scroll-left {
   0% {
     transform: translateX(0%);
@@ -262,6 +385,34 @@ a {
 
   100% {
     transform: translateX(0%);
+  }
+}
+
+@keyframes booking-flow-old {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0px);
+  }
+
+  to {
+    opacity: 0.24;
+    transform: translate3d(-72px, 0, 0);
+    filter: blur(2px);
+  }
+}
+
+@keyframes booking-flow-new {
+  from {
+    opacity: 0.4;
+    transform: translate3d(88px, 0, 0);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0px);
   }
 }
 

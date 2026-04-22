@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorMessage } from "@/src/lib/api-error";
+import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
 import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 import { paymentsApi } from "@/src/services/payments/payments.service";
@@ -18,7 +19,7 @@ import {
 export default function usePaymentPage() {
   const params = useSearchParams();
   const router = useRouter();
-  const ready = usePageReady();
+  const ready = usePageReady({ disableDuringFlowTransition: true });
 
   const bookingId = params.get("bookingId") || "BK-XXXX";
   const bookingRef = params.get("bookingRef") || "";
@@ -32,6 +33,8 @@ export default function usePaymentPage() {
   const returnPoint = params.get("returnPoint") || "";
   const pickupTime = params.get("pickupTime") || "";
   const returnTime = params.get("returnTime") || "";
+  const carName = params.get("carName") || "";
+  const shopName = params.get("shopName") || "";
   const customerName = params.get("customerName") || "";
   const customerEmail = params.get("customerEmail") || "";
   const customerPhone = params.get("customerPhone") || "";
@@ -86,7 +89,7 @@ export default function usePaymentPage() {
 
   const canPay =
     fullName.trim().length >= 2 &&
-    email.trim().includes("@") &&
+    (!email.trim() || email.trim().includes("@")) &&
     phone.trim().length >= 9 &&
     (!needSlip || !!slipFile) &&
     !loading;
@@ -137,18 +140,58 @@ export default function usePaymentPage() {
       });
       setDone(true);
       setTimeout(() => {
-        router.push(
-          tenantSlug
-            ? `/my-bookings?tenant=${encodeURIComponent(tenantSlug)}`
-            : "/my-bookings"
+        const nextParams = new URLSearchParams();
+
+        nextParams.set("bookingId", bookingRef || bookingId);
+        nextParams.set("amount", String(amount || 0));
+        nextParams.set("carName", car?.name || carName);
+        nextParams.set("customerName", fullName.trim());
+        nextParams.set("customerEmail", email.trim());
+        nextParams.set("customerPhone", phone.trim());
+        nextParams.set("pickupDate", pickupDate);
+        nextParams.set("returnDate", returnDate);
+        nextParams.set("pickupPoint", pickupPoint);
+        nextParams.set("returnPoint", returnPoint);
+
+        if (shopName || car?.shopName) {
+          nextParams.set("shopName", shopName || car?.shopName || "");
+        }
+
+        if (tenantSlug) {
+          nextParams.set("tenant", tenantSlug);
+        }
+
+        navigateBookingFlow(
+          router,
+          `/booking/success?${nextParams.toString()}`,
+          "replace"
         );
-      }, 800);
+      }, 260);
     } catch (err: unknown) {
       setError(getErrorMessage(err, "ไม่สามารถยืนยันการชำระเงินได้"));
     } finally {
       setLoading(false);
     }
-  }, [bookingId, bookingRef, canPay, method, router, tenantSlug]);
+  }, [
+    amount,
+    bookingId,
+    bookingRef,
+    canPay,
+    car?.name,
+    car?.shopName,
+    carName,
+    email,
+    fullName,
+    method,
+    phone,
+    pickupDate,
+    pickupPoint,
+    returnDate,
+    returnPoint,
+    router,
+    shopName,
+    tenantSlug,
+  ]);
 
   const roundedFieldSX = React.useMemo(
     () => ({
@@ -170,6 +213,8 @@ export default function usePaymentPage() {
     returnPoint,
     pickupTime,
     returnTime,
+    carName,
+    shopName,
     amount,
     addonKeys,
     addonsTotal,

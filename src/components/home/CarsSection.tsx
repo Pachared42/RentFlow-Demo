@@ -58,7 +58,7 @@ export default function CarsSection({ cars, formatTHB }: Props) {
                   src={c.image || "/RentFlow.png"}
                   alt={c.name}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                 />
               </Box>
 

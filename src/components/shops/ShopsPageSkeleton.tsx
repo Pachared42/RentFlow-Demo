@@ -20,8 +20,8 @@ function HeaderSkeleton() {
             variant="text"
             animation="wave"
             sx={{
-              width: { xs: 190, md: 280 },
-              height: { xs: 54, md: 74 },
+              width: { xs: 210, md: 320 },
+              height: { xs: 56, md: 78 },
               borderRadius: "16px",
               transform: "none",
             }}
@@ -88,9 +88,34 @@ function ShopCardSkeleton() {
             borderRadius: 0,
           }}
         />
+
+        <Box className="absolute bottom-4 left-4 right-4 space-y-1.5">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: "58%",
+              height: 32,
+              borderRadius: "8px",
+              transform: "none",
+              bgcolor: "rgba(255,255,255,0.55)",
+            }}
+          />
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: "46%",
+              height: 18,
+              borderRadius: "8px",
+              transform: "none",
+              bgcolor: "rgba(255,255,255,0.42)",
+            }}
+          />
+        </Box>
       </Box>
 
-      <CardContent className="p-6!">
+      <CardContent className="p-4!">
         <Box className="flex flex-wrap gap-2">
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton
@@ -106,14 +131,14 @@ function ShopCardSkeleton() {
           ))}
         </Box>
 
-        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
           <Box className="flex items-end justify-between gap-3">
-            <Box className="grid gap-1">
+            <Box className="grid gap-1.5">
               <Skeleton
                 variant="text"
                 animation="wave"
                 sx={{
-                  width: 84,
+                  width: 86,
                   height: 18,
                   borderRadius: "6px",
                   transform: "none",
@@ -123,14 +148,14 @@ function ShopCardSkeleton() {
                 variant="text"
                 animation="wave"
                 sx={{
-                  width: 56,
+                  width: 58,
                   height: 24,
                   borderRadius: "8px",
                   transform: "none",
                 }}
               />
             </Box>
-            <Box className="grid gap-1">
+            <Box className="grid gap-1.5">
               <Skeleton
                 variant="text"
                 animation="wave"
@@ -155,13 +180,13 @@ function ShopCardSkeleton() {
           </Box>
         </Box>
 
-        <Box className="mt-5">
+        <Box className="mt-5 pt-1">
           <Skeleton
             variant="rounded"
             animation="wave"
             sx={{
               width: "100%",
-              height: 44,
+              height: 40,
               borderRadius: "999px",
             }}
           />

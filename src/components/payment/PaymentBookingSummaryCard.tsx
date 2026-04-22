@@ -61,9 +61,12 @@ export default function PaymentBookingSummaryCard({
       elevation={0}
       className="apple-card order-2 lg:order-1 lg:col-span-5"
     >
-      <CardContent className="p-6">
-        <Typography className="text-sm font-semibold text-slate-900">
+      <CardContent className="p-5! md:p-6!">
+        <Typography className="text-sm font-semibold tracking-[-0.03em] text-slate-900">
           สรุปการจอง
+        </Typography>
+        <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+          ตรวจสอบรายละเอียดรถ ช่วงเวลา และยอดรวมก่อนยืนยันการชำระเงิน
         </Typography>
 
         <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
@@ -321,9 +324,11 @@ export default function PaymentBookingSummaryCard({
 
         <Divider className="my-5! border-black/10!" />
 
-        <Typography className="text-xs text-slate-500">
-          แนะนำ: หากชำระแล้วไม่ขึ้นสถานะ ให้ติดต่อทีมงานพร้อมรหัสการจอง
-        </Typography>
+        <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
+          <Typography className="text-xs leading-6 text-slate-500">
+            แนะนำ: หากชำระแล้วไม่ขึ้นสถานะ ให้ติดต่อทีมงานพร้อมรหัสการจอง
+          </Typography>
+        </Box>
       </CardContent>
     </Card>
   );

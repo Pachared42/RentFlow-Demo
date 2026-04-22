@@ -28,7 +28,7 @@ export default function ContactFormCard() {
         <Divider className="my-5! border-black/10!" />
 
         <Box className="space-y-4">
-          <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="apple-card apple-card-no-hover rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
             <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
               ข้อมูลที่ควรแจ้ง
             </Typography>
@@ -40,7 +40,7 @@ export default function ContactFormCard() {
             </Box>
           </Box>
 
-          <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Box className="apple-card apple-card-no-hover rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
             <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">
               จัดการรายการจอง
             </Typography>

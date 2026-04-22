@@ -13,7 +13,7 @@ import type { Branch } from "@/src/services/branches/branches.types";
 import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
-export function useCatalogDirectory() {
+export function useCatalogDirectory(tenantSlug?: string) {
   const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
   const [cars, setCars] = React.useState<Car[]>([]);
   const [branches, setBranches] = React.useState<Branch[]>([]);
@@ -30,10 +30,12 @@ export function useCatalogDirectory() {
 
       const [carsResult, branchesResult] = await Promise.allSettled([
         getCars(undefined, {
-          marketplace: siteMode === "marketplace",
+          marketplace: siteMode === "marketplace" && !tenantSlug,
+          tenantSlug: tenantSlug || undefined,
         }),
         branchesApi.getBranches({
-          marketplace: siteMode === "marketplace",
+          marketplace: siteMode === "marketplace" && !tenantSlug,
+          tenantSlug: tenantSlug || undefined,
         }),
       ]);
 
@@ -70,7 +72,7 @@ export function useCatalogDirectory() {
     return () => {
       cancelled = true;
     };
-  }, [siteMode]);
+  }, [siteMode, tenantSlug]);
 
   return {
     siteMode,

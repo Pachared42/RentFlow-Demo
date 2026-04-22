@@ -5,6 +5,7 @@ import { OTHER_OPTION, merchantBranchesEnabled } from "@/src/constants/booking.c
 
 type Params = {
   carExists: boolean;
+  carAvailable: boolean;
   fullName: string;
   email: string;
   phone: string;
@@ -23,6 +24,7 @@ type Params = {
 
 export default function useBookingValidation({
   carExists,
+  carAvailable,
   fullName,
   email,
   phone,
@@ -59,8 +61,9 @@ export default function useBookingValidation({
 
   const canSubmit =
     carExists &&
+    carAvailable &&
     fullName.trim().length >= 2 &&
-    email.trim().includes("@") &&
+    (!email.trim() || email.trim().includes("@")) &&
     phone.trim().length >= 9 &&
     !!pickupDate &&
     !!returnDate &&

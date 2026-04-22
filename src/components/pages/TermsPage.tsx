@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Box,
   Container,
@@ -8,9 +7,7 @@ import {
   CardContent,
   Typography,
   Divider,
-  Stack,
   Chip,
-  Button,
 } from "@mui/material";
 import TermsTableOfContents from "@/src/components/terms/TermsTableOfContents";
 import TermsContent from "@/src/components/terms/TermsContent";
@@ -40,41 +37,51 @@ export default function TermsPage() {
     <Box className="apple-page">
       <Box aria-hidden className="pointer-events-none fixed inset-0" />
 
-      <Container maxWidth="md" className="relative py-10">
-        <Stack spacing={1} className="mb-6">
-          <Stack direction="row" className="items-center justify-between gap-3">
-            <Stack>
-              <Typography
-                className="apple-heading"
-                sx={{ fontSize: { xs: 34, md: 48 } }}
-              >
-                เงื่อนไขการใช้งาน (Terms of Service)
-              </Typography>
+      <Container maxWidth="lg" className="apple-section relative">
+        <Box className="mx-auto max-w-3xl text-center">
+          <Box className="flex flex-col gap-4">
+            <Typography
+              className="apple-heading"
+              sx={{ fontSize: { xs: 38, md: 56 } }}
+            >
+              เงื่อนไขการใช้งาน
+            </Typography>
+            <Typography className="apple-subtitle text-lg">
+              ข้อกำหนดสำหรับการใช้บริการ RentFlow โปรดอ่านก่อนเริ่มใช้งาน
+            </Typography>
+          </Box>
 
-              <Stack direction="row" className="items-center gap-2">
-                <Chip size="small" label={`อัปเดตล่าสุด: ${updatedAt}`} />
-                <Typography className="text-xs text-[var(--rf-apple-muted)]">
-                  ข้อกำหนดสำหรับการใช้บริการ RentFlow
-                </Typography>
-              </Stack>
-            </Stack>
-
-            <Link href="/" style={{ textDecoration: "none" }}>
-              <Button
-                variant="outlined"
-                className="rounded-full!"
-              >
-                กลับหน้าแรก
-              </Button>
-            </Link>
-          </Stack>
-        </Stack>
+          <Box className="mt-6 flex flex-wrap justify-center gap-3">
+            <Chip
+              size="small"
+              label={`อัปเดตล่าสุด: ${updatedAt}`}
+              className="apple-pill text-[var(--rf-apple-muted)]!"
+            />
+            <Chip
+              size="small"
+              label="มีผลกับการใช้งานเว็บไซต์และการจองทั้งหมด"
+              className="apple-pill text-[var(--rf-apple-muted)]!"
+            />
+          </Box>
+        </Box>
 
         <Card
           elevation={0}
-          className="apple-card"
+          className="apple-card mt-10"
         >
-          <CardContent className="p-7">
+          <CardContent className="p-5! md:p-7!">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
+              <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+                สรุปสั้น ๆ
+              </Typography>
+              <Typography className="mt-2 text-sm leading-6 text-[var(--rf-apple-muted)]">
+                การใช้งานบริการต่อไปหมายถึงคุณยอมรับเงื่อนไขเหล่านี้ รวมถึงข้อกำหนดด้านการจอง
+                การชำระเงิน การยกเลิก และการใช้งานบัญชีผู้ใช้
+              </Typography>
+            </Box>
+
+            <Divider className="my-6! border-black/10!" />
+
             <TermsTableOfContents sections={sections} />
 
             <Divider className="my-6! border-black/10!" />

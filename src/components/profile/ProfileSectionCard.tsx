@@ -13,8 +13,8 @@ export default function ProfileSectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Box className="apple-card p-5!">
-      <Box className="mb-4 flex items-center gap-2">
+    <Box className="apple-card p-5! md:p-6!">
+      <Box className="mb-5 flex items-center gap-3">
         {icon ? (
           <Box className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-blue)]">
             {icon}
@@ -25,7 +25,7 @@ export default function ProfileSectionCard({
         </Typography>
       </Box>
 
-      <Box className="grid gap-3">{children}</Box>
+      <Box className="grid gap-4">{children}</Box>
     </Box>
   );
 }

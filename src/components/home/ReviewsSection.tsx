@@ -144,11 +144,15 @@ export default function ReviewsSection() {
   }, [reviews]);
 
   const firstReviewRow = React.useMemo(() => {
-    return marqueeReviews.filter((_, index) => index % 2 === 0);
+    return marqueeReviews.filter((_, index) => index % 3 === 0);
   }, [marqueeReviews]);
 
   const secondReviewRow = React.useMemo(() => {
-    return marqueeReviews.filter((_, index) => index % 2 === 1);
+    return marqueeReviews.filter((_, index) => index % 3 === 1);
+  }, [marqueeReviews]);
+
+  const thirdReviewRow = React.useMemo(() => {
+    return marqueeReviews.filter((_, index) => index % 3 === 2);
   }, [marqueeReviews]);
 
   function renderReviewCard(review: Review, key: string) {
@@ -162,7 +166,7 @@ export default function ReviewsSection() {
         key={key}
         elevation={0}
         sx={{ boxShadow: "none" }}
-        className="min-w-[320px] max-w-[320px] rounded-[26px]! border border-black/10 bg-white sm:min-w-[420px] sm:max-w-[420px]"
+        className="apple-card min-w-[320px] max-w-[320px] rounded-[26px]! border border-black/10 bg-white sm:min-w-[420px] sm:max-w-[420px]"
       >
         <CardContent className="p-4!">
           <Box className="flex flex-wrap items-start justify-between gap-3">
@@ -214,20 +218,20 @@ export default function ReviewsSection() {
         />
 
         <Box className="mx-auto max-w-3xl text-center">
-          <Box>
+          <Box className="flex flex-col gap-4">
             <Typography
               className="apple-heading"
               sx={{ fontSize: { xs: 38, md: 56 } }}
             >
               รีวิวจากผู้ใช้งาน
             </Typography>
-            <Typography className="apple-subtitle mt-2 text-lg">
+            <Typography className="apple-subtitle text-lg">
               เสียงจากลูกค้าที่ใช้บริการกับร้านต่าง ๆ
             </Typography>
           </Box>
         </Box>
 
-        <Box className="mt-10 overflow-hidden rounded-[34px] bg-white p-4">
+        <Box className="apple-card apple-card-no-hover mt-10 overflow-hidden rounded-[34px] bg-white p-4">
           {loadingReviews ? (
             <Box className="flex min-h-72 items-center justify-center rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-8 text-[var(--rf-apple-muted)]">
               <Box className="flex items-center gap-3 text-sm">
@@ -245,6 +249,11 @@ export default function ReviewsSection() {
               <Box className="marquee-right flex w-max gap-3">
                 {secondReviewRow.map((review, index) =>
                   renderReviewCard(review, `review-right-${review.id}-${index}`)
+                )}
+              </Box>
+              <Box className="marquee-left flex w-max gap-3">
+                {thirdReviewRow.map((review, index) =>
+                  renderReviewCard(review, `review-bottom-${review.id}-${index}`)
                 )}
               </Box>
             </Box>
@@ -278,14 +287,14 @@ export default function ReviewsSection() {
       />
 
       <Box className="mx-auto max-w-3xl text-center">
-        <Box>
+        <Box className="flex flex-col gap-4">
           <Typography
             className="apple-heading"
             sx={{ fontSize: { xs: 38, md: 56 } }}
           >
             รีวิวจากผู้ใช้งาน
           </Typography>
-          <Typography className="apple-subtitle mt-2 text-lg">
+          <Typography className="apple-subtitle text-lg">
             แบ่งปันประสบการณ์ของคุณได้ทันที
           </Typography>
         </Box>
@@ -385,7 +394,7 @@ export default function ReviewsSection() {
           </CardContent>
         </Card>
 
-        <Box className="rounded-[30px] bg-white p-4">
+        <Box className="apple-card apple-card-no-hover rounded-[30px] bg-white p-4">
           {loadingReviews ? (
             <Box className="flex min-h-72 items-center justify-center rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-8 text-[var(--rf-apple-muted)]">
               <Box className="flex items-center gap-3 text-sm">
@@ -400,7 +409,7 @@ export default function ReviewsSection() {
                   key={review.id}
                   elevation={0}
                   sx={{ boxShadow: "none" }}
-                  className="rounded-[24px]! border border-black/10 bg-white"
+                  className="apple-card rounded-[24px]! border border-black/10 bg-white"
                 >
                   <CardContent className="p-4!">
                     <Box className="flex flex-wrap items-start justify-between gap-3">

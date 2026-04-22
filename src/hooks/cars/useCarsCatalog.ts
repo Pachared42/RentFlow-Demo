@@ -13,10 +13,11 @@ type Params = {
     location: string;
     pickupDate: string;
     returnDate: string;
+    tenantSlug?: string;
 };
 
 export function useCarsCatalog(params: Params) {
-  const { q, type, sort, location, pickupDate, returnDate } = params;
+  const { q, type, sort, location, pickupDate, returnDate, tenantSlug } = params;
   const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
   const [cars, setCars] = React.useState<Car[]>([]);
     const [loading, setLoading] = React.useState(true);
@@ -40,7 +41,8 @@ export function useCarsCatalog(params: Params) {
                     pickupDate,
                     returnDate,
                 }, {
-                    marketplace: siteMode === "marketplace",
+                    marketplace: siteMode === "marketplace" && !tenantSlug,
+                    tenantSlug: tenantSlug || undefined,
                 });
                 const elapsed = Date.now() - start;
                 const delay = Math.max(2000 - elapsed, 0);
@@ -73,6 +75,7 @@ export function useCarsCatalog(params: Params) {
         returnDate,
         siteMode,
         sort,
+        tenantSlug,
         type,
     ]);
 

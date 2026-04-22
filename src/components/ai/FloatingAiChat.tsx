@@ -131,11 +131,17 @@ export default function FloatingAiChat() {
 
   return (
     <Box className="fixed bottom-5 right-5 z-50 md:bottom-7 md:right-7">
-      {open ? (
-        <Paper
-          elevation={0}
-          className="mb-4 w-[calc(100vw-40px)] max-w-[420px] overflow-hidden rounded-[30px]! border border-black/10 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)]"
-        >
+      <Paper
+        elevation={0}
+        className={`absolute bottom-0 right-0 w-[calc(100vw-40px)] max-w-[420px] overflow-hidden rounded-[30px]! border border-black/10 bg-white shadow-[0_24px_80px_rgba(0,0,0,0.18)] transform-gpu will-change-[transform,opacity,filter] transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          open
+            ? "pointer-events-auto translate-y-0 scale-[1] opacity-100 blur-0"
+            : "pointer-events-none translate-y-3 scale-[0.985] opacity-0 blur-[6px]"
+        }`}
+        sx={{
+          transformOrigin: "bottom right",
+        }}
+      >
           <Box className="bg-[var(--rf-apple-ink)] px-5 py-4 text-white">
             <Stack direction="row" alignItems="center" spacing={1.5}>
               <Box className="grid h-10 w-10 place-items-center rounded-full bg-white/10">
@@ -154,7 +160,7 @@ export default function FloatingAiChat() {
               <IconButton
                 aria-label="ปิดผู้ช่วย AI"
                 onClick={() => setOpen(false)}
-                className="text-white!"
+                className="text-white! transition-transform duration-300 ease-out hover:scale-105"
                 size="small"
               >
                 <CloseRoundedIcon fontSize="small" />
@@ -176,7 +182,7 @@ export default function FloatingAiChat() {
                   size="small"
                   label={suggestion}
                   onClick={() => setQuery(suggestion)}
-                  className={`h-auto! min-h-11! w-full! cursor-pointer justify-start! rounded-[18px]! border px-2! py-2! text-left! text-[12px]! font-bold! leading-5! transition hover:-translate-y-0.5 ${
+                  className={`h-auto! min-h-11! w-full! cursor-pointer justify-start! rounded-[18px]! border px-2! py-2! text-left! text-[12px]! font-bold! leading-5! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006] ${
                     query === suggestion
                       ? "border-[var(--rf-apple-blue)]! bg-[var(--rf-apple-blue)]! text-white!"
                       : "border-black/10! bg-[var(--rf-apple-surface-soft)]! text-[var(--rf-apple-ink)]! hover:bg-white!"
@@ -244,7 +250,7 @@ export default function FloatingAiChat() {
                 aria-label="ส่งคำถามให้ AI"
                 onClick={() => void ask()}
                 disabled={loading || !query.trim()}
-                className="h-10 w-10 rounded-full! bg-[var(--rf-apple-blue)]! text-white! disabled:bg-black/10!"
+                className="h-10 w-10 rounded-full! bg-[var(--rf-apple-blue)]! text-white! transition-transform duration-300 ease-out hover:scale-105 disabled:bg-black/10!"
               >
                 {loading ? (
                   <CircularProgress size={18} color="inherit" />
@@ -254,14 +260,21 @@ export default function FloatingAiChat() {
               </IconButton>
             </Stack>
           </Box>
-        </Paper>
-      ) : null}
+      </Paper>
 
-      {!open ? (
-        <Stack direction="row" alignItems="center" spacing={1.5}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={1.5}
+        className={`will-change-[opacity] transition-opacity duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open
+            ? "pointer-events-none opacity-0"
+            : "pointer-events-auto opacity-100"
+        }`}
+      >
           <Box
             className={`hidden rounded-[20px] border border-black/10 bg-white px-4 py-2 text-right shadow-[0_14px_40px_rgba(0,0,0,0.12)] transition-all duration-500 sm:block ${
-              showHint
+              !open && showHint
                 ? "translate-x-0 opacity-100"
                 : "pointer-events-none translate-x-3 opacity-0"
             }`}
@@ -276,7 +289,7 @@ export default function FloatingAiChat() {
           <IconButton
             aria-label="เปิดผู้ช่วย AI"
             onClick={() => setOpen(true)}
-            className="h-16 w-16 rounded-full! bg-[var(--rf-apple-ink)]! text-white! shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition hover:scale-105 hover:bg-black!"
+            className="h-16 w-16 rounded-full! bg-[var(--rf-apple-ink)]! text-white! shadow-[0_18px_48px_rgba(0,0,0,0.28)] transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-[1.02] hover:bg-black!"
           >
             <svg width="0" height="0" aria-hidden="true" focusable="false">
               <defs>
@@ -304,8 +317,7 @@ export default function FloatingAiChat() {
               }}
             />
           </IconButton>
-        </Stack>
-      ) : null}
+      </Stack>
     </Box>
   );
 }

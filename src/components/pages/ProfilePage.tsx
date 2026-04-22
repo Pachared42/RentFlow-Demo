@@ -265,9 +265,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <Box className="apple-page py-8 md:py-12">
-      <Container maxWidth="lg">
-        <Box className="mx-auto mb-8 max-w-3xl text-center">
+    <Box className="apple-page">
+      <Container maxWidth="lg" className="apple-section">
+        <Box className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
           <Typography
             component="h1"
             className="apple-heading"
@@ -275,13 +275,20 @@ export default function ProfilePage() {
           >
             โปรไฟล์ของฉัน
           </Typography>
-          <Typography className="apple-subtitle mx-auto mt-3 max-w-xl text-lg!">
+          <Box
+            className="apple-subtitle mt-3 flex w-screen justify-center text-center text-lg!"
+            sx={{
+              ml: "calc(50% - 50vw)",
+              textAlign: "center",
+              textWrap: "balance",
+            }}
+          >
             จัดการข้อมูลบัญชีและรายละเอียดติดต่อของคุณในที่เดียว
-          </Typography>
+          </Box>
         </Box>
 
-        <Box className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <Box className="grid gap-4">
+        <Box className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-6">
+          <Box className="grid gap-5">
             {error ? (
               <Alert severity="error" className="rounded-2xl!">
                 {error}
@@ -316,7 +323,7 @@ export default function ProfilePage() {
             </ProfileSectionCard>
           </Box>
 
-          <Box className="space-y-4">
+          <Box className="space-y-5">
             {saving ? (
               <Box className="apple-card flex items-center justify-center p-6">
                 <CircularProgress size={22} />

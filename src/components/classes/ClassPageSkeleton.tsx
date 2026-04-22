@@ -1,25 +1,42 @@
+"use client";
+
 import {
   Box,
   Container,
   Card,
-  CardContent,
   CardActions,
+  CardContent,
   Skeleton,
 } from "@mui/material";
 
 function HeaderSkeleton() {
   return (
-    <Box className="flex flex-col gap-2">
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 150,
-          height: 38,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
+    <Box className="mx-auto max-w-3xl text-center">
+      <Box className="flex flex-col gap-3">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mx: "auto",
+            width: { xs: 210, md: 320 },
+            height: { xs: 56, md: 78 },
+            borderRadius: "16px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            mx: "auto",
+            width: { xs: 180, sm: 240 },
+            maxWidth: "100%",
+            height: 24,
+            borderRadius: "10px",
+            transform: "none",
+          }}
+        />
+      </Box>
     </Box>
   );
 }
@@ -31,25 +48,26 @@ function CarCardSkeleton() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover"
     >
-      <Skeleton
-        variant="rectangular"
-        animation="wave"
-        sx={{
-          width: "100%",
-          height: 208,
-          borderTopLeftRadius: 24,
-          borderTopRightRadius: 24,
-        }}
-      />
+      <Box className="relative h-56 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)]">
+        <Skeleton
+          variant="rectangular"
+          animation="wave"
+          sx={{
+            width: "100%",
+            height: "100%",
+            borderRadius: 0,
+          }}
+        />
+      </Box>
 
-      <CardContent className="p-6">
-        <Box className="flex flex-col gap-1.5">
+      <CardContent className="p-6!">
+        <Box className="space-y-1.5">
           <Skeleton
             variant="text"
             animation="wave"
             sx={{
-              width: "68%",
-              height: 24,
+              width: "66%",
+              height: 28,
               borderRadius: "8px",
               transform: "none",
             }}
@@ -58,22 +76,22 @@ function CarCardSkeleton() {
             variant="text"
             animation="wave"
             sx={{
-              width: "90%",
-              height: 18,
+              width: "92%",
+              height: 20,
               borderRadius: "8px",
               transform: "none",
             }}
           />
         </Box>
 
-        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
           <Box className="flex items-end gap-2">
             <Skeleton
               variant="text"
               animation="wave"
               sx={{
-                width: 65,
-                height: 18,
+                width: 74,
+                height: 20,
                 borderRadius: "8px",
                 transform: "none",
               }}
@@ -82,8 +100,8 @@ function CarCardSkeleton() {
               variant="text"
               animation="wave"
               sx={{
-                width: 100,
-                height: 30,
+                width: 104,
+                height: 32,
                 borderRadius: "8px",
                 transform: "none",
               }}
@@ -92,8 +110,8 @@ function CarCardSkeleton() {
               variant="text"
               animation="wave"
               sx={{
-                width: 32,
-                height: 18,
+                width: 28,
+                height: 20,
                 borderRadius: "8px",
                 transform: "none",
               }}
@@ -106,22 +124,12 @@ function CarCardSkeleton() {
         <Skeleton
           variant="rounded"
           animation="wave"
-          sx={{
-            width: "100%",
-            height: 36,
-            borderRadius: "999px",
-            flex: 1,
-          }}
+          sx={{ width: "100%", height: 40, borderRadius: "999px", flex: 1 }}
         />
         <Skeleton
           variant="rounded"
           animation="wave"
-          sx={{
-            width: "100%",
-            height: 36,
-            borderRadius: "999px",
-            flex: 1,
-          }}
+          sx={{ width: "100%", height: 40, borderRadius: "999px", flex: 1 }}
         />
       </CardActions>
     </Card>
@@ -134,9 +142,9 @@ export default function ClassPageSkeleton() {
       <Container maxWidth="lg" className="apple-section">
         <HeaderSkeleton />
 
-        <Box className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <CarCardSkeleton key={i} />
+        <Box className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <CarCardSkeleton key={`class-card-skeleton-${index}`} />
           ))}
         </Box>
       </Container>

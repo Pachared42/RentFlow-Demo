@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 
 type Section = {
   id: string;
@@ -11,22 +11,27 @@ export default function PrivacyTableOfContents({
   sections: Section[];
 }) {
   return (
-    <>
-      <Typography className="text-sm font-bold text-slate-900">
-        สารบัญ
-      </Typography>
+    <Box className="flex flex-col gap-4">
+      <Box>
+        <Typography className="text-sm font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
+          สารบัญ
+        </Typography>
+        <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
+          เลือกหัวข้อที่ต้องการอ่านได้ทันที
+        </Typography>
+      </Box>
 
-      <Stack className="mt-3 grid gap-2 sm:grid-cols-2">
+      <Stack className="grid gap-3 sm:grid-cols-2">
         {sections.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+            className="apple-card rounded-[18px]! border border-black/10 bg-[var(--rf-apple-surface-soft)] px-4 py-3 text-sm font-semibold text-[var(--rf-apple-ink)]"
           >
             {section.title}
           </a>
         ))}
       </Stack>
-    </>
+    </Box>
   );
 }

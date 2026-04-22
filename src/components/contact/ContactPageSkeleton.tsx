@@ -1,19 +1,20 @@
 "use client";
 
 import * as React from "react";
-import { Box, Container, Skeleton } from "@mui/material";
+import { Box, Container, Divider, Skeleton } from "@mui/material";
 
 function HeaderSkeleton() {
   return (
-    <Box className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <Box className="flex flex-col gap-2">
+    <Box className="mx-auto max-w-3xl text-center">
+      <Box className="flex flex-col gap-3">
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: 150,
-            height: 40,
-            borderRadius: "8px",
+            mx: "auto",
+            width: { xs: 170, md: 280 },
+            height: { xs: 56, md: 78 },
+            borderRadius: "16px",
             transform: "none",
           }}
         />
@@ -21,10 +22,11 @@ function HeaderSkeleton() {
           variant="text"
           animation="wave"
           sx={{
-            width: { xs: "100%", sm: 420 },
+            mx: "auto",
+            width: { xs: "100%", sm: 360 },
             maxWidth: "100%",
-            height: 22,
-            borderRadius: "8px",
+            height: 28,
+            borderRadius: "12px",
             transform: "none",
           }}
         />
@@ -35,83 +37,62 @@ function HeaderSkeleton() {
 
 function ChipsSkeleton() {
   return (
-    <Box className="mt-2 flex flex-wrap gap-4">
+    <Box className="mt-8 flex flex-wrap justify-center gap-3">
       <Skeleton
         variant="rounded"
         animation="wave"
-        sx={{
-          width: 110,
-          height: 32,
-          borderRadius: "999px",
-        }}
+        sx={{ width: 132, height: 32, borderRadius: "999px" }}
+      />
+      <Skeleton
+        variant="rounded"
+        animation="wave"
+        sx={{ width: 168, height: 32, borderRadius: "999px" }}
       />
       <Skeleton
         variant="rounded"
         animation="wave"
         sx={{
-          width: 165,
-          height: 32,
-          borderRadius: "999px",
-        }}
-      />
-      <Skeleton
-        variant="rounded"
-        animation="wave"
-        sx={{
-          width: 270,
-          height: 32,
-          borderRadius: "999px",
+          width: 284,
           maxWidth: "100%",
+          height: 32,
+          borderRadius: "999px",
         }}
       />
     </Box>
   );
 }
 
-function InfoRowSkeleton() {
+function BranchInfoRowSkeleton() {
   return (
-    <Box className="flex items-start gap-4">
+    <Box className="flex items-start gap-3">
       <Skeleton
         variant="rounded"
         animation="wave"
         sx={{
-          width: 40,
-          height: 40,
-          borderRadius: "12px",
+          width: 36,
+          height: 36,
+          borderRadius: "999px",
           flexShrink: 0,
-          mt: "2px",
         }}
       />
 
-      <Box className="flex flex-1 flex-col gap-1.5">
+      <Box className="min-w-0 flex-1 space-y-1.5">
         <Skeleton
           variant="text"
           animation="wave"
           sx={{
-            width: 90,
-            height: 20,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 180,
-            maxWidth: "100%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 150,
-            maxWidth: "100%",
+            width: 78,
             height: 16,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: "92%",
+            height: 18,
             borderRadius: "8px",
             transform: "none",
           }}
@@ -123,48 +104,104 @@ function InfoRowSkeleton() {
 
 function ContactInfoSkeleton() {
   return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Box className="flex flex-col gap-1.5">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 120,
-            height: 22,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 220,
-            maxWidth: "100%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
+    <Box className="apple-card apple-card-no-hover p-4!">
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: 118,
+          height: 22,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          mt: 1,
+          width: 248,
+          maxWidth: "100%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
 
-      <Box className="my-5 h-px bg-black/10" />
+      <Divider className="my-5! border-black/10!" />
 
       <Box className="space-y-4">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <InfoRowSkeleton key={i} />
+        {Array.from({ length: 2 }).map((_, index) => (
+          <Box
+            key={`contact-branch-skeleton-${index}`}
+            className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
+          >
+            <Box className="flex flex-wrap items-start justify-between gap-3">
+              <Box className="space-y-1">
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: 112,
+                    height: 20,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: 80,
+                    height: 16,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+              </Box>
+
+              <Box className="flex flex-wrap gap-2">
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  sx={{ width: 88, height: 24, borderRadius: "999px" }}
+                />
+                <Skeleton
+                  variant="rounded"
+                  animation="wave"
+                  sx={{ width: 110, height: 24, borderRadius: "999px" }}
+                />
+              </Box>
+            </Box>
+
+            <Box className="mt-4 space-y-3">
+              <BranchInfoRowSkeleton />
+              <BranchInfoRowSkeleton />
+              <BranchInfoRowSkeleton />
+            </Box>
+          </Box>
         ))}
       </Box>
 
-      <Box className="my-5 h-px bg-black/10" />
+      <Divider className="my-5! border-black/10!" />
 
-      <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
-        <Box className="flex flex-col gap-1.5">
+      <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 26,
+            height: 16,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Box className="mt-1.5 space-y-1.5">
           <Skeleton
             variant="text"
             animation="wave"
             sx={{
-              width: 40,
+              width: "100%",
               height: 16,
               borderRadius: "8px",
               transform: "none",
@@ -174,18 +211,8 @@ function ContactInfoSkeleton() {
             variant="text"
             animation="wave"
             sx={{
-              width: "100%",
-              height: 18,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "82%",
-              height: 18,
+              width: "84%",
+              height: 16,
               borderRadius: "8px",
               transform: "none",
             }}
@@ -196,71 +223,108 @@ function ContactInfoSkeleton() {
   );
 }
 
-function FieldSkeleton({ height = 40 }: { height?: number }) {
+function ContactPreparationSkeleton() {
   return (
-    <Skeleton
-      variant="rounded"
-      animation="wave"
-      sx={{
-        width: "100%",
-        height,
-        borderRadius: "18px",
-      }}
-    />
-  );
-}
+    <Box className="apple-card apple-card-no-hover p-4!">
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: 164,
+          height: 22,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          mt: 1,
+          width: 308,
+          maxWidth: "100%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
 
-function ContactFormSkeleton() {
-  return (
-    <Box className="apple-card apple-card-no-hover p-5">
-      <Box className="flex flex-col gap-1.5">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 110,
-            height: 22,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 250,
-            maxWidth: "100%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
+      <Divider className="my-5! border-black/10!" />
 
-      <Box className="my-5 h-px bg-black/10" />
-
-      <Box className="grid gap-4">
-        <Box className="grid gap-4 sm:grid-cols-2">
-          <FieldSkeleton />
-          <FieldSkeleton />
+      <Box className="space-y-4">
+        <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: 118,
+              height: 20,
+              borderRadius: "8px",
+              transform: "none",
+            }}
+          />
+          <Box className="mt-3 space-y-2">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton
+                key={`contact-prepare-line-${index}`}
+                variant="text"
+                animation="wave"
+                sx={{
+                  width: index === 3 ? "76%" : "100%",
+                  height: 18,
+                  borderRadius: "8px",
+                  transform: "none",
+                }}
+              />
+            ))}
+          </Box>
         </Box>
 
-        <Box className="grid gap-4 sm:grid-cols-2">
-          <FieldSkeleton />
-          <FieldSkeleton />
+        <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: 108,
+              height: 20,
+              borderRadius: "8px",
+              transform: "none",
+            }}
+          />
+          <Box className="mt-2 space-y-1.5">
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: "100%",
+                height: 18,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: "78%",
+                height: 18,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+          </Box>
+
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            sx={{
+              mt: 4,
+              width: 172,
+              height: 40,
+              borderRadius: "999px",
+            }}
+          />
         </Box>
-
-        <FieldSkeleton height={132} />
-
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: 110,
-            height: 40,
-            borderRadius: "999px",
-          }}
-        />
       </Box>
     </Box>
   );
@@ -273,13 +337,13 @@ export default function ContactPageSkeleton() {
         <HeaderSkeleton />
         <ChipsSkeleton />
 
-        <Box className="mt-8 grid gap-5 lg:grid-cols-12">
+        <Box className="mt-10 grid gap-5 lg:grid-cols-12">
           <Box className="lg:col-span-5">
             <ContactInfoSkeleton />
           </Box>
 
           <Box className="lg:col-span-7">
-            <ContactFormSkeleton />
+            <ContactPreparationSkeleton />
           </Box>
         </Box>
       </Container>

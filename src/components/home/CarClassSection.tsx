@@ -55,14 +55,14 @@ export default function CarClassSection({
                 href={`/classes/${x.slug}`}
                 elevation={0}
                 sx={{ boxShadow: "none" }}
-                className="group cursor-pointer overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! border-0! bg-[var(--rf-apple-surface-soft)]! transition duration-200 hover:scale-[1.01]"
+                className="group cursor-pointer overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! border-0! bg-[var(--rf-apple-surface-soft)]! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006]"
               >
                 <Box className="relative h-36 w-full overflow-hidden">
                   <Image
                     src={x.image}
                     alt={x.title}
                     fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />
                   <Box className="absolute inset-0 bg-linear-to-t from-black/45 via-black/10 to-transparent" />
                 </Box>

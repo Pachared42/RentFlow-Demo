@@ -84,8 +84,19 @@ export function useCarsFilters() {
     setLocation("");
     setPickupDate("");
     setReturnDate("");
-    router.replace(pathname, { scroll: false });
-  }, [pathname, router]);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("q");
+    params.delete("type");
+    params.delete("location");
+    params.delete("pickupDate");
+    params.delete("returnDate");
+
+    const queryString = params.toString();
+    router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+      scroll: false,
+    });
+  }, [pathname, router, searchParams]);
 
   return {
     q,

@@ -55,7 +55,7 @@ export default function ContactInfoCard({
             {branches.map((branch) => (
               <Box
                 key={branch.id}
-                className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
+                className="apple-card apple-card-no-hover rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4"
               >
                 <Box className="flex flex-wrap items-start justify-between gap-3">
                   <Box>
@@ -141,7 +141,7 @@ export default function ContactInfoCard({
 
         <Divider className="my-5! border-black/10!" />
 
-        <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+        <Box className="apple-card apple-card-no-hover rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
           <Typography className="text-xs font-semibold text-[var(--rf-apple-ink)]">
             ทิป
           </Typography>

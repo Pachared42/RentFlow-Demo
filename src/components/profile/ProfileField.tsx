@@ -11,7 +11,7 @@ function FieldShell({
   children: React.ReactNode;
 }) {
   return (
-    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4">
+    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5 md:py-4.5">
       <Typography className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-[var(--rf-apple-muted)]">
         {label}
       </Typography>

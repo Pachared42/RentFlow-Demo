@@ -37,12 +37,12 @@ export default function ProfileActionCard({
   }, [router]);
 
   return (
-    <Box className="apple-card p-5">
+    <Box className="apple-card p-5 md:p-6">
       <Typography className="text-lg font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
         จัดการบัญชี
       </Typography>
 
-      <Box className="mt-4 grid gap-3">
+      <Box className="mt-5 grid gap-3">
         {!isEditing ? (
           <Button
             fullWidth

@@ -18,7 +18,8 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
-import AuthCardSkeleton from "@/src/components/auth/AuthCardSkeleton";
+import LoginCardSkeleton from "@/src/components/auth/LoginCardSkeleton";
+import RegisterCardSkeleton from "@/src/components/auth/RegisterCardSkeleton";
 import { getErrorMessage } from "@/src/lib/api-error";
 import usePageReady from "@/src/hooks/usePageReady";
 import {
@@ -152,7 +153,7 @@ export default function AuthCard({
   );
 
   if (!ready) {
-    return <AuthCardSkeleton />;
+    return isRegister ? <RegisterCardSkeleton /> : <LoginCardSkeleton />;
   }
 
   return (
@@ -164,7 +165,7 @@ export default function AuthCard({
         onClose={closeSnackbar}
       />
 
-      <Container maxWidth="sm" className="relative py-14 md:py-20">
+      <Container maxWidth="sm" className="apple-section relative">
         <Card
           elevation={0}
           className="apple-card w-full"
@@ -172,7 +173,7 @@ export default function AuthCard({
         >
           <CardContent className="p-8!">
             <Stack className="mb-6 items-center text-center">
-              <Box className="mb-4 flex items-center justify-center rounded-[28px] bg-[var(--rf-apple-surface-soft)] px-4 py-4">
+              <Box className="mb-4 flex items-center justify-center">
                 <Box className="relative h-16 w-16">
                   <Image
                     src="/RentFlow.png"

@@ -10,74 +10,86 @@ import {
 
 function HeaderSkeleton() {
   return (
-    <Stack spacing={1} className="mb-6">
-      <Stack direction="row" className="items-center justify-between gap-3">
-        <Stack className="min-w-0 flex-1">
+    <Box className="mx-auto max-w-3xl text-center">
+      <Stack spacing={0} className="items-center">
+        <Stack className="w-full items-center">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: { xs: "100%", sm: 420 },
+              maxWidth: "100%",
+              height: 48,
+              borderRadius: "8px",
+              transform: "none",
+            }}
+          />
           <Skeleton
             variant="text"
             animation="wave"
             sx={{
               width: { xs: "100%", sm: 360 },
               maxWidth: "100%",
-              height: 38,
+              height: 22,
               borderRadius: "8px",
               transform: "none",
+              marginTop: "8px",
             }}
           />
-          <Box className="mt-1 flex flex-wrap items-center gap-2">
+          <Box className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Skeleton
               variant="rounded"
               animation="wave"
               sx={{
-                width: 150,
+                width: 170,
                 height: 28,
                 borderRadius: "999px",
               }}
             />
             <Skeleton
-              variant="text"
+              variant="rounded"
               animation="wave"
               sx={{
-                width: { xs: "100%", sm: 300 },
-                maxWidth: "100%",
-                height: 16,
-                borderRadius: "8px",
-                transform: "none",
+                width: 280,
+                height: 28,
+                borderRadius: "999px",
               }}
             />
           </Box>
         </Stack>
-
-        <Skeleton
-          variant="rounded"
-          animation="wave"
-          sx={{
-            width: 110,
-            height: 36,
-            borderRadius: "999px",
-            flexShrink: 0,
-          }}
-        />
       </Stack>
-    </Stack>
+    </Box>
   );
 }
 
 function TocSkeleton() {
   return (
-    <>
-      <Skeleton
-        variant="text"
-        animation="wave"
-        sx={{
-          width: 55,
-          height: 20,
-          borderRadius: "8px",
-          transform: "none",
-        }}
-      />
+    <Box className="flex flex-col gap-4">
+      <Box>
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 55,
+            height: 20,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: 180,
+            height: 18,
+            borderRadius: "8px",
+            transform: "none",
+            marginTop: "4px",
+          }}
+        />
+      </Box>
 
-      <Box className="mt-3 grid gap-2 sm:grid-cols-2">
+      <Box className="grid gap-3 sm:grid-cols-2">
         {Array.from({ length: 8 }).map((_, i) => (
           <Skeleton
             key={i}
@@ -85,13 +97,13 @@ function TocSkeleton() {
             animation="wave"
             sx={{
               width: "100%",
-              height: 40,
-              borderRadius: "999px",
+              height: 48,
+              borderRadius: "18px",
             }}
           />
         ))}
       </Box>
-    </>
+    </Box>
   );
 }
 
@@ -137,19 +149,56 @@ function ContentSectionSkeleton({
 export default function PrivacyPageSkeleton() {
   return (
     <Box className="apple-page">
-      <Container maxWidth="md" className="apple-section relative">
+      <Container maxWidth="lg" className="apple-section relative">
         <HeaderSkeleton />
 
         <Card
           elevation={0}
-          className="apple-card apple-card-no-hover"
+          className="apple-card apple-card-no-hover mt-10"
         >
-          <CardContent className="p-7">
+          <CardContent className="p-5! md:p-7!">
+            <Box className="apple-card apple-card-no-hover rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-4! md:p-5!">
+              <Skeleton
+                variant="text"
+                animation="wave"
+                sx={{
+                  width: 80,
+                  height: 20,
+                  borderRadius: "8px",
+                  transform: "none",
+                }}
+              />
+              <Box className="mt-2 flex flex-col gap-1.5">
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: "100%",
+                    height: 18,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+                <Skeleton
+                  variant="text"
+                  animation="wave"
+                  sx={{
+                    width: "86%",
+                    height: 18,
+                    borderRadius: "8px",
+                    transform: "none",
+                  }}
+                />
+              </Box>
+            </Box>
+
+            <Divider className="my-6! border-black/10!" />
+
             <TocSkeleton />
 
             <Divider className="my-6! border-black/10!" />
 
-            <Stack spacing={3}>
+            <Stack spacing={5}>
               <ContentSectionSkeleton titleWidth={90} lines={2} />
               <ContentSectionSkeleton titleWidth={120} lines={4} />
               <ContentSectionSkeleton titleWidth={150} lines={4} />
