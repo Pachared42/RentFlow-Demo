@@ -4,14 +4,14 @@ import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import { normCarId } from "@/src/utils/car-detail/carDetail.format";
 import usePageReady from "@/src/hooks/usePageReady";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
 export default function useCarDetail(carId: string) {
   const ready = usePageReady();
   const searchParams = useSearchParams();
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const tenantSlug = searchParams.get("tenant") || undefined;
 
   const id = React.useMemo(() => normCarId(carId), [carId]);

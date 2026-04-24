@@ -136,6 +136,7 @@ export default function ProfilePage() {
   const [draft, setDraft] = React.useState<ProfileData | null>(null);
   const [isEditing, setIsEditing] = React.useState(false);
   const [avatarFileName, setAvatarFileName] = React.useState("");
+  const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
   const [passwordDraft, setPasswordDraft] = React.useState({
     currentPassword: "",
     newPassword: "",
@@ -189,6 +190,8 @@ export default function ProfilePage() {
   const handleStartEdit = React.useCallback(() => {
     if (!profile) return;
     setDraft(profile);
+    setAvatarFile(null);
+    setAvatarFileName("");
     setIsEditing(true);
   }, [profile]);
 
@@ -197,6 +200,7 @@ export default function ProfilePage() {
     setDraft(profile);
     setIsEditing(false);
     setAvatarFileName("");
+    setAvatarFile(null);
     setError(null);
   }, [profile]);
 
@@ -222,6 +226,7 @@ export default function ProfilePage() {
           setDraft((prev) =>
             prev ? { ...prev, avatarUrl: reader.result as string } : prev
           );
+          setAvatarFile(file);
           setAvatarFileName(file.name);
           setError(null);
         }
@@ -242,10 +247,16 @@ export default function ProfilePage() {
 
     try {
       const avatarChanged = draft.avatarUrl.trim() !== profile.avatarUrl.trim();
+      const shouldClearAvatar =
+        !avatarFile && Boolean(profile.avatarUrl) && !draft.avatarUrl.trim();
       const payload = {
         name: draft.displayName.trim(),
         phone: draft.phone.trim(),
-        ...(avatarChanged ? { avatarUrl: draft.avatarUrl.trim() } : {}),
+        ...(avatarFile ? { avatarFile } : {}),
+        ...(shouldClearAvatar ? { clearAvatar: true } : {}),
+        ...(avatarChanged && !avatarFile && !shouldClearAvatar
+          ? { avatarUrl: draft.avatarUrl.trim() }
+          : {}),
       };
 
       const res = await usersApi.updateMe(payload);
@@ -263,13 +274,14 @@ export default function ProfilePage() {
       setProfile(nextProfile);
       setDraft(nextProfile);
       setAvatarFileName("");
+      setAvatarFile(null);
       setIsEditing(false);
     } catch (err: unknown) {
       setError(getErrorMessage(err, "ไม่สามารถบันทึกข้อมูลโปรไฟล์ได้"));
     } finally {
       setSaving(false);
     }
-  }, [draft, profile]);
+  }, [avatarFile, draft, profile]);
 
   const handleDraftChange = React.useCallback(
     (key: keyof ProfileData, value: string) => {
@@ -412,6 +424,7 @@ export default function ProfilePage() {
                               prev ? { ...prev, avatarUrl: "" } : prev
                             );
                             setAvatarFileName("");
+                            setAvatarFile(null);
                           }}
                         >
                           ลบรูป

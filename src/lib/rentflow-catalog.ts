@@ -106,14 +106,44 @@ export function formatLocationLabel(value: string) {
 }
 
 export function buildLocationOptions(branches: Branch[]): LocationOption[] {
-  return branches
+  const byValue = new Map<string, LocationOption>();
+  const byBranchId = new Map<string, LocationOption>();
+
+  branches
     .filter((branch) => branch.name || branch.locationId || branch.id)
-    .map((branch) => ({
-      label: branch.shopName ? `${branch.name} • ${branch.shopName}` : branch.name || formatLocationLabel(branch.locationId || branch.id),
-      value: branch.locationId || branch.id || branch.name,
-    }))
-    .filter((location) => location.value)
-    .sort((a, b) => a.label.localeCompare(b.label));
+    .forEach((branch) => {
+      const branchId = branch.id?.trim();
+      const locationId = branch.locationId?.trim();
+      const branchName = branch.name?.trim() || "";
+      const rawName = branch.rawName?.trim() || "";
+      const looksGeneratedName =
+        /^brn[_-]/i.test(branchName) || /^brn[_-]/i.test(rawName);
+      const looksGeneratedLocation = /^brn[_-]/i.test(locationId || "");
+      const label =
+        branchName && !looksGeneratedName
+          ? branchName
+          : locationId && !looksGeneratedLocation
+            ? formatLocationLabel(locationId)
+            : branch.address?.trim()
+              ? branch.address.trim()
+            : "สาขาหลัก";
+      const value = locationId || branchId || branchName || rawName;
+      if (!value || byValue.has(value)) return;
+
+      const option = { label, value };
+      byValue.set(value, option);
+      if (branchId) {
+        byBranchId.set(branchId, option);
+      }
+    });
+
+  for (const option of byBranchId.values()) {
+    byValue.set(option.value, option);
+  }
+
+  return Array.from(byValue.values()).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
 }
 
 export function buildCarClasses(cars: Car[]): CatalogCarClass[] {

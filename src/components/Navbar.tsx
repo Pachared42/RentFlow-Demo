@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   AppBar,
@@ -19,7 +18,7 @@ import {
 } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
 import {
   clearCachedSessionUser,
   getCachedSessionUser,
@@ -208,6 +207,47 @@ function MobileProfileSkeleton() {
   );
 }
 
+function BrandSkeleton({ mobile = false }: { mobile?: boolean }) {
+  return (
+    <Box
+      className={`flex min-w-0 items-center ${mobile ? "gap-3" : "gap-2 md:gap-2.5"}`}
+      aria-hidden="true"
+    >
+      <Box
+        className={`${mobile ? "h-6 w-6" : "h-5 w-5"} shrink-0 animate-pulse rounded-full bg-black/[0.08]`}
+      />
+      <Box className="min-w-0">
+        <Box
+          className={`${mobile ? "h-[18px] w-[104px]" : "h-[15px] w-[92px]"} animate-pulse rounded-full bg-black/[0.08]`}
+        />
+        <Box
+          className={`${mobile ? "mt-2 h-[12px] w-[128px]" : "mt-1.5 h-[10px] w-[112px]"} animate-pulse rounded-full bg-black/[0.055]`}
+        />
+      </Box>
+    </Box>
+  );
+}
+
+function BrandLogo({
+  src,
+  alt,
+  className,
+}: {
+  src: string;
+  alt: string;
+  className: string;
+}) {
+  return (
+    <Box
+      component="img"
+      src={src}
+      alt={alt}
+      className={className}
+      sx={{ display: "block" }}
+    />
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
 
@@ -220,8 +260,11 @@ export default function Navbar() {
   const [authShellReady, setAuthShellReady] = React.useState(false);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(null);
+  const [tenantResolved, setTenantResolved] = React.useState(false);
 
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const { siteMode, ready: siteModeReady } = useRentFlowSiteModeStatus();
+  const isBrandLoading =
+    !siteModeReady || (siteMode === "storefront" && !tenantResolved);
   const brandName = tenantProfile?.shopName || "RentFlow";
   const brandCaption =
     siteMode === "storefront" && tenantProfile ? "หน้าร้านเช่ารถ" : "Smart Car Rental";
@@ -249,27 +292,31 @@ export default function Navbar() {
   React.useEffect(() => {
     if (siteMode !== "storefront") {
       setTenantProfile(null);
+      setTenantResolved(siteModeReady);
       return;
     }
 
     let cancelled = false;
+    setTenantResolved(false);
     tenantApi
       .resolveTenant()
       .then((res) => {
         if (!cancelled) {
           setTenantProfile(res.data);
+          setTenantResolved(true);
         }
       })
       .catch(() => {
         if (!cancelled) {
           setTenantProfile(null);
+          setTenantResolved(true);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [siteMode]);
+  }, [siteMode, siteModeReady]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -333,24 +380,28 @@ export default function Navbar() {
               },
             }}
           >
-            <Box className="relative h-5 w-5 shrink-0">
-              <Image
-                src={brandLogoSrc}
-                alt={brandName}
-                fill
-                className="object-contain"
-                priority
-              />
-            </Box>
+            {isBrandLoading ? (
+              <BrandSkeleton />
+            ) : (
+              <>
+                <Box className="relative h-5 w-5 shrink-0 overflow-hidden">
+                  <BrandLogo
+                    src={brandLogoSrc}
+                    alt={brandName}
+                    className="h-full w-full object-contain"
+                  />
+                </Box>
 
-            <Box className="flex min-w-0 flex-col">
-              <Typography className="apple-nav-brand truncate font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                {brandName}
-              </Typography>
-              <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                {brandCaption}
-              </Typography>
-            </Box>
+                <Box className="flex min-w-0 flex-col">
+                  <Typography className="apple-nav-brand truncate font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
+                    {brandName}
+                  </Typography>
+                  <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-[var(--rf-apple-muted)]!">
+                    {brandCaption}
+                  </Typography>
+                </Box>
+              </>
+            )}
           </Box>
 
           <Box
@@ -362,6 +413,8 @@ export default function Navbar() {
                 justifySelf: "center",
                 justifyContent: "center",
               },
+              opacity: siteModeReady ? 1 : 0,
+              pointerEvents: siteModeReady ? "auto" : "none",
             }}
           >
               {navItems.map((n) => {
@@ -543,25 +596,30 @@ export default function Navbar() {
         <Box className="flex h-full min-h-dvh w-full flex-col bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
           <Box className="flex items-center justify-between border-b border-black/10 px-4 py-4 md:px-5">
             <Box className="flex items-center gap-3">
-              <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
-                <Box className="relative h-6 w-6">
-                  <Image
-                    src={brandLogoSrc}
-                    alt={brandName}
-                    fill
-                    className="object-contain"
-                  />
-                </Box>
-              </Box>
+              {isBrandLoading ? (
+                <BrandSkeleton mobile />
+              ) : (
+                <>
+                  <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
+                    <Box className="relative h-6 w-6 overflow-hidden">
+                      <BrandLogo
+                        src={brandLogoSrc}
+                        alt={brandName}
+                        className="h-full w-full object-contain"
+                      />
+                    </Box>
+                  </Box>
 
-              <Box>
-                <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                  {brandName}
-                </Typography>
-                <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                  {brandCaption}
-                </Typography>
-              </Box>
+                  <Box>
+                    <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
+                      {brandName}
+                    </Typography>
+                    <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
+                      {brandCaption}
+                    </Typography>
+                  </Box>
+                </>
+              )}
             </Box>
 
             <Button
@@ -582,7 +640,13 @@ export default function Navbar() {
             </Button>
           </Box>
 
-          <List className="flex-1 px-4! py-4! md:px-5! md:py-5!">
+          <List
+            className="flex-1 px-4! py-4! md:px-5! md:py-5!"
+            sx={{
+              opacity: siteModeReady ? 1 : 0,
+              pointerEvents: siteModeReady ? "auto" : "none",
+            }}
+          >
             {navItems.map((n) => {
               const active = isActive(n.href);
 

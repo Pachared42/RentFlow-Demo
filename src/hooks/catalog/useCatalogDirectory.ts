@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import {
   buildCarClasses,
   buildCarTypes,
@@ -14,7 +14,7 @@ import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
 export function useCatalogDirectory(tenantSlug?: string) {
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const [cars, setCars] = React.useState<Car[]>([]);
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);

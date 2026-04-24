@@ -17,6 +17,28 @@ export const usersApi = {
   },
 
   async updateMe(payload: UpdateProfilePayload) {
+    const hasAvatarFile =
+      typeof FormData !== "undefined" &&
+      typeof File !== "undefined" &&
+      payload.avatarFile instanceof File;
+
+    if (hasAvatarFile || payload.clearAvatar) {
+      const formData = new FormData();
+      if (payload.name !== undefined) formData.append("name", payload.name);
+      if (payload.phone !== undefined) formData.append("phone", payload.phone);
+      if (payload.avatarFile) formData.append("avatar", payload.avatarFile);
+      if (payload.clearAvatar) formData.append("clearAvatar", "true");
+
+      const res = await api.patch<ApiResponse<Customer>>(
+        "/users/me",
+        formData
+      );
+      return {
+        ...res.data,
+        data: normalizeCustomer(res.data.data)!,
+      };
+    }
+
     const res = await api.patch<ApiResponse<Customer>>("/users/me", payload);
     return {
       ...res.data,

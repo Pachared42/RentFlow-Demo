@@ -4,6 +4,7 @@ import type { TenantSummary } from "../types/types";
 export type Branch = TenantSummary & {
   id: string;
   name: string;
+  rawName?: string;
   address: string;
   phone?: string;
   locationId?: string;

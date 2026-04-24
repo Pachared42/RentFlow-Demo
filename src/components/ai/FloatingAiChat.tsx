@@ -15,8 +15,8 @@ import {
 } from "@mui/material";
 
 import { formatTHB } from "@/src/constants/money";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import { aiService } from "@/src/services/ai/ai.service";
 import type {
   StorefrontAssistantRecommendation,
@@ -96,7 +96,7 @@ export default function FloatingAiChat() {
   const [result, setResult] = React.useState<StorefrontAssistantResult | null>(
     null
   );
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
 
   React.useEffect(() => {
     const timer = window.setTimeout(() => {

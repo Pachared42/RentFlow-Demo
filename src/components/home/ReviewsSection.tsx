@@ -17,11 +17,9 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
-import {
-  getRentFlowSiteMode,
-  getRentFlowStorefrontHref,
-} from "@/src/lib/tenant";
+import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
 import { reviewsApi } from "@/src/services/reviews/reviews.service";
 import type { Review } from "@/src/services/reviews/reviews.types";
 
@@ -43,7 +41,7 @@ function formatReviewDate(value: string) {
 }
 
 export default function ReviewsSection() {
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const isMarketplace = siteMode === "marketplace";
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [firstName, setFirstName] = React.useState("");

@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
 import { availabilityApi } from "@/src/services/availability/availability.service";
 import { branchesApi } from "@/src/services/branches/branches.service";
@@ -98,7 +98,7 @@ function resolveBranchPrefill(
 export default function useBooking() {
   const params = useSearchParams();
   const router = useRouter();
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
 
   const carId = params.get("carId") || "";
   const tenantSlugFromUrl = params.get("tenant") || "";

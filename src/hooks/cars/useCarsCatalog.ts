@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
@@ -18,7 +18,7 @@ type Params = {
 
 export function useCarsCatalog(params: Params) {
   const { q, type, sort, location, pickupDate, returnDate, tenantSlug } = params;
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const [cars, setCars] = React.useState<Car[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);

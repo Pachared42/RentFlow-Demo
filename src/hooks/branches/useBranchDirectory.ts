@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { branchesApi } from "@/src/services/branches/branches.service";
 import type { Branch } from "@/src/services/branches/branches.types";
 
 export function useBranchDirectory() {
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);

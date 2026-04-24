@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Box, Container, Typography, Stack, Divider } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
-import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
@@ -26,7 +26,7 @@ const SOCIAL = {
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const siteMode = useRentFlowSiteMode();
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(null);
 
