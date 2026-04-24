@@ -22,7 +22,7 @@ export default function ClassPage({ slug }: { slug: string }) {
   if (!meta) {
     return (
       <Box className="apple-page flex items-center justify-center">
-        <Typography>ไม่พบคลาสนี้</Typography>
+        <Typography>ไม่พบประเภทรถนี้</Typography>
       </Box>
     );
   }
@@ -38,7 +38,7 @@ export default function ClassPage({ slug }: { slug: string }) {
               รถ{meta.title}
             </Typography>
             <Typography className="apple-subtitle text-lg">
-              มีรถในคลาสนี้ {cars.length} คัน
+              มีรถประเภทนี้ {cars.length} คัน
             </Typography>
           </Box>
         </Box>
@@ -54,7 +54,7 @@ export default function ClassPage({ slug }: { slug: string }) {
             cars.map((car) => <CarCard key={car.id} car={car} />)
           ) : (
             <Box className="rounded-[30px] border border-dashed border-black/10 bg-white p-12 text-center text-sm font-semibold text-[var(--rf-apple-muted)] md:col-span-2 lg:col-span-3">
-              ยังไม่มีรถในคลาสนี้
+              ยังไม่มีรถประเภทนี้
             </Box>
           )}
         </Box>

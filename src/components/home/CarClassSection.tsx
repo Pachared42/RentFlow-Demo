@@ -2,18 +2,20 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Box,
   Container,
   Typography,
   Card,
   CardContent,
-  Chip,
   Divider,
+  Skeleton,
 } from "@mui/material";
 
-import type { CatalogCarClass } from "@/src/lib/rentflow-catalog";
+import {
+  getCarTypeImage,
+  type CatalogCarClass,
+} from "@/src/lib/rentflow-catalog";
 
 export default function CarClassSection({
   classes,
@@ -30,10 +32,10 @@ export default function CarClassSection({
             <Typography
               className="apple-heading apple-section-title"
             >
-              เลือกตามคลาสรถ
+              เลือกตามประเภทรถ
             </Typography>
             <Typography className="apple-subtitle mt-2 text-lg">
-              กดการ์ดเพื่อไปหน้ารถตามคลาส
+              กดการ์ดเพื่อดูรถตามประเภทที่ต้องการ
             </Typography>
           </Box>
         </Box>
@@ -44,57 +46,116 @@ export default function CarClassSection({
             Array.from({ length: 4 }).map((_, index) => (
               <Box
                 key={`class-skeleton-${index}`}
-                className="h-56 rounded-[26px] bg-[var(--rf-apple-surface-soft)]"
-              />
-            ))
-          ) : classes.length ? (
-            classes.map((x) => (
-              <Card
-                key={x.slug}
-                component={Link}
-                href={`/classes/${x.slug}`}
-                elevation={0}
-                sx={{ boxShadow: "none" }}
-                className="group cursor-pointer overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! border-0! bg-[var(--rf-apple-surface-soft)]! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006]"
+                className="overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! bg-[var(--rf-apple-surface-soft)]!"
               >
-                <Box className="relative h-36 w-full overflow-hidden">
-                  <Image
-                    src={x.image}
-                    alt={x.title}
-                    fill
-                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
-                  />
-                  <Box className="absolute inset-0 bg-linear-to-t from-black/45 via-black/10 to-transparent" />
-                </Box>
+                <Skeleton
+                  variant="rectangular"
+                  animation="wave"
+                  sx={{ width: "100%", height: 144, borderRadius: 0 }}
+                />
 
-                <CardContent className="p-5">
+                <Box className="p-5">
                   <Box className="flex items-start justify-between gap-2">
-                    <Box>
-                      <Typography className="text-base font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
-                        {x.title}
-                      </Typography>
-                      <Typography className="mt-1 text-xs text-[var(--rf-apple-muted)]">
-                        รถในคลาสนี้ {x.count} คัน
-                      </Typography>
+                    <Box className="min-w-0 flex-1">
+                      <Skeleton
+                        variant="text"
+                        animation="wave"
+                        sx={{
+                          width: "68%",
+                          height: 24,
+                          borderRadius: "8px",
+                          transform: "none",
+                        }}
+                      />
+                      <Skeleton
+                        variant="text"
+                        animation="wave"
+                        sx={{
+                          mt: 0.5,
+                          width: "54%",
+                          height: 16,
+                          borderRadius: "8px",
+                          transform: "none",
+                        }}
+                      />
                     </Box>
 
-                    <Chip
-                      size="small"
-                      label={x.tag}
-                      className="bg-white! text-[var(--rf-apple-blue)]!"
+                    <Skeleton
+                      variant="rounded"
+                      animation="wave"
+                      sx={{ width: 64, height: 24, borderRadius: "999px" }}
                     />
                   </Box>
 
-                  <Typography className="mt-2 text-xs leading-5 text-[var(--rf-apple-muted)]">
-                    {x.desc}
-                  </Typography>
-                </CardContent>
-              </Card>
+                  <Box className="mt-2 grid gap-1.5">
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      sx={{
+                        width: "100%",
+                        height: 16,
+                        borderRadius: "8px",
+                        transform: "none",
+                      }}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      sx={{
+                        width: "78%",
+                        height: 16,
+                        borderRadius: "8px",
+                        transform: "none",
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Box>
             ))
+          ) : classes.length ? (
+            classes.map((x) => {
+              const classImage = getCarTypeImage(x.type);
+
+              return (
+                <Card
+                  key={x.slug}
+                  component={Link}
+                  href={`/classes/${x.slug}`}
+                  elevation={0}
+                  sx={{ boxShadow: "none" }}
+                  className="group cursor-pointer overflow-hidden rounded-[var(--rf-apple-card-radius-sm)]! border-0! bg-[var(--rf-apple-surface-soft)]! transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] hover:scale-[1.006]"
+                >
+                  <Box className="relative h-44 w-full overflow-hidden bg-white sm:h-48">
+                    <Box
+                      component="img"
+                      src={classImage}
+                      alt=""
+                      aria-hidden
+                      className="absolute inset-0 h-full w-full object-contain transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+                    />
+                    <Box className="absolute left-5 top-5">
+                      <Typography className="apple-card-title font-black tracking-[-0.04em] text-[var(--rf-apple-ink)]">
+                        {x.title}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <CardContent className="p-5">
+                    <Typography className="text-xs text-[var(--rf-apple-muted)]">
+                      รถประเภทนี้ {x.count} คัน
+                    </Typography>
+
+                    <Typography className="mt-2 text-xs leading-5 text-[var(--rf-apple-muted)]">
+                      {x.desc}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              );
+            })
           ) : (
             <Box className="flex min-h-40 items-center justify-center rounded-[26px] border border-dashed border-black/10 bg-[var(--rf-apple-surface-soft)] px-8 py-12 text-center sm:col-span-2 md:min-h-48 md:px-12 lg:col-span-4">
               <Typography className="text-base font-semibold text-[var(--rf-apple-muted)] md:text-lg">
-                ยังไม่มีการจัดกลุ่มคลาสรถในตอนนี้
+                ยังไม่มีการจัดกลุ่มประเภทรถในตอนนี้
               </Typography>
             </Box>
           )}

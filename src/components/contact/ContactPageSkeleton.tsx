@@ -128,7 +128,7 @@ function ContactInfoSkeleton() {
         }}
       />
 
-      <Box className="space-y-4">
+      <Box className="mt-5 space-y-4">
         {Array.from({ length: 2 }).map((_, index) => (
           <Box
             key={`contact-branch-skeleton-${index}`}
@@ -181,7 +181,7 @@ function ContactInfoSkeleton() {
         ))}
       </Box>
 
-      <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-5 rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
         <Skeleton
           variant="text"
           animation="wave"
@@ -245,7 +245,7 @@ function ContactPreparationSkeleton() {
         }}
       />
 
-      <Box className="space-y-4">
+      <Box className="mt-5 space-y-4">
         <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
           <Skeleton
             variant="text"

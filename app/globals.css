@@ -496,6 +496,16 @@ a {
   box-shadow: initial !important;
 }
 
+.MuiAppBar-root {
+  z-index: 1320 !important;
+}
+
+.rentflow-select-menu-paper {
+  margin-top: 8px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
 .apple-page [class*="rounded-[24px]"][class*="bg-white"],
 .apple-page [class*="rounded-[26px]"][class*="bg-white"],
 .apple-page [class*="rounded-[30px]"][class*="bg-white"],

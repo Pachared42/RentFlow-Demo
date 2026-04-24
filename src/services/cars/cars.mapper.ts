@@ -11,6 +11,7 @@ export function normalizeCar(
 ): Car {
   const imageUrl = resolveRentFlowAssetUrl(raw.imageUrl || raw.image || "");
   const images = raw.images?.map(resolveRentFlowAssetUrl).filter(Boolean);
+  const primaryImageUrl = imageUrl || images?.[0] || "";
 
   return {
     id: raw.id,
@@ -23,10 +24,10 @@ export function normalizeCar(
     transmission: (raw.transmission || "Auto") as Car["transmission"],
     fuel: (raw.fuel || "Gasoline") as Car["fuel"],
     pricePerDay: raw.pricePerDay || 0,
-    image: imageUrl || undefined,
-    imageUrl,
+    image: primaryImageUrl || undefined,
+    imageUrl: primaryImageUrl,
     grade: raw.grade,
-    images: images?.length ? images : imageUrl ? [imageUrl] : undefined,
+    images: images?.length ? images : primaryImageUrl ? [primaryImageUrl] : undefined,
     description: raw.description,
     locationId: raw.locationId,
     isAvailable: raw.isAvailable ?? true,

@@ -25,6 +25,7 @@ export type TenantSummary = {
   publicDomain?: string;
   logoUrl?: string;
   promoImageUrl?: string;
+  promoImageUrls?: string[];
 };
 
 export type LineOfficialAccountSummary = {

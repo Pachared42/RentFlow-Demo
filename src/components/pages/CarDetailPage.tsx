@@ -50,9 +50,18 @@ export default function CarDetailPage({ carId }: { carId: string }) {
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <Box className="grid gap-5 lg:grid-cols-12 lg:gap-6">
+        <Box className="apple-section-intro max-w-3xl">
+          <Typography className="apple-heading apple-page-title">
+            รายละเอียดรถ
+          </Typography>
+          <Typography className="apple-subtitle text-lg">
+            ตรวจสอบรูปจริงของรถ สเปก ราคา และเงื่อนไขก่อนจอง
+          </Typography>
+        </Box>
+
+        <Box className="mt-8 grid gap-5 lg:grid-cols-12 lg:gap-6">
           <CarDetailHero
-            image={detail.image}
+            image={detail.images?.[0] || detail.imageUrl || detail.image}
             name={detail.name}
             isAvailable={detail.isAvailable}
           />

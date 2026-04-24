@@ -21,12 +21,16 @@ export const usersApi = {
       typeof FormData !== "undefined" &&
       typeof File !== "undefined" &&
       payload.avatarFile instanceof File;
+    const hasInlineAvatar = payload.avatarUrl?.startsWith("data:") ?? false;
 
-    if (hasAvatarFile || payload.clearAvatar) {
+    if (hasAvatarFile || hasInlineAvatar || payload.clearAvatar) {
       const formData = new FormData();
       if (payload.name !== undefined) formData.append("name", payload.name);
       if (payload.phone !== undefined) formData.append("phone", payload.phone);
       if (payload.avatarFile) formData.append("avatar", payload.avatarFile);
+      if (!payload.avatarFile && payload.avatarUrl !== undefined) {
+        formData.append("avatarUrl", payload.avatarUrl);
+      }
       if (payload.clearAvatar) formData.append("clearAvatar", "true");
 
       const res = await api.patch<ApiResponse<Customer>>(

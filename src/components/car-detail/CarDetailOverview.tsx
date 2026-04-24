@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, Typography } from "@mui/material";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   detail: {
@@ -23,7 +24,9 @@ export default function CarDetailOverview({ detail }: Props) {
         รถรุ่น{" "}
         <span className="font-semibold text-[var(--rf-apple-ink)]">{detail.name}</span>{" "}
         เหมาะสำหรับการใช้งานประเภท{" "}
-        <span className="font-semibold text-[var(--rf-apple-ink)]">{detail.type}</span>{" "}
+        <span className="font-semibold text-[var(--rf-apple-ink)]">
+          {getCarTypeLabel(detail.type)}
+        </span>{" "}
         รองรับ{" "}
         <span className="font-semibold text-[var(--rf-apple-ink)]">
           {detail.seats} ที่นั่ง

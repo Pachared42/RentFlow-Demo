@@ -4,10 +4,17 @@ import type { ApiResponse } from "../types/types";
 import type { TenantProfile } from "./tenant.types";
 
 function normalizeTenantProfile(tenant: TenantProfile): TenantProfile {
+  const promoImageUrls = (tenant.promoImageUrls || [])
+    .map((url) => resolveRentFlowAssetUrl(url))
+    .filter(Boolean) as string[];
+  const promoImageUrl =
+    resolveRentFlowAssetUrl(tenant.promoImageUrl) || promoImageUrls[0];
+
   return {
     ...tenant,
     logoUrl: resolveRentFlowAssetUrl(tenant.logoUrl),
-    promoImageUrl: resolveRentFlowAssetUrl(tenant.promoImageUrl),
+    promoImageUrl,
+    promoImageUrls,
   };
 }
 

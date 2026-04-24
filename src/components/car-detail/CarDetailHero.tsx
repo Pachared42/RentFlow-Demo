@@ -17,12 +17,12 @@ export default function CarDetailHero({ image, name, isAvailable = true }: Props
     <Box className="lg:col-span-7">
       <Box className="apple-card relative overflow-hidden">
         <StableImage
-          className="aspect-16/10"
+          className="aspect-[16/10] min-h-[260px]"
           src={image || "/RentFlow.png"}
           alt={name}
           priority
           sizes="(min-width: 1200px) 58vw, 100vw"
-          imageClassName="object-cover"
+          imageClassName="object-contain"
           onLoadedChange={setImageLoaded}
         />
 

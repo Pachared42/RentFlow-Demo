@@ -7,7 +7,7 @@ function HeroSkeleton() {
   return (
     <Box className="lg:col-span-7">
       <Box className="apple-card apple-card-no-hover overflow-hidden">
-        <Box className="aspect-16/10">
+        <Box className="aspect-[16/10] min-h-[260px]">
           <Skeleton
             variant="rectangular"
             animation="wave"
@@ -339,7 +339,33 @@ export default function CarDetailPageSkeleton() {
   return (
     <Box className="apple-page">
       <Container maxWidth="lg" className="apple-section">
-        <Box className="mt-5 grid gap-6 lg:grid-cols-12">
+        <Box className="apple-section-intro max-w-3xl">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: "min(420px, 80vw)",
+              height: { xs: 58, sm: 76, lg: 92 },
+              borderRadius: "14px",
+              transform: "none",
+              mx: "auto",
+            }}
+          />
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: "min(620px, 86vw)",
+              height: { xs: 28, sm: 34 },
+              borderRadius: "10px",
+              transform: "none",
+              mx: "auto",
+              mt: 1.5,
+            }}
+          />
+        </Box>
+
+        <Box className="mt-8 grid gap-6 lg:grid-cols-12">
           <HeroSkeleton />
           <SummaryCardSkeleton />
         </Box>

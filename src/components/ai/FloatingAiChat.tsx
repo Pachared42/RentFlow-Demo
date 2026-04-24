@@ -17,6 +17,7 @@ import {
 import { formatTHB } from "@/src/constants/money";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import { aiService } from "@/src/services/ai/ai.service";
 import type {
   StorefrontAssistantRecommendation,
@@ -24,7 +25,7 @@ import type {
 } from "@/src/services/ai/ai.types";
 
 const SUGGESTIONS = [
-  "อยากได้ SUV 5 คน งบไม่เกิน 3000 บาท",
+  "อยากได้เอสยูวี 5 คน งบไม่เกิน 3000 บาท",
   "ช่วยเลือกรถสำหรับเที่ยวทะเล 4 คน",
   "อยากได้รถประหยัดน้ำมันใช้งานในเมือง",
 ];
@@ -56,7 +57,7 @@ function RecommendationItem({
             {car.name}
           </Typography>
           <Typography className="text-xs text-[var(--rf-apple-muted)]">
-            {car.seats} ที่นั่ง • {car.type} • {formatTHB(car.pricePerDay)}/วัน
+            {car.seats} ที่นั่ง • {getCarTypeLabel(car.type)} • {formatTHB(car.pricePerDay)}/วัน
           </Typography>
         </Box>
       </Stack>

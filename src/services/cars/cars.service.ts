@@ -18,6 +18,11 @@ export async function getCars(
   params?: GetCarsParams,
   options?: RentFlowRequestOptions
 ): Promise<GetCarsResponse> {
+  const headers =
+    options?.marketplace === true
+      ? undefined
+      : getRentFlowTenantHeaders({ tenantSlug: options?.tenantSlug });
+
   const res = await api.get<CarsApiResponse>("/cars", {
     params: {
       marketplace: options?.marketplace ? "true" : undefined,
@@ -28,10 +33,7 @@ export async function getCars(
       returnDate: params?.returnDate || undefined,
       sort: params?.sort || undefined,
     },
-    headers:
-      options?.tenantSlug !== undefined
-        ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
-        : undefined,
+    headers,
   });
 
   return normalizeCarsResponse(res.data);

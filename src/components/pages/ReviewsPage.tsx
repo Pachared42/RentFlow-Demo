@@ -38,9 +38,9 @@ function ReviewsPageSkeleton() {
         <Card
           key={`review-skeleton-${index}`}
           elevation={0}
-          className="apple-card apple-card-no-hover"
+          className="apple-card apple-card-no-hover flex h-full flex-col"
         >
-          <CardContent className="p-4!">
+          <CardContent className="flex h-full min-h-[230px] flex-col p-4!">
             <Box className="flex items-start justify-between gap-4">
               <Box className="min-w-0 flex-1">
                 <Skeleton variant="text" height={26} width="68%" sx={{ transform: "none", borderRadius: 2 }} />
@@ -50,7 +50,7 @@ function ReviewsPageSkeleton() {
             </Box>
             <Skeleton variant="text" height={22} width="96%" sx={{ mt: 3, transform: "none", borderRadius: 2 }} />
             <Skeleton variant="text" height={22} width="78%" sx={{ mt: 1, transform: "none", borderRadius: 2 }} />
-            <Box className="mt-6 flex justify-end">
+            <Box className="mt-auto flex justify-end pt-6">
               <Skeleton variant="rounded" height={38} width={116} sx={{ borderRadius: 999 }} />
             </Box>
           </CardContent>

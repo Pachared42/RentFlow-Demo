@@ -14,18 +14,21 @@ type Props = {
 function CarGridSkeletonCard() {
     return (
         <Card elevation={0} className="apple-card apple-card-no-hover">
-            <Box className="relative h-56 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)]">
+            <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
                 <Skeleton variant="rectangular" animation="wave" sx={{ width: "100%", height: "100%", borderRadius: 0 }} />
             </Box>
-            <CardContent className="p-6!">
+            <CardContent className="p-5! sm:p-6!">
                 <Skeleton variant="text" animation="wave" sx={{ width: "68%", height: 28, borderRadius: "8px", transform: "none" }} />
                 <Skeleton variant="text" animation="wave" sx={{ mt: 0.5, width: "88%", height: 22, borderRadius: "8px", transform: "none" }} />
-                <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+                <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
                     <Skeleton variant="text" animation="wave" sx={{ width: "45%", height: 20, borderRadius: "8px", transform: "none" }} />
                     <Skeleton variant="text" animation="wave" sx={{ mt: 1, width: "75%", height: 28, borderRadius: "8px", transform: "none" }} />
                 </Box>
             </CardContent>
-            <CardActions sx={{ p: "0px 16px 16px" }} className="mt-1 gap-2">
+            <CardActions
+                sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
+                className="flex-col gap-2 sm:flex-row"
+            >
                 <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, height: 36.5, borderRadius: "999px" }} />
                 <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, height: 36.5, borderRadius: "999px" }} />
             </CardActions>

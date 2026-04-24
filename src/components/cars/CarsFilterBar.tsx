@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import { Box, TextField, MenuItem, Button } from "@mui/material";
-import type { LocationOption } from "@/src/lib/rentflow-catalog";
+import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
+import {
+  getCarTypeLabel,
+  type LocationOption,
+} from "@/src/lib/rentflow-catalog";
+import { getMinReturnDate, getTodayLocalDate } from "@/src/lib/rentflow-dates";
 import type { CarType, SortKey } from "@/src/services/cars/cars.types";
 
 type Props = {
@@ -40,6 +45,8 @@ export default function CarsFilterBar({
   onReturnDateChange,
   onReset,
 }: Props) {
+  const today = getTodayLocalDate();
+  const minReturnDate = getMinReturnDate(pickupDate);
   const fieldSX = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "18px",
@@ -76,12 +83,13 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
           <MenuItem value="all">ทั้งหมด</MenuItem>
           {carTypes.map((carType) => (
             <MenuItem key={carType} value={carType}>
-              {carType}
+              {getCarTypeLabel(carType)}
             </MenuItem>
           ))}
         </TextField>
@@ -94,6 +102,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
           <MenuItem value="">ทั้งหมด</MenuItem>
@@ -112,6 +121,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           InputLabelProps={{ shrink: true }}
+          inputProps={{ min: today }}
           variant="outlined"
           sx={fieldSX}
         />
@@ -124,6 +134,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           InputLabelProps={{ shrink: true }}
+          inputProps={{ min: minReturnDate }}
           variant="outlined"
           sx={fieldSX}
         />
@@ -138,6 +149,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
           <MenuItem value="price_asc">ราคาต่ำ → สูง</MenuItem>

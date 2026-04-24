@@ -9,6 +9,10 @@ import CarsPageSkeleton from "@/src/components/cars/CarsPageSkeleton";
 import { useCatalogDirectory } from "@/src/hooks/catalog/useCatalogDirectory";
 import { useCarsFilters } from "@/src/hooks/cars/useCarsFilters";
 import { useCarsCatalog } from "@/src/hooks/cars/useCarsCatalog";
+import {
+  clampPickupDateToToday,
+  clampReturnDateToPickup,
+} from "@/src/lib/rentflow-dates";
 
 function formatShopHeading(tenantSlug?: string, fallbackName?: string) {
   const candidate = fallbackName?.trim();
@@ -105,7 +109,7 @@ export default function CarsPage() {
           <Typography className="apple-subtitle text-lg">
             {isTenantCarsPage
               ? "เลือกรถของร้านนี้ได้ในหน้าเดียว พร้อมรายละเอียดครบถ้วน"
-              : "เลือกจากรถหลากหลายประเภท ทั้งรถเก๋ง รถ SUV รถกระบะ และอื่น ๆ พร้อมรายละเอียดครบถ้วน"}
+              : "เลือกจากรถหลากหลายประเภท ทั้งรถเก๋ง รถเอสยูวี รถตู้ และอื่น ๆ พร้อมรายละเอียดครบถ้วน"}
           </Typography>
         </Box>
 
@@ -140,12 +144,16 @@ export default function CarsPage() {
           updateUrl({ location: value });
         }}
         onPickupDateChange={(value) => {
-          setPickupDate(value);
-          updateUrl({ pickupDate: value });
+          const nextPickupDate = clampPickupDateToToday(value);
+          const nextReturnDate = clampReturnDateToPickup(returnDate, nextPickupDate);
+          setPickupDate(nextPickupDate);
+          setReturnDate(nextReturnDate);
+          updateUrl({ pickupDate: nextPickupDate, returnDate: nextReturnDate });
         }}
         onReturnDateChange={(value) => {
-          setReturnDate(value);
-          updateUrl({ returnDate: value });
+          const nextReturnDate = clampReturnDateToPickup(value, pickupDate);
+          setReturnDate(nextReturnDate);
+          updateUrl({ returnDate: nextReturnDate });
         }}
         onReset={resetFilters}
       />

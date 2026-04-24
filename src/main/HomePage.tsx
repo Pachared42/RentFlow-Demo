@@ -18,16 +18,24 @@ import type { PlatformPublicSettings } from "@/src/services/platform/platform.ty
 import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
-export default function HomePage() {
+type HomePageProps = {
+  initialHost?: string;
+  initialTenantProfile?: TenantProfile | null;
+};
+
+export default function HomePage({
+  initialHost,
+  initialTenantProfile = null,
+}: HomePageProps) {
   const [location, setLocation] = React.useState("");
   const [type, setType] = React.useState<CarType | "All">("All");
   const [pickupDate, setPickupDate] = React.useState("");
   const [returnDate, setReturnDate] = React.useState("");
   const [q, setQ] = React.useState("");
   const { siteMode, cars, carTypes, locations, classes, loading, error } =
-    useCatalogDirectory();
+    useCatalogDirectory(undefined, initialHost);
   const [tenantProfile, setTenantProfile] =
-    React.useState<TenantProfile | null>(null);
+    React.useState<TenantProfile | null>(initialTenantProfile);
   const [platformSettings, setPlatformSettings] =
     React.useState<PlatformPublicSettings | null>(null);
 
@@ -45,13 +53,13 @@ export default function HomePage() {
         if (!cancelled) setTenantProfile(res.data);
       })
       .catch(() => {
-        if (!cancelled) setTenantProfile(null);
+        if (!cancelled) setTenantProfile(initialTenantProfile);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [siteMode]);
+  }, [initialTenantProfile, siteMode]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -81,17 +89,19 @@ export default function HomePage() {
   const recommendedShops = React.useMemo(() => {
     return buildShopSummaries(cars).slice(0, 12);
   }, [cars]);
-  const promoImageUrl =
-    siteMode === "storefront"
-      ? tenantProfile?.promoImageUrl || ""
-      : platformSettings?.promoImageUrl || "";
   const heroImages = React.useMemo(() => {
-    if (promoImageUrl) {
-      return [promoImageUrl];
+    if (siteMode === "storefront") {
+      const images = tenantProfile?.promoImageUrls?.length
+        ? tenantProfile.promoImageUrls
+        : tenantProfile?.promoImageUrl
+          ? [tenantProfile.promoImageUrl]
+          : [];
+
+      return images.filter(Boolean);
     }
 
-    return [];
-  }, [promoImageUrl]);
+    return platformSettings?.promoImageUrl ? [platformSettings.promoImageUrl] : [];
+  }, [platformSettings, siteMode, tenantProfile]);
 
   return (
     <Box className="apple-page">

@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
 
 type Props = {
@@ -70,7 +71,7 @@ export default function CarCard({ car, showShop = false }: Props) {
               {car.name}
             </Typography>
             <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
-              {car.type} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
+              {getCarTypeLabel(car.type)} • {car.seats} ที่นั่ง • {car.transmission} • {car.fuel}
             </Typography>
           </Box>
         </Box>

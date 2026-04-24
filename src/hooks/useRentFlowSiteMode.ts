@@ -7,18 +7,18 @@ import {
   type RentFlowSiteMode,
 } from "@/src/lib/tenant";
 
-export function useRentFlowSiteMode() {
-  return useRentFlowSiteModeStatus().siteMode;
+export function useRentFlowSiteMode(initialHost?: string) {
+  return useRentFlowSiteModeStatus(initialHost).siteMode;
 }
 
-export function useRentFlowSiteModeStatus() {
+export function useRentFlowSiteModeStatus(initialHost?: string) {
   const [state, setState] = React.useState<{
     siteMode: RentFlowSiteMode;
     ready: boolean;
-  }>({
-    siteMode: "marketplace",
-    ready: false,
-  });
+  }>(() => ({
+    siteMode: initialHost ? getRentFlowSiteMode(initialHost) : "marketplace",
+    ready: Boolean(initialHost),
+  }));
 
   React.useEffect(() => {
     setState({

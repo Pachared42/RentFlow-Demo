@@ -12,6 +12,7 @@ import {
   CardContent,
 } from "@mui/material";
 import { toTHBText } from "@/src/utils/car-detail/carDetail.format";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   detail: {
@@ -43,7 +44,7 @@ export default function CarDetailSummaryCard({ detail }: Props) {
               {detail.name}
             </Typography>
             <Typography className="mt-2 text-sm text-[var(--rf-apple-muted)]">
-              {detail.type} • {detail.seats} ที่นั่ง • {detail.transmission} •{" "}
+              {getCarTypeLabel(detail.type)} • {detail.seats} ที่นั่ง • {detail.transmission} •{" "}
               {detail.fuel}
             </Typography>
           </Box>

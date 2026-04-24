@@ -17,7 +17,17 @@ import {
 } from "@mui/material";
 
 import { Herotextfield } from "@/src/components/hero/Herotextfield";
-import type { LocationOption } from "@/src/lib/rentflow-catalog";
+import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
+import {
+  getCarTypeLabel,
+  type LocationOption,
+} from "@/src/lib/rentflow-catalog";
+import {
+  clampPickupDateToToday,
+  clampReturnDateToPickup,
+  getMinReturnDate,
+  getTodayLocalDate,
+} from "@/src/lib/rentflow-dates";
 import type { CarType } from "@/src/services/cars/cars.types";
 
 type Props = {
@@ -58,6 +68,8 @@ export default function HeroSection({
   locations,
 }: Props) {
   const router = useRouter();
+  const today = getTodayLocalDate();
+  const minReturnDate = getMinReturnDate(pickupDate);
   const [heroIndex, setHeroIndex] = React.useState(0);
   const [highlightAnnouncement, setHighlightAnnouncement] = React.useState(true);
   const [loadedHeroImages, setLoadedHeroImages] = React.useState<string[]>([]);
@@ -98,10 +110,12 @@ export default function HeroSection({
 
   const handleSearch = () => {
     const params = new URLSearchParams();
+    const nextPickupDate = clampPickupDateToToday(pickupDate);
+    const nextReturnDate = clampReturnDateToPickup(returnDate, nextPickupDate);
 
     if (location) params.set("location", location);
-    if (pickupDate) params.set("pickupDate", pickupDate);
-    if (returnDate) params.set("returnDate", returnDate);
+    if (nextPickupDate) params.set("pickupDate", nextPickupDate);
+    if (nextReturnDate) params.set("returnDate", nextReturnDate);
     if (q.trim()) params.set("q", q.trim());
     if (type && type !== "All") params.set("type", type);
 
@@ -232,14 +246,13 @@ export default function HeroSection({
             {heroImages.length ? (
               heroImages.map((src, i) => {
                 const active = i === heroIndex;
-                const imageLoaded = loadedHeroImages.includes(src);
 
                 return (
                   <Box
                     key={src}
                     className={[
                       "absolute inset-0 transition-all duration-700",
-                      active && imageLoaded
+                      active
                         ? "scale-100 opacity-100"
                         : "scale-[1.02] opacity-0",
                     ].join(" ")}
@@ -259,7 +272,7 @@ export default function HeroSection({
             )}
             <Box
               className={`absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent transition-opacity duration-300 ${
-                activeHeroLoaded ? "opacity-100" : "opacity-0"
+                heroImages.length && activeHeroLoaded ? "opacity-100" : "opacity-0"
               }`}
             />
           </Box>
@@ -283,6 +296,7 @@ export default function HeroSection({
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                     fullWidth
+                    SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                     sx={Herotextfield}
                   >
                     <MenuItem value="">ทุกสาขา</MenuItem>
@@ -298,18 +312,30 @@ export default function HeroSection({
                       type="date"
                       label="วันรับรถ"
                       value={pickupDate}
-                      onChange={(e) => setPickupDate(e.target.value)}
+                      onChange={(e) => {
+                        const nextPickupDate = clampPickupDateToToday(e.target.value);
+                        const nextReturnDate = clampReturnDateToPickup(
+                          returnDate,
+                          nextPickupDate
+                        );
+                        setPickupDate(nextPickupDate);
+                        setReturnDate(nextReturnDate);
+                      }}
                       fullWidth
                       InputLabelProps={{ shrink: true }}
+                      inputProps={{ min: today }}
                       sx={Herotextfield}
                     />
                     <TextField
                       type="date"
                       label="วันคืนรถ"
                       value={returnDate}
-                      onChange={(e) => setReturnDate(e.target.value)}
+                      onChange={(e) =>
+                        setReturnDate(clampReturnDateToPickup(e.target.value, pickupDate))
+                      }
                       fullWidth
                       InputLabelProps={{ shrink: true }}
+                      inputProps={{ min: minReturnDate }}
                       sx={Herotextfield}
                     />
                   </Box>
@@ -320,12 +346,13 @@ export default function HeroSection({
                     value={type}
                     onChange={(e) => setType(e.target.value as CarType | "All")}
                     fullWidth
+                    SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                     sx={Herotextfield}
                   >
                     <MenuItem value="All">ทั้งหมด</MenuItem>
                     {carTypes.map((t) => (
                       <MenuItem key={t} value={t}>
-                        {t}
+                        {getCarTypeLabel(t)}
                       </MenuItem>
                     ))}
                   </TextField>

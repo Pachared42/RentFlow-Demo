@@ -66,16 +66,71 @@ function FieldSkeleton() {
   );
 }
 
+function AvatarFieldSkeleton() {
+  return (
+    <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5">
+      <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <Box className="flex min-w-0 items-center gap-4">
+          <Skeleton
+            variant="circular"
+            animation="wave"
+            sx={{ width: 64, height: 64, flexShrink: 0 }}
+          />
+
+          <Box className="min-w-0 flex-1 space-y-1.5">
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: 92,
+                height: 18,
+                borderRadius: "8px",
+                transform: "none",
+              }}
+            />
+            <Skeleton
+              variant="text"
+              animation="wave"
+              sx={{
+                width: 160,
+                maxWidth: "100%",
+                height: 28,
+                borderRadius: "10px",
+                transform: "none",
+              }}
+            />
+          </Box>
+        </Box>
+
+        <Box className="flex flex-wrap gap-2">
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            sx={{ width: 92, height: 40, borderRadius: "999px" }}
+          />
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            sx={{ width: 76, height: 40, borderRadius: "999px" }}
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
 function SectionSkeleton({
   titleWidth,
   columns = "md:grid-cols-2",
   fields = 4,
+  showAvatar = false,
   showDescription = false,
   showAction = false,
 }: {
   titleWidth: number;
   columns?: string;
   fields?: number;
+  showAvatar?: boolean;
   showDescription?: boolean;
   showAction?: boolean;
 }) {
@@ -109,6 +164,11 @@ function SectionSkeleton({
       </Box>
 
       <Box className={`grid gap-3 ${columns}`}>
+        {showAvatar ? (
+          <Box>
+            <AvatarFieldSkeleton />
+          </Box>
+        ) : null}
         {Array.from({ length: fields }).map((_, index) => (
           <FieldSkeleton key={`profile-field-skeleton-${titleWidth}-${index}`} />
         ))}
@@ -207,7 +267,12 @@ export default function ProfilePageSkeleton() {
 
         <Box className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-6">
           <Box className="grid gap-5">
-            <SectionSkeleton titleWidth={118} fields={5} />
+            <SectionSkeleton
+              titleWidth={118}
+              columns="grid-cols-1"
+              fields={3}
+              showAvatar
+            />
             <SectionSkeleton
               titleWidth={102}
               columns="grid-cols-1"

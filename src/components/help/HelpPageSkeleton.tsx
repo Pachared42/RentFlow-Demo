@@ -157,7 +157,7 @@ function DirectoryCardSkeleton() {
         }}
       />
 
-      <Box className="space-y-4">
+      <Box className="mt-5 space-y-4">
         {Array.from({ length: 2 }).map((_, index) => (
           <Box
             key={`help-branch-skeleton-${index}`}
@@ -210,7 +210,7 @@ function DirectoryCardSkeleton() {
         ))}
       </Box>
 
-      <Box className="rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
+      <Box className="mt-5 rounded-[18px] bg-[var(--rf-apple-surface-soft)] p-4">
         <Skeleton
           variant="text"
           animation="wave"
@@ -297,7 +297,7 @@ export default function HelpPageSkeleton() {
         <HeaderSkeleton />
         <ChipsSkeleton />
 
-        <Box className="mt-6 grid gap-4 md:grid-cols-3">
+        <Box className="apple-shelf mt-6 md:grid md:grid-cols-3">
           {Array.from({ length: 3 }).map((_, index) => (
             <StepCardSkeleton key={`help-step-skeleton-${index}`} />
           ))}

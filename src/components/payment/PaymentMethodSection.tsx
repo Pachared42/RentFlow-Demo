@@ -3,6 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { Box, Typography, TextField, MenuItem, Button } from "@mui/material";
+import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import type { Method } from "@/src/utils/payment/payment.helpers";
 import { formatTHB } from "@/src/constants/money";
 
@@ -39,6 +40,7 @@ export default function PaymentMethodSection({
           value={method}
           onChange={(e) => setMethod(e.target.value as Method)}
           fullWidth
+          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={roundedFieldSX}
         >
           <MenuItem value="promptpay">PromptPay QR</MenuItem>

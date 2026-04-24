@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, Typography } from "@mui/material";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   detail: {
@@ -29,7 +30,7 @@ export default function CarDetailSpecsCard({ detail }: Props) {
       </Typography>
 
       <Box className="apple-body-sm mt-3 grid gap-2 text-slate-700">
-        <SpecRow label="ประเภท" value={detail.type} />
+        <SpecRow label="ประเภท" value={getCarTypeLabel(detail.type)} />
         <SpecRow label="ที่นั่ง" value={detail.seats} />
         <SpecRow label="เกียร์" value={detail.transmission} />
         <SpecRow label="เชื้อเพลิง" value={detail.fuel} />

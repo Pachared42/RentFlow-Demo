@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 
 import type { Car } from "@/src/services/cars/cars.types";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   cars: Car[];
@@ -67,7 +68,7 @@ export default function CarsSection({ cars, formatTHB }: Props) {
                       {c.name}
                     </Typography>
                     <Typography className="mt-1 text-sm text-[var(--rf-apple-muted)]">
-                      {c.type} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
+                      {getCarTypeLabel(c.type)} • {c.seats} ที่นั่ง • {c.transmission} • {c.fuel}
                     </Typography>
                   </Box>
                 </Box>

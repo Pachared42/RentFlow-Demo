@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Box, Container, Typography, Stack, Divider } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
@@ -24,11 +23,19 @@ const SOCIAL = {
   facebook: "https://facebook.com",
 };
 
-export default function Footer() {
+type FooterProps = {
+  initialHost?: string;
+  initialTenantProfile?: TenantProfile | null;
+};
+
+export default function Footer({
+  initialHost,
+  initialTenantProfile = null,
+}: FooterProps) {
   const year = new Date().getFullYear();
-  const siteMode = useRentFlowSiteMode();
+  const siteMode = useRentFlowSiteMode(initialHost);
   const [tenantProfile, setTenantProfile] =
-    React.useState<TenantProfile | null>(null);
+    React.useState<TenantProfile | null>(initialTenantProfile);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -44,13 +51,26 @@ export default function Footer() {
         if (!cancelled) setTenantProfile(res.data);
       })
       .catch(() => {
-        if (!cancelled) setTenantProfile(null);
+        if (!cancelled) setTenantProfile(initialTenantProfile);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [siteMode]);
+  }, [initialTenantProfile, siteMode]);
+
+  const brandName =
+    siteMode === "storefront" && tenantProfile?.shopName
+      ? tenantProfile.shopName
+      : BRAND.name;
+  const brandLogoSrc =
+    siteMode === "storefront" && tenantProfile?.logoUrl
+      ? tenantProfile.logoUrl
+      : "/RentFlow.png";
+  const brandTagline =
+    siteMode === "storefront" && tenantProfile?.shopName
+      ? `จองรถกับ ${tenantProfile.shopName} ได้ง่าย พร้อมดูข้อมูลรถและสาขาของร้านในที่เดียว`
+      : BRAND.tagline;
 
   const contactTitle =
     siteMode === "marketplace"
@@ -74,22 +94,22 @@ export default function Footer() {
           {/* Brand */}
           <Box className="space-y-3">
             <Stack direction="row" spacing={1} alignItems="center">
-              <Box className="relative h-6 w-6 shrink-0">
-                <Image
-                  src="/RentFlow.png"
-                  alt="RentFlow Logo"
-                  fill
-                  className="object-contain"
+              <Box className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md">
+                <Box
+                  component="img"
+                  src={brandLogoSrc}
+                  alt={brandName}
+                  className="h-full w-full object-contain"
                 />
               </Box>
 
               <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">
-                {BRAND.name}
+                {brandName}
               </Typography>
             </Stack>
 
             <Typography className="apple-body-sm max-w-sm text-[var(--rf-apple-muted)] md:hidden">
-              {BRAND.tagline}
+              {brandTagline}
             </Typography>
           </Box>
 
@@ -146,7 +166,7 @@ export default function Footer() {
 
         <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Typography className="apple-label-text text-[var(--rf-apple-muted)]">
-            © {year} {BRAND.name} • แพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์
+            © {year} {brandName} • แพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์
           </Typography>
 
           <Stack

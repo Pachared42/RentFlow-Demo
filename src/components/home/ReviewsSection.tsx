@@ -205,6 +205,29 @@ export default function ReviewsSection() {
     );
   }
 
+  function renderReviewSkeletonCard(key: string) {
+    return (
+      <Card
+        key={key}
+        elevation={0}
+        sx={{ boxShadow: "none" }}
+        className="apple-card apple-card-no-hover min-w-[280px] max-w-[280px] rounded-[26px]! border border-black/10 bg-white sm:min-w-[420px] sm:max-w-[420px]"
+      >
+        <CardContent className="p-4!">
+          <Box className="flex flex-wrap items-start justify-between gap-3">
+            <Box className="min-w-0 flex-1">
+              <Box className="h-[22px] w-32 rounded-lg bg-black/[0.08]" />
+              <Box className="mt-2 h-[16px] w-40 rounded-lg bg-black/[0.08]" />
+            </Box>
+            <Box className="h-[22px] w-24 rounded-full bg-black/[0.08]" />
+          </Box>
+          <Box className="mt-4 h-[18px] w-full rounded-lg bg-black/[0.08]" />
+          <Box className="mt-2 h-[18px] w-3/4 rounded-lg bg-black/[0.08]" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (isMarketplace) {
     return (
       <Container maxWidth="lg" className="apple-section pt-0!">
@@ -240,10 +263,21 @@ export default function ReviewsSection() {
 
         <Box className="apple-card apple-card-no-hover mt-10 overflow-hidden rounded-[34px] bg-white p-4">
           {loadingReviews ? (
-            <Box className="flex min-h-72 items-center justify-center rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-8 text-[var(--rf-apple-muted)]">
-              <Box className="flex items-center gap-3 text-sm">
-                <CircularProgress size={18} />
-                <span>กำลังโหลดรีวิว...</span>
+            <Box className="grid min-h-72 gap-3">
+              <Box className="flex w-max gap-3">
+                {Array.from({ length: 3 }).map((_, index) =>
+                  renderReviewSkeletonCard(`market-review-skeleton-a-${index}`)
+                )}
+              </Box>
+              <Box className="flex w-max gap-3 pl-12">
+                {Array.from({ length: 3 }).map((_, index) =>
+                  renderReviewSkeletonCard(`market-review-skeleton-b-${index}`)
+                )}
+              </Box>
+              <Box className="flex w-max gap-3">
+                {Array.from({ length: 3 }).map((_, index) =>
+                  renderReviewSkeletonCard(`market-review-skeleton-c-${index}`)
+                )}
               </Box>
             </Box>
           ) : reviews.length ? (
@@ -394,11 +428,10 @@ export default function ReviewsSection() {
 
         <Box className="apple-card apple-card-no-hover rounded-[30px] bg-white p-4">
           {loadingReviews ? (
-            <Box className="flex min-h-72 items-center justify-center rounded-[26px] bg-[var(--rf-apple-surface-soft)] p-8 text-[var(--rf-apple-muted)]">
-              <Box className="flex items-center gap-3 text-sm">
-                <CircularProgress size={18} />
-                <span>กำลังโหลดรีวิว...</span>
-              </Box>
+            <Box className="grid min-h-72 gap-3">
+              {Array.from({ length: 3 }).map((_, index) =>
+                renderReviewSkeletonCard(`store-review-skeleton-${index}`)
+              )}
             </Box>
           ) : reviews.length ? (
             <Box className="grid gap-3">

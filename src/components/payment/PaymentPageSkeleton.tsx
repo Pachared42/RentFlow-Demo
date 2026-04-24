@@ -568,7 +568,7 @@ function PaymentFormSkeleton() {
           variant="rounded"
           animation="wave"
           sx={{
-            width: 170,
+            width: { xs: "100%", sm: 220 },
             height: 42,
             borderRadius: "999px",
           }}

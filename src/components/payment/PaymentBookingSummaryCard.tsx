@@ -14,6 +14,7 @@ import type { Car } from "@/src/services/cars/cars.types";
 import { formatTHB } from "@/src/constants/money";
 import { ADDONS, type AddonKey } from "@/src/utils/payment/payment.helpers";
 import StableImage from "@/src/components/common/StableImage";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 
 type Props = {
   bookingId: string;
@@ -271,7 +272,7 @@ export default function PaymentBookingSummaryCard({
                   {car.name}
                 </Typography>
                 <Typography className="apple-label-text mt-1 text-slate-600">
-                  {car.type} • {car.seats} ที่นั่ง • {car.transmission} •{" "}
+                  {getCarTypeLabel(car.type)} • {car.seats} ที่นั่ง • {car.transmission} •{" "}
                   {car.fuel}
                 </Typography>
               </Box>

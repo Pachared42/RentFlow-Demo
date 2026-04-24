@@ -3,6 +3,10 @@
 import * as React from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { SortKey, CarType } from "@/src/services/cars/cars.types";
+import {
+  clampPickupDateToToday,
+  clampReturnDateToPickup,
+} from "@/src/lib/rentflow-dates";
 
 export function useCarsFilters() {
   const searchParams = useSearchParams();
@@ -12,8 +16,11 @@ export function useCarsFilters() {
   const initialQ = searchParams.get("q") ?? "";
   const initialType = searchParams.get("type") ?? "all";
   const initialLocation = searchParams.get("location") ?? "";
-  const initialPickupDate = searchParams.get("pickupDate") ?? "";
-  const initialReturnDate = searchParams.get("returnDate") ?? "";
+  const initialPickupDate = clampPickupDateToToday(searchParams.get("pickupDate"));
+  const initialReturnDate = clampReturnDateToPickup(
+    searchParams.get("returnDate"),
+    initialPickupDate
+  );
 
   const [q, setQ] = React.useState(initialQ);
   const [type, setType] = React.useState<CarType | "all">(
@@ -28,8 +35,11 @@ export function useCarsFilters() {
     const nextQ = searchParams.get("q") ?? "";
     const nextType = searchParams.get("type") ?? "all";
     const nextLocation = searchParams.get("location") ?? "";
-    const nextPickupDate = searchParams.get("pickupDate") ?? "";
-    const nextReturnDate = searchParams.get("returnDate") ?? "";
+    const nextPickupDate = clampPickupDateToToday(searchParams.get("pickupDate"));
+    const nextReturnDate = clampReturnDateToPickup(
+      searchParams.get("returnDate"),
+      nextPickupDate
+    );
 
     setQ(nextQ);
     setType(nextType === "All" ? "all" : (nextType as CarType | "all"));
@@ -51,8 +61,11 @@ export function useCarsFilters() {
       const nextQ = next.q ?? q;
       const nextType = next.type ?? type;
       const nextLocation = next.location ?? location;
-      const nextPickupDate = next.pickupDate ?? pickupDate;
-      const nextReturnDate = next.returnDate ?? returnDate;
+      const nextPickupDate = clampPickupDateToToday(next.pickupDate ?? pickupDate);
+      const nextReturnDate = clampReturnDateToPickup(
+        next.returnDate ?? returnDate,
+        nextPickupDate
+      );
 
       if (nextQ.trim()) params.set("q", nextQ.trim());
       else params.delete("q");

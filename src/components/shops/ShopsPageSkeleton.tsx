@@ -78,7 +78,7 @@ function ShopCardSkeleton() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover"
     >
-      <Box className="relative h-56 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)]">
+      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -115,7 +115,7 @@ function ShopCardSkeleton() {
         </Box>
       </Box>
 
-      <CardContent className="p-4!">
+      <CardContent className="p-4! sm:p-5!">
         <Box className="flex flex-wrap gap-2">
           {Array.from({ length: 3 }).map((_, index) => (
             <Skeleton

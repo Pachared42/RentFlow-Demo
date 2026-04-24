@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, MenuItem, TextField, Typography } from "@mui/material";
+import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import {
   BRANCH_POINTS,
   OTHER_OPTION,
@@ -104,6 +105,7 @@ export default function BookingLocation({
                 onChange={(e) => setPickupBranch(e.target.value)}
                 fullWidth
                 size="small"
+                SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                 sx={fieldSX}
               >
                 {(branchOptions.length ? branchOptions : BRANCH_POINTS).map((p) => (
@@ -146,6 +148,7 @@ export default function BookingLocation({
                 onChange={(e) => setReturnBranch(e.target.value)}
                 fullWidth
                 size="small"
+                SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                 sx={fieldSX}
               >
                 {(branchOptions.length ? branchOptions : BRANCH_POINTS).map((p) => (

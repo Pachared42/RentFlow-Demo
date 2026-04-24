@@ -355,8 +355,7 @@ function FormSkeleton() {
         <Divider className="my-5! border-black/10!" />
 
         <Box className="grid gap-4">
-          <Box className="grid gap-4 lg:grid-cols-3">
-            <InputSkeleton />
+          <Box className="grid gap-4 sm:grid-cols-2">
             <InputSkeleton />
             <InputSkeleton />
           </Box>

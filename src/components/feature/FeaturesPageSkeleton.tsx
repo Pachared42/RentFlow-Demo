@@ -268,7 +268,7 @@ function FeaturesGridSkeleton() {
         <SectionHeadingSkeleton titleWidth={168} descWidth={360} />
       </Box>
 
-      <Box className="mt-4 grid gap-4 md:grid-cols-2">
+      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
         {Array.from({ length: 4 }).map((_, index) => (
           <FeatureCardSkeleton key={`feature-card-skeleton-${index}`} />
         ))}
@@ -282,7 +282,7 @@ function StepsSectionSkeleton() {
     <Box className="mt-10">
       <SectionHeadingSkeleton titleWidth={138} descWidth={420} />
 
-      <Box className="mt-4 grid gap-4 md:grid-cols-2">
+      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
         {Array.from({ length: 4 }).map((_, index) => (
           <StepCardSkeleton key={`feature-step-skeleton-${index}`} />
         ))}
@@ -296,7 +296,7 @@ function TrustSectionSkeleton() {
     <Box className="mt-10">
       <SectionHeadingSkeleton titleWidth={232} descWidth={340} />
 
-      <Box className="mt-4 grid gap-4 md:grid-cols-2">
+      <Box className="apple-shelf apple-shelf-wide mt-4 md:grid md:grid-cols-2">
         {Array.from({ length: 4 }).map((_, index) => (
           <TrustCardSkeleton key={`feature-trust-skeleton-${index}`} />
         ))}

@@ -31,7 +31,7 @@ export default function AuthSkeletonLayout({
           className="apple-card apple-card-no-hover w-full"
           sx={{ backdropFilter: "blur(6px)" }}
         >
-          <CardContent className="p-8!">
+          <CardContent className="p-5! sm:p-6! md:p-8!">
             <Stack className="mb-6 items-center text-center">
               <Box className="mb-4 flex items-center justify-center">
                 <Box className="flex h-16 w-16 items-center justify-center">

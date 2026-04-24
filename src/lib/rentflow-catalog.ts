@@ -1,5 +1,5 @@
 import type { Branch } from "@/src/services/branches/branches.types";
-import type { Grade, Car } from "@/src/services/cars/cars.types";
+import type { Car, CarType } from "@/src/services/cars/cars.types";
 
 export type LocationOption = {
   label: string;
@@ -11,13 +11,21 @@ export type CatalogCarClass = {
   title: string;
   desc: string;
   tag: string;
-  grade: Grade;
+  type: CarType;
   image: string;
   count: number;
 };
 
 const PRESENTATION_ORDER = ["Economy", "Sedan", "SUV", "Van"] as const;
-const CLASS_GRADES: Grade[] = [1, 2, 3, 4];
+const CAR_TYPE_LABEL_MAP: Record<string, string> = {
+  economy: "ประหยัด",
+  eco: "ประหยัด",
+  budget: "ประหยัด",
+  sedan: "ซีดาน",
+  suv: "เอสยูวี",
+  van: "รถตู้",
+  mpv: "รถตู้",
+};
 const LOCATION_LABEL_MAP: Record<string, string> = {
   bangkok: "กรุงเทพฯ",
   pattaya: "พัทยา",
@@ -37,39 +45,77 @@ const LOCATION_LABEL_MAP: Record<string, string> = {
   "hua-hin": "หัวหิน",
 };
 
-const CLASS_META: Record<
-  Grade,
+const CAR_TYPE_SLUG_MAP: Record<CarType, string> = {
+  Economy: "economy",
+  Sedan: "sedan",
+  SUV: "suv",
+  Van: "van",
+};
+
+const CAR_TYPE_IMAGE_MAP: Record<CarType, string> = {
+  Economy: "/car-types/economy.svg",
+  Sedan: "/car-types/sedan.svg",
+  SUV: "/car-types/suv.svg",
+  Van: "/car-types/van.svg",
+};
+
+const CAR_TYPE_META: Record<
+  CarType,
   Omit<CatalogCarClass, "count" | "image">
 > = {
-  1: {
-    slug: "premium",
-    title: "คลาส Premium",
-    desc: "กลุ่มรถพรีเมียมสำหรับการเดินทางที่ต้องการความสบาย",
-    tag: "Premium",
-    grade: 1,
+  Economy: {
+    slug: CAR_TYPE_SLUG_MAP.Economy,
+    title: "ประหยัด",
+    desc: "รถคุ้มค่า ใช้งานง่าย เหมาะกับการเดินทางประจำวัน",
+    tag: "ประหยัด",
+    type: "Economy",
   },
-  2: {
-    slug: "comfort",
-    title: "คลาส Comfort",
-    desc: "กลุ่มรถสมดุลระหว่างความสบายและราคา",
-    tag: "Comfort",
-    grade: 2,
+  Sedan: {
+    slug: CAR_TYPE_SLUG_MAP.Sedan,
+    title: "ซีดาน",
+    desc: "รถเก๋งนั่งสบาย เหมาะกับการเดินทางในเมืองและต่างจังหวัด",
+    tag: "ซีดาน",
+    type: "Sedan",
   },
-  3: {
-    slug: "value",
-    title: "คลาส Value",
-    desc: "กลุ่มรถคุ้มค่าที่พร้อมใช้งานทุกวัน",
-    tag: "Value",
-    grade: 3,
+  SUV: {
+    slug: CAR_TYPE_SLUG_MAP.SUV,
+    title: "เอสยูวี",
+    desc: "พื้นที่กว้าง นั่งสบาย เหมาะกับครอบครัวหรือสัมภาระเยอะ",
+    tag: "เอสยูวี",
+    type: "SUV",
   },
-  4: {
-    slug: "budget",
-    title: "คลาส Budget",
-    desc: "กลุ่มรถเริ่มต้นสำหรับการเดินทางประจำวัน",
-    tag: "Budget",
-    grade: 4,
+  Van: {
+    slug: CAR_TYPE_SLUG_MAP.Van,
+    title: "รถตู้",
+    desc: "รองรับผู้โดยสารหลายคน เหมาะกับทริปกลุ่มและการเดินทางเป็นทีม",
+    tag: "รถตู้",
+    type: "Van",
   },
 };
+
+export function getCarTypeLabel(type?: string | null) {
+  const normalized = type?.trim().toLowerCase();
+
+  if (!normalized) {
+    return "-";
+  }
+
+  return CAR_TYPE_LABEL_MAP[normalized] || type || "-";
+}
+
+export function getCarTypeImage(type?: string | null) {
+  const normalized = type?.trim().toLowerCase();
+
+  if (!normalized) {
+    return "/RentFlow.png";
+  }
+
+  const matchedType = PRESENTATION_ORDER.find(
+    (item) => item.toLowerCase() === normalized
+  );
+
+  return matchedType ? CAR_TYPE_IMAGE_MAP[matchedType] : "/RentFlow.png";
+}
 
 export function buildCarTypes(cars: Car[]): Car["type"][] {
   const seen = new Set<Car["type"]>();
@@ -147,25 +193,24 @@ export function buildLocationOptions(branches: Branch[]): LocationOption[] {
 }
 
 export function buildCarClasses(cars: Car[]): CatalogCarClass[] {
-  const byGrade = new Map<Grade, Car[]>();
+  const byType = new Map<CarType, Car[]>();
 
   for (const car of cars) {
-    if (!car.grade) continue;
+    if (!car.type) continue;
 
-    const list = byGrade.get(car.grade) ?? [];
+    const list = byType.get(car.type) ?? [];
     list.push(car);
-    byGrade.set(car.grade, list);
+    byType.set(car.type, list);
   }
 
-  return CLASS_GRADES
-    .filter((grade) => (byGrade.get(grade) ?? []).length > 0)
-    .map((grade) => {
-      const items = byGrade.get(grade) ?? [];
-      const lead = items[0];
+  return PRESENTATION_ORDER
+    .filter((type) => (byType.get(type) ?? []).length > 0)
+    .map((type) => {
+      const items = byType.get(type) ?? [];
 
       return {
-        ...CLASS_META[grade],
-        image: lead?.image || lead?.imageUrl || "/RentFlow.png",
+        ...CAR_TYPE_META[type],
+        image: CAR_TYPE_IMAGE_MAP[type],
         count: items.length,
       };
     });
@@ -177,6 +222,6 @@ export function getCarClassBySlug(cars: Car[], slug: string) {
 
   return {
     meta,
-    cars: meta ? cars.filter((car) => car.grade === meta.grade) : [],
+    cars: meta ? cars.filter((car) => car.type === meta.type) : [],
   };
 }

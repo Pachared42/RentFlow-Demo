@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Box, TextField, MenuItem } from "@mui/material";
+import { rentFlowSelectMenuProps } from "@/src/components/common/selectMenuProps";
 import type { BookingStatus } from "@/src/hooks/my-bookings/useMyBookingsPage";
 
 type Props = {
@@ -48,6 +49,7 @@ export default function MyBookingsFilters({
           size="small"
           fullWidth
           variant="outlined"
+          SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
           <MenuItem value="all">ทั้งหมด</MenuItem>

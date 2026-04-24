@@ -48,7 +48,7 @@ function CarCardSkeleton() {
       sx={{ boxShadow: "none" }}
       className="apple-card apple-card-no-hover"
     >
-      <Box className="relative h-56 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)]">
+      <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
         <Skeleton
           variant="rectangular"
           animation="wave"
@@ -60,7 +60,7 @@ function CarCardSkeleton() {
         />
       </Box>
 
-      <CardContent className="p-6!">
+      <CardContent className="p-5! sm:p-6!">
         <Box className="space-y-1.5">
           <Skeleton
             variant="text"
@@ -120,7 +120,10 @@ function CarCardSkeleton() {
         </Box>
       </CardContent>
 
-      <CardActions sx={{ p: "0px 16px 16px" }} className="gap-2">
+      <CardActions
+        sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
+        className="flex-col gap-2 sm:flex-row"
+      >
         <Skeleton
           variant="rounded"
           animation="wave"

@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 
 import { formatTHB } from "@/src/constants/money";
+import { getCarTypeLabel } from "@/src/lib/rentflow-catalog";
 import type { ShopSummary } from "@/src/lib/shop-directory";
 
 type Props = {
@@ -101,7 +102,7 @@ export default function ShopRecommendationsSection({
                     src={shop.logoUrl}
                     alt={shop.name}
                     onError={() => handleLogoError(shop.key)}
-                    className="absolute inset-0 h-full w-full object-contain p-10 transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />
                 ) : (
                   <Box className="grid h-full place-items-center px-6 text-center text-sm font-semibold text-[var(--rf-apple-muted)]">
@@ -127,7 +128,7 @@ export default function ShopRecommendationsSection({
                     <Chip
                       key={`${shop.key}-${type}`}
                       size="small"
-                      label={type}
+                      label={getCarTypeLabel(type)}
                       className="h-7! rounded-full! bg-[var(--rf-apple-surface-soft)]! text-[var(--rf-apple-muted)]!"
                     />
                   ))}

@@ -13,8 +13,8 @@ import type { Branch } from "@/src/services/branches/branches.types";
 import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
 
-export function useCatalogDirectory(tenantSlug?: string) {
-  const siteMode = useRentFlowSiteMode();
+export function useCatalogDirectory(tenantSlug?: string, initialHost?: string) {
+  const siteMode = useRentFlowSiteMode(initialHost);
   const [cars, setCars] = React.useState<Car[]>([]);
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
