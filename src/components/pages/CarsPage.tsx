@@ -81,7 +81,7 @@ export default function CarsPage() {
 
   const pageError = [error, directoryError].filter(Boolean).join(" • ");
 
-  if (loading) {
+  if (loading && cars.length === 0) {
     return <CarsPageSkeleton showShop={isMarketplace && !isTenantCarsPage} />;
   }
 
@@ -165,7 +165,11 @@ export default function CarsPage() {
         />
       ) : null}
 
-      <CarGrid cars={cars} showShop={isMarketplace && !isTenantCarsPage} />
+      <CarGrid
+        cars={cars}
+        showShop={isMarketplace && !isTenantCarsPage}
+        loading={loading}
+      />
     </Container>
     </Box>
   );

@@ -24,7 +24,27 @@ function apiImageRemotePattern() {
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [apiImageRemotePattern()],
+    remotePatterns: [
+      apiImageRemotePattern(),
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8080",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "8080",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "**.localhost",
+        port: "8080",
+        pathname: "/**",
+      },
+    ],
   },
 };
 

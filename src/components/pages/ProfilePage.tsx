@@ -4,6 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -23,10 +24,8 @@ type ProfileData = {
   avatarUrl: string;
   displayName: string;
   username: string;
-  email: string;
   phone: string;
   provider: string;
-  emailVerified: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -54,22 +53,10 @@ const ACCOUNT_FIELDS: FieldConfig[] = [
     editable: false,
   },
   {
-    label: "อีเมล",
-    key: "email",
-    editable: false,
-    type: "email",
-  },
-  {
     label: "เบอร์โทรศัพท์",
     key: "phone",
     editable: true,
     placeholder: "กรอกเบอร์โทรศัพท์",
-  },
-  {
-    label: "รูปโปรไฟล์ (URL)",
-    key: "avatarUrl",
-    editable: true,
-    placeholder: "https://example.com/avatar.jpg",
   },
 ];
 
@@ -148,6 +135,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = React.useState<ProfileData | null>(null);
   const [draft, setDraft] = React.useState<ProfileData | null>(null);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [avatarFileName, setAvatarFileName] = React.useState("");
   const [passwordDraft, setPasswordDraft] = React.useState({
     currentPassword: "",
     newPassword: "",
@@ -166,10 +154,8 @@ export default function ProfilePage() {
           avatarUrl: res.data.avatarUrl || "",
           displayName: getProfileDisplayName(res.data),
           username: res.data.username || "",
-          email: res.data.email?.includes("@") ? res.data.email : "",
           phone: res.data.phone || "",
           provider: "RentFlow",
-          emailVerified: true,
           createdAt: formatDateTime(res.data.createdAt || ""),
           updatedAt: formatDateTime(res.data.updatedAt || ""),
         };
@@ -210,43 +196,80 @@ export default function ProfilePage() {
     if (!profile) return;
     setDraft(profile);
     setIsEditing(false);
+    setAvatarFileName("");
     setError(null);
   }, [profile]);
 
+  const handleAvatarFileChange = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        setError("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setError("รูปโปรไฟล์ต้องมีขนาดไม่เกิน 5 เมกะไบต์");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          setDraft((prev) =>
+            prev ? { ...prev, avatarUrl: reader.result as string } : prev
+          );
+          setAvatarFileName(file.name);
+          setError(null);
+        }
+      };
+      reader.onerror = () => {
+        setError("ไม่สามารถอ่านไฟล์รูปโปรไฟล์ได้");
+      };
+      reader.readAsDataURL(file);
+    },
+    []
+  );
+
   const handleSave = React.useCallback(async () => {
-    if (!draft) return;
+    if (!draft || !profile) return;
 
     setSaving(true);
     setError(null);
 
     try {
-      const res = await usersApi.updateMe({
+      const avatarChanged = draft.avatarUrl.trim() !== profile.avatarUrl.trim();
+      const payload = {
         name: draft.displayName.trim(),
         phone: draft.phone.trim(),
-        avatarUrl: draft.avatarUrl.trim() || undefined,
-      });
+        ...(avatarChanged ? { avatarUrl: draft.avatarUrl.trim() } : {}),
+      };
+
+      const res = await usersApi.updateMe(payload);
 
       const nextProfile: ProfileData = {
         avatarUrl: res.data.avatarUrl || "",
         displayName: getProfileDisplayName(res.data),
         username: res.data.username || draft.username,
-        email: res.data.email?.includes("@") ? res.data.email : "",
         phone: res.data.phone || "",
         provider: "RentFlow",
-        emailVerified: true,
         createdAt: profile?.createdAt || "-",
         updatedAt: formatDateTime(res.data.updatedAt || ""),
       };
 
       setProfile(nextProfile);
       setDraft(nextProfile);
+      setAvatarFileName("");
       setIsEditing(false);
     } catch (err: unknown) {
       setError(getErrorMessage(err, "ไม่สามารถบันทึกข้อมูลโปรไฟล์ได้"));
     } finally {
       setSaving(false);
     }
-  }, [draft, profile?.createdAt]);
+  }, [draft, profile]);
 
   const handleDraftChange = React.useCallback(
     (key: keyof ProfileData, value: string) => {
@@ -345,12 +368,67 @@ export default function ProfilePage() {
             <ProfileSectionCard
               title="ข้อมูลบัญชี"
             >
+              <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-4 md:px-5">
+                <Box className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <Box className="flex min-w-0 items-center gap-4">
+                    <Avatar
+                      src={draft.avatarUrl || undefined}
+                      className="h-16! w-16! bg-[var(--rf-apple-ink)]! text-xl! font-bold! text-white!"
+                    >
+                      {draft.displayName?.charAt(0) || "ผ"}
+                    </Avatar>
+                    <Box className="min-w-0">
+                      <Typography className="apple-label-text mb-1 font-medium uppercase text-[var(--rf-apple-muted)]">
+                        รูปโปรไฟล์
+                      </Typography>
+                      <Typography className="wrap-break-word text-base font-bold leading-7 text-[var(--rf-apple-ink)]">
+                        {avatarFileName || (draft.avatarUrl ? "มีรูปโปรไฟล์แล้ว" : "ยังไม่มีรูปโปรไฟล์")}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {isEditing ? (
+                    <Box className="flex flex-wrap gap-2">
+                      <Button
+                        component="label"
+                        variant="outlined"
+                        className="rounded-full! px-4! font-semibold!"
+                      >
+                        เลือกรูป
+                        <input
+                          hidden
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp,image/gif"
+                          onChange={handleAvatarFileChange}
+                        />
+                      </Button>
+                      {draft.avatarUrl ? (
+                        <Button
+                          variant="text"
+                          color="error"
+                          className="rounded-full! px-4! font-semibold!"
+                          onClick={() => {
+                            setDraft((prev) =>
+                              prev ? { ...prev, avatarUrl: "" } : prev
+                            );
+                            setAvatarFileName("");
+                          }}
+                        >
+                          ลบรูป
+                        </Button>
+                      ) : null}
+                    </Box>
+                  ) : null}
+                </Box>
+              </Box>
+
               <ProfileFieldsGrid
                 fields={ACCOUNT_FIELDS}
                 profile={profile}
                 draft={draft}
                 isEditing={isEditing}
                 onDraftChange={handleDraftChange}
+                columns="grid-cols-1"
               />
             </ProfileSectionCard>
 
@@ -426,7 +504,6 @@ export default function ProfilePage() {
 
             <ProfileActionCard
               isEditing={isEditing}
-              emailVerified={profile.emailVerified}
               onStartEdit={handleStartEdit}
               onSave={handleSave}
               onCancel={handleCancel}

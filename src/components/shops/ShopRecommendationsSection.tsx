@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Box,
@@ -52,6 +51,17 @@ export default function ShopRecommendationsSection({
     [limit, shops]
   );
   const isPageLayout = layout === "page";
+  const [failedLogoIds, setFailedLogoIds] = React.useState<Set<string>>(
+    () => new Set()
+  );
+
+  const handleLogoError = React.useCallback((shopKey: string) => {
+    setFailedLogoIds((current) => {
+      const next = new Set(current);
+      next.add(shopKey);
+      return next;
+    });
+  }, []);
 
   return (
     <Container maxWidth="lg" className={isPageLayout ? "apple-section" : "apple-section"}>
@@ -85,16 +95,17 @@ export default function ShopRecommendationsSection({
               className="apple-card group"
             >
               <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
-                {shop.heroImage ? (
-                  <Image
-                    src={shop.heroImage}
+                {shop.logoUrl && !failedLogoIds.has(shop.key) ? (
+                  <Box
+                    component="img"
+                    src={shop.logoUrl}
                     alt={shop.name}
-                    fill
-                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+                    onError={() => handleLogoError(shop.key)}
+                    className="absolute inset-0 h-full w-full object-contain p-10 transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                   />
                 ) : (
                   <Box className="grid h-full place-items-center px-6 text-center text-sm font-semibold text-[var(--rf-apple-muted)]">
-                    ยังไม่มีภาพหน้าร้าน
+                    {shop.name}
                   </Box>
                 )}
                 <Box className="absolute inset-0 bg-linear-to-t from-black/55 via-black/15 to-transparent" />

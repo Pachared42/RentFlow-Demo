@@ -3,12 +3,12 @@
 import * as React from "react";
 import { Box, Button, Chip, Typography } from "@mui/material";
 import { formatTHB } from "@/src/constants/money";
+import { formatBookingDateTime } from "@/src/lib/booking-datetime";
 
 type Props = {
   bookingId: string;
   amount: number;
   customerName?: string;
-  customerEmail?: string;
   customerPhone?: string;
   carName?: string;
   pickupDate?: string;
@@ -27,19 +27,6 @@ type PreviewField = {
 
 type DownloadMode = "auto" | "manual";
 type DownloadStatus = "idle" | "auto" | "manual" | "error";
-
-function formatThaiDate(value?: string) {
-  if (!value) return "-";
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat("th-TH", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
 
 function wrapCanvasText(
   ctx: CanvasRenderingContext2D,
@@ -245,7 +232,6 @@ export default function BookingReceiptCard({
   bookingId,
   amount,
   customerName,
-  customerEmail,
   customerPhone,
   carName,
   pickupDate,
@@ -294,13 +280,8 @@ export default function BookingReceiptCard({
         label: "เบอร์โทร",
         value: customerPhone || "-",
       },
-      {
-        label: "อีเมล",
-        value: customerEmail || "-",
-        wide: true,
-      },
     ],
-    [customerEmail, customerName, customerPhone]
+    [customerName, customerPhone]
   );
 
   const tripFields = React.useMemo<PreviewField[]>(
@@ -316,12 +297,12 @@ export default function BookingReceiptCard({
       },
       {
         label: "วันรับรถ",
-        value: `${formatThaiDate(pickupDate)}${pickupPoint ? ` • ${pickupPoint}` : ""}`,
+        value: `${formatBookingDateTime(pickupDate)}${pickupPoint ? ` • ${pickupPoint}` : ""}`,
         wide: true,
       },
       {
         label: "วันคืนรถ",
-        value: `${formatThaiDate(returnDate)}${returnPoint ? ` • ${returnPoint}` : ""}`,
+        value: `${formatBookingDateTime(returnDate)}${returnPoint ? ` • ${returnPoint}` : ""}`,
         wide: true,
       },
     ],
@@ -477,7 +458,6 @@ export default function BookingReceiptCard({
     const customerCards = [
       { label: "ชื่อผู้จอง", value: customerName || "-", fontSize: 34 },
       { label: "เบอร์โทร", value: customerPhone || "-", fontSize: 32 },
-      { label: "อีเมล", value: customerEmail || "-", fontSize: 28 },
     ];
     const customerSectionHeight =
       24 +
@@ -514,7 +494,7 @@ export default function BookingReceiptCard({
           background: "#ffffff",
           valueFontSize: field.fontSize,
           minHeight: 102,
-        }) + (index < 2 ? 14 : 0);
+        }) + (index < customerCards.length - 1 ? 14 : 0);
     });
 
     cursorY = customerSectionY + customerSectionHeight + 46;
@@ -530,12 +510,12 @@ export default function BookingReceiptCard({
       { label: "รถ", value: carName || "-", fontSize: 30 },
       {
         label: "วันรับรถ",
-        value: `${formatThaiDate(pickupDate)}${pickupPoint ? ` • ${pickupPoint}` : ""}`,
+        value: `${formatBookingDateTime(pickupDate)}${pickupPoint ? ` • ${pickupPoint}` : ""}`,
         fontSize: 28,
       },
       {
         label: "วันคืนรถ",
-        value: `${formatThaiDate(returnDate)}${returnPoint ? ` • ${returnPoint}` : ""}`,
+        value: `${formatBookingDateTime(returnDate)}${returnPoint ? ` • ${returnPoint}` : ""}`,
         fontSize: 28,
       },
     ];
@@ -598,7 +578,6 @@ export default function BookingReceiptCard({
     amount,
     bookingReference,
     carName,
-    customerEmail,
     customerName,
     customerPhone,
     issuedDate,

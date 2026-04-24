@@ -26,6 +26,8 @@ import {
   getSessionUser,
 } from "@/src/services/auth/auth.service";
 import type { Customer } from "@/src/services/auth/auth.types";
+import { tenantApi } from "@/src/services/tenant/tenant.service";
+import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
 type User = {
   name: string;
@@ -33,6 +35,56 @@ type User = {
   username?: string;
   avatarUrl?: string;
 };
+
+type AuthSkeletonVariant = "guest" | "profile";
+
+const desktopLoginButtonSx = {
+  px: {
+    xs: "10px !important",
+    md: "11px !important",
+    lg: "12px !important",
+  },
+  py: {
+    xs: "3px !important",
+    md: "3px !important",
+    lg: "4px !important",
+  },
+  minHeight: {
+    xs: "30px !important",
+    md: "32px !important",
+    lg: "34px !important",
+  },
+  fontSize: {
+    xs: "0.72rem !important",
+    md: "0.74rem !important",
+    lg: "0.78rem !important",
+  },
+  lineHeight: "1 !important",
+} as const;
+
+const desktopRegisterButtonSx = {
+  px: {
+    xs: "12px !important",
+    md: "13px !important",
+    lg: "14px !important",
+  },
+  py: {
+    xs: "3px !important",
+    md: "3px !important",
+    lg: "4px !important",
+  },
+  minHeight: {
+    xs: "30px !important",
+    md: "32px !important",
+    lg: "34px !important",
+  },
+  fontSize: {
+    xs: "0.72rem !important",
+    md: "0.74rem !important",
+    lg: "0.78rem !important",
+  },
+  lineHeight: "1 !important",
+} as const;
 
 function MobileMenuGlyph({ open }: { open: boolean }) {
   return (
@@ -85,6 +137,77 @@ function mapCustomerToNavbarUser(user: Customer | null): User | null {
   };
 }
 
+function DesktopGuestButtonsSkeleton() {
+  return (
+    <>
+      <Box
+        sx={desktopLoginButtonSx}
+        className="relative inline-flex items-center justify-center overflow-hidden rounded-full border border-black/[0.1] bg-white"
+      >
+        <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/[0.04]" />
+      </Box>
+      <Box
+        sx={desktopRegisterButtonSx}
+        className="relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[var(--rf-apple-blue)]"
+      >
+        <span className="invisible whitespace-nowrap font-semibold">
+          สมัครสมาชิก
+        </span>
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14" />
+      </Box>
+    </>
+  );
+}
+
+function DesktopProfileSkeleton() {
+  return (
+    <Box className="h-10! w-full max-w-[220px] rounded-full! px-0! py-0!">
+      <Box className="flex h-full w-full items-center justify-end gap-2.5">
+        <Box className="h-8 w-8 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
+        <Box className="min-w-0 flex-1 text-left">
+          <Box className="h-[14px] w-[108px] animate-pulse rounded-full bg-black/[0.08]" />
+          <Box className="mt-1.5 h-[10px] w-[72px] animate-pulse rounded-full bg-black/[0.055]" />
+        </Box>
+      </Box>
+    </Box>
+  );
+}
+
+function MobileGuestButtonsSkeleton() {
+  return (
+    <>
+      <Box className="relative inline-flex min-h-[44px] w-full items-center justify-center overflow-hidden rounded-full border border-black/[0.08] bg-white px-4 py-2.5">
+        <span className="invisible whitespace-nowrap">เข้าสู่ระบบ</span>
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-black/[0.04]" />
+      </Box>
+      <Box className="relative inline-flex min-h-[44px] w-full items-center justify-center overflow-hidden rounded-full bg-[var(--rf-apple-blue)] px-4 py-2.5">
+        <span className="invisible whitespace-nowrap font-semibold">
+          สมัครสมาชิก
+        </span>
+        <Box className="absolute inset-0 animate-pulse rounded-full bg-white/14" />
+      </Box>
+    </>
+  );
+}
+
+function MobileProfileSkeleton() {
+  return (
+    <>
+      <Box className="rounded-[24px] border border-black/10 bg-white px-4 py-3">
+        <Box className="flex items-center gap-3">
+          <Box className="h-11 w-11 shrink-0 animate-pulse rounded-full bg-black/[0.08]" />
+          <Box className="min-w-0 flex-1">
+            <Box className="h-[15px] w-[124px] animate-pulse rounded-full bg-black/[0.08]" />
+            <Box className="mt-2 h-[12px] w-[164px] max-w-full animate-pulse rounded-full bg-black/[0.055]" />
+          </Box>
+        </Box>
+      </Box>
+      <Box className="h-[44px] w-full animate-pulse rounded-full border border-black/[0.08] bg-white" />
+    </>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
 
@@ -92,8 +215,17 @@ export default function Navbar() {
   const toggleDrawer = (v: boolean) => () => setOpen(v);
   const [user, setUser] = React.useState<User | null>(null);
   const [authResolved, setAuthResolved] = React.useState(false);
+  const [authSkeletonVariant, setAuthSkeletonVariant] =
+    React.useState<AuthSkeletonVariant>("guest");
+  const [authShellReady, setAuthShellReady] = React.useState(false);
+  const [tenantProfile, setTenantProfile] =
+    React.useState<TenantProfile | null>(null);
 
   const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const brandName = tenantProfile?.shopName || "RentFlow";
+  const brandCaption =
+    siteMode === "storefront" && tenantProfile ? "หน้าร้านเช่ารถ" : "Smart Car Rental";
+  const brandLogoSrc = tenantProfile?.logoUrl || "/RentFlow.png";
   const navItems = React.useMemo(
     () =>
       siteMode === "marketplace"
@@ -104,11 +236,40 @@ export default function Navbar() {
 
   useHydrationLayoutEffect(() => {
     const cachedUser = getCachedSessionUser();
-    if (!cachedUser) return;
-
-    setUser(mapCustomerToNavbarUser(cachedUser));
-    setAuthResolved(true);
+    if (cachedUser) {
+      setUser(mapCustomerToNavbarUser(cachedUser));
+      setAuthSkeletonVariant("profile");
+    } else {
+      setUser(null);
+      setAuthSkeletonVariant("guest");
+    }
+    setAuthShellReady(true);
   }, []);
+
+  React.useEffect(() => {
+    if (siteMode !== "storefront") {
+      setTenantProfile(null);
+      return;
+    }
+
+    let cancelled = false;
+    tenantApi
+      .resolveTenant()
+      .then((res) => {
+        if (!cancelled) {
+          setTenantProfile(res.data);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTenantProfile(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -118,12 +279,14 @@ export default function Navbar() {
         const currentUser = await getSessionUser();
         if (!cancelled) {
           setUser(mapCustomerToNavbarUser(currentUser));
+          setAuthSkeletonVariant(currentUser ? "profile" : "guest");
           setAuthResolved(true);
         }
       } catch {
         if (!cancelled) {
           clearCachedSessionUser();
           setUser(null);
+          setAuthSkeletonVariant("guest");
           setAuthResolved(true);
         }
       }
@@ -146,16 +309,34 @@ export default function Navbar() {
       sx={{ color: "var(--rf-apple-ink)" }}
     >
       <Container maxWidth="lg">
-        <Toolbar className="flex min-h-[52px]! justify-between gap-3 px-0! md:min-h-11! md:gap-4">
+        <Toolbar
+          className="min-h-[52px]! px-0! md:min-h-11!"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 3,
+            "@media (min-width: 801px)": {
+              display: "grid",
+              gridTemplateColumns: "minmax(0,1fr) auto minmax(0,1fr)",
+              alignItems: "center",
+              gap: 2,
+            },
+          }}
+        >
           <Box
             component={Link}
             href="/"
             className="flex min-w-0 items-center gap-2 no-underline md:gap-2.5"
+            sx={{
+              "@media (min-width: 801px)": {
+                justifySelf: "start",
+              },
+            }}
           >
             <Box className="relative h-5 w-5 shrink-0">
               <Image
-                src="/RentFlow.png"
-                alt="RentFlow Logo"
+                src={brandLogoSrc}
+                alt={brandName}
                 fill
                 className="object-contain"
                 priority
@@ -164,10 +345,10 @@ export default function Navbar() {
 
             <Box className="flex min-w-0 flex-col">
               <Typography className="apple-nav-brand truncate font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                RentFlow
+                {brandName}
               </Typography>
               <Typography className="apple-nav-caption mt-0.5! truncate font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                Smart Car Rental
+                {brandCaption}
               </Typography>
             </Box>
           </Box>
@@ -178,6 +359,8 @@ export default function Navbar() {
               display: "none",
               "@media (min-width: 801px)": {
                 display: "flex",
+                justifySelf: "center",
+                justifyContent: "center",
               },
             }}
           >
@@ -221,23 +404,26 @@ export default function Navbar() {
             className="items-center gap-2"
             sx={{
               display: "none",
-              minWidth: 228,
-              justifyContent: "flex-end",
+              minWidth: 0,
               "@media (min-width: 801px)": {
                 display: "flex",
+                justifySelf: "end",
+                justifyContent: "flex-end",
+                maxWidth: 220,
+                width: "100%",
               },
             }}
           >
-              {!authResolved ? (
-                <Box className="h-10! w-[228px]! rounded-full! px-0! py-0!">
-                  <Box className="flex h-full w-full items-center justify-end gap-2.5">
-                    <Box className="h-8 w-8 shrink-0 rounded-full bg-black/[0.1]" />
-                    <Box className="min-w-0 flex-1 text-left">
-                      <Box className="h-[15px] w-[108px] rounded-full bg-black/[0.11]" />
-                      <Box className="mt-1.5 h-[10px] w-[72px] rounded-full bg-black/[0.075]" />
-                    </Box>
-                  </Box>
+              {!authShellReady ? (
+                <Box className="h-10! w-full max-w-[220px] opacity-0">
+                  <Box className="flex h-full w-full items-center justify-end gap-2" />
                 </Box>
+              ) : !authResolved ? (
+                authSkeletonVariant === "profile" ? (
+                  <DesktopProfileSkeleton />
+                ) : (
+                  <DesktopGuestButtonsSkeleton />
+                )
               ) : !user ? (
                 <>
                   <Button
@@ -245,7 +431,7 @@ export default function Navbar() {
                     href="/login"
                     variant="outlined"
                     className="apple-button-copy rounded-full!"
-                    sx={{ px: 2.2, py: 0.65 }}
+                    sx={desktopLoginButtonSx}
                   >
                     เข้าสู่ระบบ
                   </Button>
@@ -255,10 +441,7 @@ export default function Navbar() {
                     href="/register"
                     variant="contained"
                     className="apple-button-copy rounded-full! font-semibold!"
-                    sx={{
-                      px: 2.4,
-                      py: 0.65,
-                    }}
+                    sx={desktopRegisterButtonSx}
                   >
                     สมัครสมาชิก
                   </Button>
@@ -270,10 +453,12 @@ export default function Navbar() {
                     href="/profile"
                     disableRipple
                     disableTouchRipple
-                    className="h-10! w-[228px]! rounded-full! px-0! py-0!"
+                    className="h-10! w-full rounded-full! px-0! py-0!"
                     sx={{
                       backgroundColor: "transparent",
                       border: "0",
+                      minWidth: 0,
+                      maxWidth: 220,
                       "&:hover": {
                         backgroundColor: "transparent",
                       },
@@ -361,8 +546,8 @@ export default function Navbar() {
               <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
                 <Box className="relative h-6 w-6">
                   <Image
-                    src="/RentFlow.png"
-                    alt="RentFlow Logo"
+                    src={brandLogoSrc}
+                    alt={brandName}
                     fill
                     className="object-contain"
                   />
@@ -371,10 +556,10 @@ export default function Navbar() {
 
               <Box>
                 <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                  RentFlow
+                  {brandName}
                 </Typography>
                 <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                  Smart Car Rental
+                  {brandCaption}
                 </Typography>
               </Box>
             </Box>
@@ -437,7 +622,15 @@ export default function Navbar() {
           </List>
 
           <Box className="flex flex-col gap-3 border-t border-black/10 p-4 md:px-5 md:pb-6">
-            {!user ? (
+            {!authShellReady ? (
+              <Box className="h-[91px] w-full opacity-0" />
+            ) : !authResolved ? (
+              authSkeletonVariant === "profile" ? (
+                <MobileProfileSkeleton />
+              ) : (
+                <MobileGuestButtonsSkeleton />
+              )
+            ) : !user ? (
               <>
                 <Button
                   component={Link}
@@ -489,8 +682,8 @@ export default function Navbar() {
                         <Typography className="apple-nav-link truncate font-semibold! text-[var(--rf-apple-ink)]!">
                           {user.name}
                         </Typography>
-                        <Typography className="apple-body-sm break-all text-[var(--rf-apple-muted)]!">
-                          {user.email}
+                        <Typography className="apple-body-sm text-[var(--rf-apple-muted)]!">
+                          {user.username || "ผู้ใช้งาน"}
                         </Typography>
                       </Box>
                     </Box>

@@ -118,8 +118,6 @@ export default function PaymentPage() {
                 <PaymentCustomerForm
                   fullName={payment.fullName}
                   setFullName={payment.setFullName}
-                  email={payment.email}
-                  setEmail={payment.setEmail}
                   phone={payment.phone}
                   setPhone={payment.setPhone}
                   roundedFieldSX={payment.roundedFieldSX}

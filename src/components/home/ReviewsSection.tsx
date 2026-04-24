@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Box,
   Button,
@@ -226,6 +227,16 @@ export default function ReviewsSection() {
             <Typography className="apple-subtitle text-lg">
               เสียงจากลูกค้าที่ใช้บริการกับร้านต่าง ๆ
             </Typography>
+            <Box>
+              <Button
+                component={Link}
+                href="/reviews"
+                variant="contained"
+                className="rounded-full! px-5! font-semibold!"
+              >
+                ดูรีวิวทั้งหมด
+              </Button>
+            </Box>
           </Box>
         </Box>
 

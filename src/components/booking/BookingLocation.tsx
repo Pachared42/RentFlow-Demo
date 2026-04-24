@@ -8,6 +8,7 @@ import {
 
 type Props = {
   merchantBranchesEnabled: boolean;
+  branchOptions: string[];
   fieldSX: object;
   pickupBranch: string;
   setPickupBranch: (value: string) => void;
@@ -25,6 +26,7 @@ type Props = {
 
 export default function BookingLocation({
   merchantBranchesEnabled,
+  branchOptions,
   fieldSX,
   pickupBranch,
   setPickupBranch,
@@ -104,7 +106,7 @@ export default function BookingLocation({
                 size="small"
                 sx={fieldSX}
               >
-                {BRANCH_POINTS.map((p) => (
+                {(branchOptions.length ? branchOptions : BRANCH_POINTS).map((p) => (
                   <MenuItem key={p} value={p}>
                     {p}
                   </MenuItem>
@@ -146,7 +148,7 @@ export default function BookingLocation({
                 size="small"
                 sx={fieldSX}
               >
-                {BRANCH_POINTS.map((p) => (
+                {(branchOptions.length ? branchOptions : BRANCH_POINTS).map((p) => (
                   <MenuItem key={p} value={p}>
                     {p}
                   </MenuItem>

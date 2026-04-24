@@ -7,7 +7,6 @@ type Params = {
   carExists: boolean;
   carAvailable: boolean;
   fullName: string;
-  email: string;
   phone: string;
   pickupDate: string;
   returnDate: string;
@@ -26,7 +25,6 @@ export default function useBookingValidation({
   carExists,
   carAvailable,
   fullName,
-  email,
   phone,
   pickupDate,
   returnDate,
@@ -63,7 +61,6 @@ export default function useBookingValidation({
     carExists &&
     carAvailable &&
     fullName.trim().length >= 2 &&
-    (!email.trim() || email.trim().includes("@")) &&
     phone.trim().length >= 9 &&
     !!pickupDate &&
     !!returnDate &&

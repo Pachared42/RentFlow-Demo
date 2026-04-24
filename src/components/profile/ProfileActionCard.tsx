@@ -10,13 +10,11 @@ import {
 
 export default function ProfileActionCard({
   isEditing,
-  emailVerified,
   onStartEdit,
   onSave,
   onCancel,
 }: {
   isEditing: boolean;
-  emailVerified: boolean;
   onStartEdit: () => void;
   onSave: () => void;
   onCancel: () => void;
@@ -86,17 +84,6 @@ export default function ProfileActionCard({
       <Divider className="my-4! border-black/10!" />
 
       <Box className="space-y-3">
-        <Box className="flex items-center justify-between">
-          <Typography className="text-sm text-[var(--rf-apple-muted)]">อีเมล</Typography>
-          <Typography
-            className={`text-sm font-semibold ${
-              emailVerified ? "text-emerald-600" : "text-amber-600"
-            }`}
-          >
-            {emailVerified ? "ยืนยันแล้ว" : "ยังไม่ยืนยัน"}
-          </Typography>
-        </Box>
-
         <Box className="flex items-center justify-between">
           <Typography className="text-sm text-[var(--rf-apple-muted)]">บัญชี</Typography>
           <Typography className="text-sm font-semibold text-[var(--rf-apple-ink)]">

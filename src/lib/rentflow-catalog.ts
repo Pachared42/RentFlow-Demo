@@ -106,21 +106,11 @@ export function formatLocationLabel(value: string) {
 }
 
 export function buildLocationOptions(branches: Branch[]): LocationOption[] {
-  const seen = new Set<string>();
-
   return branches
-    .filter((branch) => branch.locationId)
-    .filter((branch) => {
-      if (!branch.locationId || seen.has(branch.locationId)) {
-        return false;
-      }
-
-      seen.add(branch.locationId);
-      return true;
-    })
+    .filter((branch) => branch.name || branch.locationId || branch.id)
     .map((branch) => ({
-      label: formatLocationLabel(branch.locationId || ""),
-      value: branch.locationId || "",
+      label: branch.shopName ? `${branch.name} • ${branch.shopName}` : branch.name || formatLocationLabel(branch.locationId || branch.id),
+      value: branch.locationId || branch.id || branch.name,
     }))
     .filter((location) => location.value)
     .sort((a, b) => a.label.localeCompare(b.label));

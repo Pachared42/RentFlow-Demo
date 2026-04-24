@@ -2,10 +2,12 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
 import { branchesApi } from "@/src/services/branches/branches.service";
 import type { Branch } from "@/src/services/branches/branches.types";
 
 export function useBranchDirectory() {
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -20,7 +22,9 @@ export function useBranchDirectory() {
         setLoading(true);
         setError(null);
 
-        const res = await branchesApi.getBranches();
+        const res = await branchesApi.getBranches({
+          marketplace: siteMode === "marketplace",
+        });
         if (!cancelled) {
           setBranches(res.data);
         }
@@ -47,7 +51,7 @@ export function useBranchDirectory() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [siteMode]);
 
   return {
     branches,

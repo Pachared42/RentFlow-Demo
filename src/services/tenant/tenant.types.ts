@@ -1,0 +1,12 @@
+export type TenantProfile = {
+  id: string;
+  shopName: string;
+  domainSlug: string;
+  publicDomain: string;
+  logoUrl?: string;
+  promoImageUrl?: string;
+  status?: string;
+  plan?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};

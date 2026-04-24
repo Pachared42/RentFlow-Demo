@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Box,
   Card,
@@ -41,11 +40,11 @@ export default function CarCard({ car, showShop = false }: Props) {
       className="apple-card group"
     >
       <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
-        <Image
-          src={car.image || "/RentFlow.png"}
+        <Box
+          component="img"
+          src={car.imageUrl || car.image || "/RentFlow.png"}
           alt={car.name}
-          fill
-          className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+          className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
         />
         {isBooked ? (
           <Box className="absolute left-4 top-4 z-[1]">

@@ -23,6 +23,8 @@ export type TenantSummary = {
   shopName?: string;
   domainSlug?: string;
   publicDomain?: string;
+  logoUrl?: string;
+  promoImageUrl?: string;
 };
 
 export type LineOfficialAccountSummary = {

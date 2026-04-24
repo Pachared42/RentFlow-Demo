@@ -16,11 +16,14 @@ export type Booking = TenantSummary & {
   bookingCode: string;
   userId: string;
   carId: string;
+  carName?: string;
   status: BookingStatus;
   pickupDate: string;
   returnDate: string;
   pickupLocation: string;
   returnLocation: string;
+  pickupLocationValue?: string;
+  returnLocationValue?: string;
   pickupMethod: PickupMethod;
   returnMethod: ReturnMethod;
   totalDays: number;

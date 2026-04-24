@@ -1,8 +1,16 @@
 import api from "@/src/lib/axios";
+import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
 import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
 import type { ApiResponse } from "../types/types";
 import type { RentFlowRequestOptions } from "../types/types";
 import type { CreatePaymentPayload, Payment } from "./payments.types";
+
+function normalizePayment(payment: Payment): Payment {
+  return {
+    ...payment,
+    slipUrl: resolveRentFlowAssetUrl(payment.slipUrl),
+  };
+}
 
 export const paymentsApi = {
   async createPayment(
@@ -15,7 +23,7 @@ export const paymentsApi = {
           ? getRentFlowTenantHeaders({ tenantSlug: options.tenantSlug })
           : undefined,
     });
-    return res.data;
+    return { ...res.data, data: normalizePayment(res.data.data) };
   },
 
   async getPaymentByBookingId(
@@ -31,6 +39,6 @@ export const paymentsApi = {
             : undefined,
       }
     );
-    return res.data;
+    return { ...res.data, data: normalizePayment(res.data.data) };
   },
 };

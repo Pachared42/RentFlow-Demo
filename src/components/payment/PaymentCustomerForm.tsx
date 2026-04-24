@@ -6,8 +6,6 @@ import { Box, TextField, Typography } from "@mui/material";
 type Props = {
   fullName: string;
   setFullName: (value: string) => void;
-  email: string;
-  setEmail: (value: string) => void;
   phone: string;
   setPhone: (value: string) => void;
   roundedFieldSX: object;
@@ -16,8 +14,6 @@ type Props = {
 export default function PaymentCustomerForm({
   fullName,
   setFullName,
-  email,
-  setEmail,
   phone,
   setPhone,
   roundedFieldSX,
@@ -48,20 +44,9 @@ export default function PaymentCustomerForm({
         />
       </Box>
 
-      <Box className="mt-4">
-        <TextField
-          label="อีเมล (ถ้ามี)"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-          sx={roundedFieldSX}
-        />
-      </Box>
-
       <Box className="mt-4 rounded-[22px] bg-[var(--rf-apple-surface-soft)] px-4 py-3">
         <Typography className="apple-label-text leading-6 text-[var(--rf-apple-muted)]">
-          ใช้สำหรับอ้างอิงการชำระเงินและการติดต่อกลับ
-          หากไม่ต้องการรับรายละเอียดทางอีเมลสามารถเว้นช่องอีเมลไว้ได้
+          ใช้สำหรับอ้างอิงการชำระเงินและการติดต่อกลับจากร้าน
         </Typography>
       </Box>
     </>

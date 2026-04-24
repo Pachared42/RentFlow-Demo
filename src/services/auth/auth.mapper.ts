@@ -1,3 +1,4 @@
+import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
 import type { AuthResponse, Customer } from "./auth.types";
 
 type LegacyAuthResponse = {
@@ -6,6 +7,17 @@ type LegacyAuthResponse = {
   user?: Customer;
   data?: Customer | { user?: Customer };
 };
+
+export function normalizeCustomer(
+  user?: Customer | null
+): Customer | undefined {
+  if (!user) return undefined;
+
+  return {
+    ...user,
+    avatarUrl: resolveRentFlowAssetUrl(user.avatarUrl),
+  };
+}
 
 export function normalizeAuthResponse(
   raw: AuthResponse | LegacyAuthResponse | null
@@ -18,7 +30,7 @@ export function normalizeAuthResponse(
     return {
       success: raw.success,
       message: raw.message,
-      data: data.user ? { user: data.user } : undefined,
+      data: data.user ? { user: normalizeCustomer(data.user)! } : undefined,
     };
   }
 
@@ -26,7 +38,7 @@ export function normalizeAuthResponse(
     return {
       success: raw.success,
       message: raw.message,
-      data: { user: data },
+      data: { user: normalizeCustomer(data)! },
     };
   }
 
@@ -34,7 +46,7 @@ export function normalizeAuthResponse(
     return {
       success: raw.success,
       message: raw.message,
-      data: { user: raw.user },
+      data: { user: normalizeCustomer(raw.user)! },
     };
   }
 

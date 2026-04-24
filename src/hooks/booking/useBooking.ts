@@ -47,6 +47,11 @@ function normalizeDateForInput(value?: string | null) {
   return `${year}-${month}-${day}`;
 }
 
+function combineDateAndTime(date: string, time: string) {
+  if (!date) return "";
+  return `${date} ${time || "10:00"}`;
+}
+
 function clampDateToToday(value?: string | null) {
   const normalized = normalizeDateForInput(value);
   if (!normalized) return "";
@@ -98,7 +103,6 @@ export default function useBooking() {
   const carId = params.get("carId") || "";
   const tenantSlugFromUrl = params.get("tenant") || "";
   const prefillFullName = params.get("fullName") || "";
-  const prefillEmail = params.get("email") || "";
   const prefillPhone = params.get("phone") || "";
   const prefillPickupMethod = params.get("pickupMethod");
   const prefillReturnMethod = params.get("returnMethod");
@@ -141,7 +145,6 @@ export default function useBooking() {
     React.useState<string[]>(BRANCH_POINTS);
 
   const [fullName, setFullName] = React.useState(prefillFullName);
-  const [email, setEmail] = React.useState(prefillEmail);
   const [phone, setPhone] = React.useState(prefillPhone);
 
   const [pickupBranch, setPickupBranch] = React.useState<string>(
@@ -297,7 +300,6 @@ export default function useBooking() {
     carExists: !!car,
     carAvailable: isCarAvailable,
     fullName,
-    email,
     phone,
     pickupDate,
     returnDate,
@@ -341,10 +343,7 @@ export default function useBooking() {
           [user.firstName, user.lastName].filter(Boolean).join(" ") ||
           user.username ||
           "";
-        const contactEmail = user.email?.includes("@") ? user.email : "";
-
         setFullName((prev) => prev || displayName);
-        setEmail((prev) => prev || contactEmail);
         setPhone((prev) => prev || user.phone || "");
         setCheckingAuth(false);
         return;
@@ -430,8 +429,8 @@ export default function useBooking() {
       try {
         const res = await bookingApi.previewPrice({
           carId: car.id,
-          pickupDate,
-          returnDate,
+          pickupDate: combineDateAndTime(pickupDate, pickupTime),
+          returnDate: combineDateAndTime(returnDate, returnTime),
           pickupLocation: finalPickupPoint || undefined,
           returnLocation: finalReturnPoint || undefined,
         }, {
@@ -468,7 +467,9 @@ export default function useBooking() {
   }, [
     car,
     pickupDate,
+    pickupTime,
     returnDate,
+    returnTime,
     finalPickupPoint,
     finalReturnPoint,
     effectiveTenantSlug,
@@ -599,11 +600,6 @@ export default function useBooking() {
         return;
       }
 
-      if (email.trim() && !email.trim().includes("@")) {
-        setError("กรุณากรอกอีเมลให้ถูกต้อง");
-        return;
-      }
-
       if (!startDT || !endDT) {
         setError("กรุณาเลือกวันและเวลาให้ครบ");
         return;
@@ -628,13 +624,11 @@ export default function useBooking() {
 
       setLoading(true);
       try {
-        const bookingEmailForApi = email.trim() || "no-email@rentflow.local";
-
         const availabilityRes = await availabilityApi.check(
           {
             carId: car.id,
-            pickupDate,
-            returnDate,
+            pickupDate: combineDateAndTime(pickupDate, pickupTime),
+            returnDate: combineDateAndTime(returnDate, returnTime),
           },
           {
             tenantSlug: effectiveTenantSlug,
@@ -648,8 +642,8 @@ export default function useBooking() {
 
         const res = await bookingApi.createBooking({
           carId: car.id,
-          pickupDate,
-          returnDate,
+          pickupDate: combineDateAndTime(pickupDate, pickupTime),
+          returnDate: combineDateAndTime(returnDate, returnTime),
           pickupLocation: finalPickupPoint,
           returnLocation: finalReturnPoint,
           pickupMethod:
@@ -661,7 +655,7 @@ export default function useBooking() {
               ? "branch"
               : "custom",
           customerName: fullName.trim(),
-          customerEmail: bookingEmailForApi,
+          customerEmail: "no-email@rentflow.local",
           customerPhone: phone.trim(),
           note: selectedAddonTitles.length
             ? `บริการเสริมที่เลือก: ${selectedAddonTitles.join(", ")}`
@@ -686,7 +680,6 @@ export default function useBooking() {
             `&pickupPoint=${encodeURIComponent(finalPickupPoint)}` +
             `&returnPoint=${encodeURIComponent(finalReturnPoint)}` +
             `&customerName=${encodeURIComponent(fullName.trim())}` +
-            `&customerEmail=${encodeURIComponent(email.trim())}` +
             `&customerPhone=${encodeURIComponent(phone.trim())}` +
             `&subtotal=${encodeURIComponent(String(booking.subtotal))}` +
             `&discount=${encodeURIComponent(String(booking.discount))}` +
@@ -718,7 +711,6 @@ export default function useBooking() {
       endDT,
       locationOk,
       canSubmit,
-      email,
       isDateAvailable,
       pickupDate,
       returnDate,
@@ -727,8 +719,8 @@ export default function useBooking() {
       finalPickupPoint,
       finalReturnPoint,
       addons,
-      fullName,
-      phone,
+    fullName,
+    phone,
       pickupBranch,
       returnBranch,
       selectedAddonTitles,
@@ -752,8 +744,6 @@ export default function useBooking() {
     car,
     fullName,
     setFullName,
-    email,
-    setEmail,
     phone,
     setPhone,
     pickupBranch,

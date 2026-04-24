@@ -5,6 +5,7 @@ export type ShopSummary = {
   name: string;
   domainSlug?: string;
   publicDomain?: string;
+  logoUrl?: string;
   carCount: number;
   startingPrice: number;
   heroImage?: string;
@@ -32,9 +33,10 @@ export function buildShopSummaries(cars: Car[]) {
         name: car.shopName || "RentFlow",
         domainSlug: car.domainSlug,
         publicDomain: car.publicDomain,
+        logoUrl: car.logoUrl,
         carCount: 1,
         startingPrice: car.pricePerDay,
-        heroImage: car.image || car.imageUrl || car.images?.[0],
+        heroImage: car.logoUrl || car.image || car.imageUrl || car.images?.[0],
         carTypes: new Set([car.type]),
         firstCarId: car.id,
       });
@@ -43,7 +45,8 @@ export function buildShopSummaries(cars: Car[]) {
 
     current.carCount += 1;
     current.startingPrice = Math.min(current.startingPrice, car.pricePerDay);
-    current.heroImage ||= car.image || car.imageUrl || car.images?.[0];
+    current.logoUrl ||= car.logoUrl;
+    current.heroImage ||= car.logoUrl || car.image || car.imageUrl || car.images?.[0];
     current.carTypes.add(car.type);
   });
 

@@ -1,10 +1,14 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Box, Container, Typography, Stack, Divider } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
+import { getRentFlowSiteMode } from "@/src/lib/tenant";
+import { tenantApi } from "@/src/services/tenant/tenant.service";
+import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
 const BRAND = {
   name: "RentFlow",
@@ -13,7 +17,6 @@ const BRAND = {
 };
 
 const CONTACT = {
-  email: "support@rentflow.com",
   phone: "099-999-9999",
 };
 
@@ -23,6 +26,42 @@ const SOCIAL = {
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const siteMode = React.useMemo(() => getRentFlowSiteMode(), []);
+  const [tenantProfile, setTenantProfile] =
+    React.useState<TenantProfile | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    if (siteMode === "marketplace") {
+      setTenantProfile(null);
+      return;
+    }
+
+    tenantApi
+      .resolveTenant()
+      .then((res) => {
+        if (!cancelled) setTenantProfile(res.data);
+      })
+      .catch(() => {
+        if (!cancelled) setTenantProfile(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
+
+  const contactTitle =
+    siteMode === "marketplace"
+      ? "สนใจเช่าแพลตฟอร์ม"
+      : tenantProfile?.shopName
+        ? `ติดต่อ ${tenantProfile.shopName}`
+        : "ติดต่อ";
+  const contactText =
+    siteMode === "marketplace"
+      ? "ถ้าสนใจเช่าแพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์ สามารถติดต่อทีม RentFlow ได้ที่นี่"
+      : "ติดต่อร้านเพื่อสอบถามข้อมูลรถ สาขา และเงื่อนไขการเช่าเพิ่มเติม";
 
   return (
     <Box
@@ -76,16 +115,13 @@ export default function Footer() {
           {/* Contact / Social */}
           <Box component="address" className="not-italic">
             <Typography className="font-semibold! text-[var(--rf-apple-ink)]">
-              ติดต่อ
+              {contactTitle}
             </Typography>
 
             <Stack spacing={1.5} className="mt-3">
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-              >
-                อีเมล: {CONTACT.email}
-              </a>
+              <Typography className="apple-body-sm text-[var(--rf-apple-muted)]">
+                {contactText}
+              </Typography>
 
               <a
                 href={`tel:${CONTACT.phone.replace(/-/g, "")}`}

@@ -16,7 +16,6 @@ export default function BookingSuccessPage({
   tenantSlug,
   carName,
   customerName,
-  customerEmail,
   customerPhone,
   pickupDate,
   returnDate,
@@ -29,7 +28,6 @@ export default function BookingSuccessPage({
   tenantSlug?: string;
   carName?: string;
   customerName?: string;
-  customerEmail?: string;
   customerPhone?: string;
   pickupDate?: string;
   returnDate?: string;
@@ -139,7 +137,6 @@ export default function BookingSuccessPage({
             amount={amount}
             carName={carName}
             customerName={customerName}
-            customerEmail={customerEmail}
             customerPhone={customerPhone}
             pickupDate={pickupDate}
             returnDate={returnDate}

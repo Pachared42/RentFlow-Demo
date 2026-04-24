@@ -77,11 +77,10 @@ export default function BookingPage() {
                   onSubmit={booking.onSubmit}
                   fullName={booking.fullName}
                   setFullName={booking.setFullName}
-                  email={booking.email}
-                  setEmail={booking.setEmail}
                   phone={booking.phone}
                   setPhone={booking.setPhone}
                   merchantBranchesEnabled={booking.merchantBranchesEnabled}
+                  branchOptions={booking.branchOptions}
                   pickupBranch={booking.pickupBranch}
                   setPickupBranch={booking.setPickupBranch}
                   returnBranch={booking.returnBranch}

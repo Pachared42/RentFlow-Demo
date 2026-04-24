@@ -13,6 +13,10 @@ import { formatTHB } from "@/src/constants/money";
 import { useCatalogDirectory } from "@/src/hooks/catalog/useCatalogDirectory";
 import { buildShopSummaries } from "@/src/lib/shop-directory";
 import type { CarType } from "@/src/services/cars/cars.types";
+import { platformApi } from "@/src/services/platform/platform.service";
+import type { PlatformPublicSettings } from "@/src/services/platform/platform.types";
+import { tenantApi } from "@/src/services/tenant/tenant.service";
+import type { TenantProfile } from "@/src/services/tenant/tenant.types";
 
 export default function HomePage() {
   const [location, setLocation] = React.useState("");
@@ -22,6 +26,54 @@ export default function HomePage() {
   const [q, setQ] = React.useState("");
   const { siteMode, cars, carTypes, locations, classes, loading, error } =
     useCatalogDirectory();
+  const [tenantProfile, setTenantProfile] =
+    React.useState<TenantProfile | null>(null);
+  const [platformSettings, setPlatformSettings] =
+    React.useState<PlatformPublicSettings | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    if (siteMode === "marketplace") {
+      setTenantProfile(null);
+      return;
+    }
+
+    tenantApi
+      .resolveTenant()
+      .then((res) => {
+        if (!cancelled) setTenantProfile(res.data);
+      })
+      .catch(() => {
+        if (!cancelled) setTenantProfile(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    if (siteMode !== "marketplace") {
+      setPlatformSettings(null);
+      return;
+    }
+
+    platformApi
+      .getPublicSettings()
+      .then((settings) => {
+        if (!cancelled) setPlatformSettings(settings);
+      })
+      .catch(() => {
+        if (!cancelled) setPlatformSettings(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
 
   const recommendedCars = React.useMemo(() => {
     return cars.slice(0, 6);
@@ -29,11 +81,17 @@ export default function HomePage() {
   const recommendedShops = React.useMemo(() => {
     return buildShopSummaries(cars).slice(0, 12);
   }, [cars]);
+  const promoImageUrl =
+    siteMode === "storefront"
+      ? tenantProfile?.promoImageUrl || ""
+      : platformSettings?.promoImageUrl || "";
   const heroImages = React.useMemo(() => {
-    return cars
-      .flatMap((car) => car.images?.length ? car.images : car.image ? [car.image] : [])
-      .slice(0, 6);
-  }, [cars]);
+    if (promoImageUrl) {
+      return [promoImageUrl];
+    }
+
+    return [];
+  }, [promoImageUrl]);
 
   return (
     <Box className="apple-page">
@@ -62,7 +120,9 @@ export default function HomePage() {
       ) : null}
 
       {siteMode === "marketplace" ? (
-        <ShopRecommendationsSection shops={recommendedShops} limit={12} />
+        <>
+          <ShopRecommendationsSection shops={recommendedShops} limit={12} />
+        </>
       ) : (
         <>
           <CarsSection cars={recommendedCars} formatTHB={formatTHB} />

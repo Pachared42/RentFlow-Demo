@@ -16,6 +16,21 @@ import {
   getCarSubTotal,
 } from "@/src/utils/payment/payment.helpers";
 
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+        return;
+      }
+      reject(new Error("ไม่สามารถอ่านไฟล์สลิปได้"));
+    };
+    reader.onerror = () => reject(new Error("ไม่สามารถอ่านไฟล์สลิปได้"));
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function usePaymentPage() {
   const params = useSearchParams();
   const router = useRouter();
@@ -36,7 +51,6 @@ export default function usePaymentPage() {
   const carName = params.get("carName") || "";
   const shopName = params.get("shopName") || "";
   const customerName = params.get("customerName") || "";
-  const customerEmail = params.get("customerEmail") || "";
   const customerPhone = params.get("customerPhone") || "";
   const subtotal = Number(params.get("subtotal") || "0") || 0;
   const discount = Number(params.get("discount") || "0") || 0;
@@ -78,7 +92,6 @@ export default function usePaymentPage() {
 
   const [method, setMethod] = React.useState<Method>("promptpay");
   const [fullName, setFullName] = React.useState(customerName);
-  const [email, setEmail] = React.useState(customerEmail);
   const [phone, setPhone] = React.useState(customerPhone);
   const [slipFile, setSlipFile] = React.useState<File | null>(null);
   const [done, setDone] = React.useState(false);
@@ -89,7 +102,6 @@ export default function usePaymentPage() {
 
   const canPay =
     fullName.trim().length >= 2 &&
-    (!email.trim() || email.trim().includes("@")) &&
     phone.trim().length >= 9 &&
     (!needSlip || !!slipFile) &&
     !loading;
@@ -114,7 +126,6 @@ export default function usePaymentPage() {
       if (profileResult.status === "fulfilled") {
         const user = profileResult.value.data;
         setFullName((prev) => prev || user.name || "");
-        setEmail((prev) => prev || user.email || "");
         setPhone((prev) => prev || user.phone || "");
       }
     }
@@ -132,9 +143,12 @@ export default function usePaymentPage() {
     setLoading(true);
     setError(null);
     try {
+      const slipImage =
+        method === "transfer" && slipFile ? await readFileAsDataUrl(slipFile) : undefined;
       await paymentsApi.createPayment({
         bookingId: bookingRef || bookingId,
         method: method === "transfer" ? "bank_transfer" : method,
+        ...(slipImage ? { slipImage } : {}),
       }, {
         tenantSlug,
       });
@@ -146,10 +160,9 @@ export default function usePaymentPage() {
         nextParams.set("amount", String(amount || 0));
         nextParams.set("carName", car?.name || carName);
         nextParams.set("customerName", fullName.trim());
-        nextParams.set("customerEmail", email.trim());
         nextParams.set("customerPhone", phone.trim());
-        nextParams.set("pickupDate", pickupDate);
-        nextParams.set("returnDate", returnDate);
+        nextParams.set("pickupDate", pickupTime ? `${pickupDate} ${pickupTime}` : pickupDate);
+        nextParams.set("returnDate", returnTime ? `${returnDate} ${returnTime}` : returnDate);
         nextParams.set("pickupPoint", pickupPoint);
         nextParams.set("returnPoint", returnPoint);
 
@@ -180,16 +193,18 @@ export default function usePaymentPage() {
     car?.name,
     car?.shopName,
     carName,
-    email,
     fullName,
     method,
     phone,
     pickupDate,
     pickupPoint,
+    pickupTime,
     returnDate,
     returnPoint,
+    returnTime,
     router,
     shopName,
+    slipFile,
     tenantSlug,
   ]);
 
@@ -228,8 +243,6 @@ export default function usePaymentPage() {
     setMethod,
     fullName,
     setFullName,
-    email,
-    setEmail,
     phone,
     setPhone,
     slipFile,

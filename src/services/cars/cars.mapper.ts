@@ -4,30 +4,13 @@ import type {
   CarsApiResponse,
   RawCarImageUploadItem,
 } from "./cars.types";
-
-function resolveApiAssetUrl(value?: string) {
-  const rawValue = value?.trim() || "";
-  if (!rawValue || rawValue.startsWith("data:") || rawValue.startsWith("blob:")) {
-    return rawValue;
-  }
-
-  if (/^https?:\/\//i.test(rawValue)) {
-    return rawValue;
-  }
-
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (apiBaseUrl && rawValue.startsWith("/")) {
-    return new URL(rawValue, apiBaseUrl).toString();
-  }
-
-  return rawValue;
-}
+import { resolveRentFlowAssetUrl } from "@/src/lib/runtime-api-url";
 
 export function normalizeCar(
   raw: Partial<Car> & { id: string; name: string }
 ): Car {
-  const imageUrl = resolveApiAssetUrl(raw.imageUrl || raw.image || "");
-  const images = raw.images?.map(resolveApiAssetUrl).filter(Boolean);
+  const imageUrl = resolveRentFlowAssetUrl(raw.imageUrl || raw.image || "");
+  const images = raw.images?.map(resolveRentFlowAssetUrl).filter(Boolean);
 
   return {
     id: raw.id,
@@ -53,6 +36,8 @@ export function normalizeCar(
     shopName: raw.shopName,
     domainSlug: raw.domainSlug,
     publicDomain: raw.publicDomain,
+    logoUrl: resolveRentFlowAssetUrl(raw.logoUrl),
+    promoImageUrl: resolveRentFlowAssetUrl(raw.promoImageUrl),
     lineOfficialAccount: raw.lineOfficialAccount,
   };
 }
@@ -69,6 +54,6 @@ export function normalizeUploadedCarImage(
 ): CarImageUploadItem {
   return {
     ...raw,
-    imageUrl: resolveApiAssetUrl(raw.imageUrl),
+    imageUrl: resolveRentFlowAssetUrl(raw.imageUrl),
   };
 }

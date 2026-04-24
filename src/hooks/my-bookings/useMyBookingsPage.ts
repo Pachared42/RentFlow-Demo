@@ -27,10 +27,11 @@ export type Booking = {
   status: BookingStatus;
   pickupLocation?: string;
   returnLocation?: string;
+  pickupLocationValue?: string;
+  returnLocationValue?: string;
   pickupMethod?: "branch" | "custom";
   returnMethod?: "branch" | "custom";
   customerName?: string;
-  customerEmail?: string;
   customerPhone?: string;
   note?: string;
   resumeHref?: string;
@@ -65,10 +66,11 @@ function buildResumeBookingHref(booking: {
   returnDate: string;
   pickupLocation?: string;
   returnLocation?: string;
+  pickupLocationValue?: string;
+  returnLocationValue?: string;
   pickupMethod?: "branch" | "custom";
   returnMethod?: "branch" | "custom";
   customerName?: string;
-  customerEmail?: string;
   customerPhone?: string;
   note?: string;
 }) {
@@ -82,12 +84,17 @@ function buildResumeBookingHref(booking: {
     params.set("tenant", booking.tenantSlug);
   }
 
-  if (booking.pickupLocation) {
-    params.set("pickupLocation", booking.pickupLocation);
+  const pickupLocation =
+    booking.pickupLocationValue || booking.pickupLocation || "";
+  const returnLocation =
+    booking.returnLocationValue || booking.returnLocation || "";
+
+  if (pickupLocation) {
+    params.set("pickupLocation", pickupLocation);
   }
 
-  if (booking.returnLocation) {
-    params.set("returnLocation", booking.returnLocation);
+  if (returnLocation) {
+    params.set("returnLocation", returnLocation);
   }
 
   if (booking.pickupMethod) {
@@ -100,10 +107,6 @@ function buildResumeBookingHref(booking: {
 
   if (booking.customerName) {
     params.set("fullName", booking.customerName);
-  }
-
-  if (booking.customerEmail) {
-    params.set("email", booking.customerEmail);
   }
 
   if (booking.customerPhone) {
@@ -138,7 +141,7 @@ export default function useMyBookingsPage() {
       try {
         const [bookingsRes, carsRes] = await Promise.all([
           bookingApi.getMyBookings({ tenantSlug }),
-          getCars(undefined, { tenantSlug }),
+          getCars(undefined, { tenantSlug }).catch(() => ({ items: [] })),
         ]);
 
         if (cancelled) return;
@@ -149,7 +152,8 @@ export default function useMyBookingsPage() {
           bookingsRes.data.map((booking) => ({
             id: booking.bookingCode,
             carId: booking.carId,
-            carName: carMap.get(booking.carId)?.name || booking.carId,
+            carName:
+              booking.carName || carMap.get(booking.carId)?.name || booking.carId,
             shopName: carMap.get(booking.carId)?.shopName || booking.shopName,
             tenantSlug:
               carMap.get(booking.carId)?.domainSlug ||
@@ -161,10 +165,11 @@ export default function useMyBookingsPage() {
             status: booking.status,
             pickupLocation: booking.pickupLocation,
             returnLocation: booking.returnLocation,
+            pickupLocationValue: booking.pickupLocationValue,
+            returnLocationValue: booking.returnLocationValue,
             pickupMethod: booking.pickupMethod,
             returnMethod: booking.returnMethod,
             customerName: booking.customerName,
-            customerEmail: booking.customerEmail,
             customerPhone: booking.customerPhone,
             note: booking.note,
             resumeHref:
@@ -179,10 +184,11 @@ export default function useMyBookingsPage() {
                     returnDate: booking.returnDate,
                     pickupLocation: booking.pickupLocation,
                     returnLocation: booking.returnLocation,
+                    pickupLocationValue: booking.pickupLocationValue,
+                    returnLocationValue: booking.returnLocationValue,
                     pickupMethod: booking.pickupMethod,
                     returnMethod: booking.returnMethod,
                     customerName: booking.customerName,
-                    customerEmail: booking.customerEmail,
                     customerPhone: booking.customerPhone,
                     note: booking.note,
                   })

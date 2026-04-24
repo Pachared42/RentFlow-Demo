@@ -5,7 +5,6 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import { formatLocationLabel } from "@/src/lib/rentflow-catalog";
 import type { Branch } from "@/src/services/branches/branches.types";
 
 function formatBranchHours(branch: Branch) {
@@ -49,16 +48,18 @@ export default function ContactInfoCard({
                   <Typography className="apple-card-title font-semibold text-[var(--rf-apple-ink)]">
                     {branch.name}
                   </Typography>
-                  <Typography className="apple-label-text mt-1 text-[var(--rf-apple-muted)]">
-                    รหัสสาขา: {branch.id}
-                  </Typography>
+                  {branch.shopName ? (
+                    <Typography className="apple-label-text mt-1 text-[var(--rf-apple-muted)]">
+                      ร้าน {branch.shopName}
+                    </Typography>
+                  ) : null}
                 </Box>
 
                 <Box className="flex flex-wrap gap-2">
-                  {branch.locationId ? (
+                  {branch.name ? (
                     <Chip
                       size="small"
-                      label={formatLocationLabel(branch.locationId)}
+                      label={branch.name}
                       className="!border-0 !bg-slate-100 !text-slate-700"
                     />
                   ) : null}

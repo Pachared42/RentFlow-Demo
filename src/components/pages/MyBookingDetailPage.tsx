@@ -24,6 +24,23 @@ import useMyBookingDetailPage from "@/src/hooks/my-bookings/useMyBookingDetailPa
 
 export default function MyBookingDetailPage() {
   const booking = useMyBookingDetailPage();
+  const local = booking.local;
+  const receiptHref = React.useMemo(() => {
+    if (!local) return "/booking/success";
+
+    const params = new URLSearchParams();
+    params.set("bookingId", local.bookingRef || local.id);
+    params.set("amount", String(local.totalPrice || 0));
+    params.set("carName", local.carName);
+    params.set("customerName", local.customerName || "");
+    params.set("customerPhone", local.phone || "");
+    params.set("pickupDate", local.pickupDate);
+    params.set("returnDate", local.returnDate);
+    params.set("pickupPoint", local.pickupLocation || "");
+    params.set("returnPoint", local.returnLocation || "");
+    if (local.shopName) params.set("shopName", local.shopName);
+    return `/booking/success?${params.toString()}`;
+  }, [local]);
 
   if (
     !booking.ready ||
@@ -35,7 +52,7 @@ export default function MyBookingDetailPage() {
 
   if (!booking.id) return null;
 
-  if (!booking.local) {
+  if (!local) {
     return (
       <Box className="apple-page">
         <Container maxWidth="lg" className="apple-section">
@@ -81,7 +98,6 @@ export default function MyBookingDetailPage() {
     );
   }
 
-  const local = booking.local;
   const p = booking.pricing;
 
   return (
@@ -338,6 +354,8 @@ export default function MyBookingDetailPage() {
 
               <Box className="mt-4 flex gap-2">
                 <Button
+                  component={Link}
+                  href={receiptHref}
                   fullWidth
                   variant="outlined"
                   className="rounded-full!"

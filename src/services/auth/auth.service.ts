@@ -1,6 +1,6 @@
 import api from "@/src/lib/axios";
 import { getErrorMessage } from "@/src/lib/api-error";
-import { normalizeAuthResponse } from "./auth.mapper";
+import { normalizeAuthResponse, normalizeCustomer } from "./auth.mapper";
 import type {
   AuthResponse,
   Customer,
@@ -16,7 +16,7 @@ function canUseStorage() {
 }
 
 function sanitizeCustomer(user: Customer): Customer {
-  return {
+  return normalizeCustomer({
     id: user.id,
     username: user.username,
     firstName: user.firstName,
@@ -27,7 +27,7 @@ function sanitizeCustomer(user: Customer): Customer {
     avatarUrl: user.avatarUrl,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
-  };
+  })!;
 }
 
 export function getCachedSessionUser(): Customer | null {
@@ -38,7 +38,7 @@ export function getCachedSessionUser(): Customer | null {
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as Customer | null;
-    return parsed && parsed.id ? parsed : null;
+    return parsed && parsed.id ? normalizeCustomer(parsed) || null : null;
   } catch {
     return null;
   }

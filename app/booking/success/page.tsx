@@ -22,7 +22,6 @@ async function BookingSuccessPageContent({
   const amount = Number(readParam(params.amount, "0")) || 0;
   const carName = readParam(params.carName, "");
   const customerName = readParam(params.customerName, "");
-  const customerEmail = readParam(params.customerEmail, "");
   const customerPhone = readParam(params.customerPhone, "");
   const pickupDate = readParam(params.pickupDate, "");
   const returnDate = readParam(params.returnDate, "");
@@ -37,7 +36,6 @@ async function BookingSuccessPageContent({
       tenantSlug={tenantSlug || undefined}
       carName={carName || undefined}
       customerName={customerName || undefined}
-      customerEmail={customerEmail || undefined}
       customerPhone={customerPhone || undefined}
       pickupDate={pickupDate || undefined}
       returnDate={returnDate || undefined}

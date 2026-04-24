@@ -14,12 +14,11 @@ type Props = {
 
   fullName: string;
   setFullName: (value: string) => void;
-  email: string;
-  setEmail: (value: string) => void;
   phone: string;
   setPhone: (value: string) => void;
 
   merchantBranchesEnabled: boolean;
+  branchOptions: string[];
   pickupBranch: string;
   setPickupBranch: (value: string) => void;
   returnBranch: string;
@@ -67,11 +66,10 @@ export default function BookingForm({
   onSubmit,
   fullName,
   setFullName,
-  email,
-  setEmail,
   phone,
   setPhone,
   merchantBranchesEnabled,
+  branchOptions,
   pickupBranch,
   setPickupBranch,
   returnBranch,
@@ -109,19 +107,11 @@ export default function BookingForm({
 }: Props) {
   return (
     <Box component="form" onSubmit={onSubmit} className="grid gap-4">
-      <Box className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Box className="grid gap-4 sm:grid-cols-2">
         <TextField
           label="ชื่อ-นามสกุล"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          fullWidth
-          size="small"
-          sx={fieldSX}
-        />
-        <TextField
-          label="อีเมล (ถ้ามี)"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           fullWidth
           size="small"
           sx={fieldSX}
@@ -138,6 +128,7 @@ export default function BookingForm({
 
       <BookingLocation
         merchantBranchesEnabled={merchantBranchesEnabled}
+        branchOptions={branchOptions}
         fieldSX={fieldSX}
         pickupBranch={pickupBranch}
         setPickupBranch={setPickupBranch}

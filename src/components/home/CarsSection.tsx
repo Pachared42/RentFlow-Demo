@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Box,
   Container,
@@ -53,11 +52,11 @@ export default function CarsSection({ cars, formatTHB }: Props) {
               className="apple-card group"
             >
               <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
-                <Image
-                  src={c.image || "/RentFlow.png"}
+                <Box
+                  component="img"
+                  src={c.imageUrl || c.image || "/RentFlow.png"}
                   alt={c.name}
-                  fill
-                  className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
+                  className="h-full w-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.18,0.9,0.22,1)] group-hover:scale-[1.012]"
                 />
               </Box>
 

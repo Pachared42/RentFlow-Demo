@@ -10,6 +10,7 @@ export type Payment = {
   transactionId?: string;
   paymentUrl?: string;
   qrCodeUrl?: string;
+  slipUrl?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -17,4 +18,5 @@ export type Payment = {
 export type CreatePaymentPayload = {
   bookingId: string;
   method: PaymentMethod;
+  slipImage?: string;
 };

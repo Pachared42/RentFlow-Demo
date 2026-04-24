@@ -1,8 +1,9 @@
 import axios, { AxiosHeaders } from "axios";
 import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
+import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+  baseURL: getRentFlowApiBaseUrl(),
   timeout: 30000,
   withCredentials: true,
   headers: {
@@ -12,6 +13,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const headers = AxiosHeaders.from(config.headers);
+  config.baseURL = getRentFlowApiBaseUrl();
 
   for (const [key, value] of Object.entries(getRentFlowTenantHeaders())) {
     if (!headers.has(key)) {

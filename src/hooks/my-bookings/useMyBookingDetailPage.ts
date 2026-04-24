@@ -19,6 +19,7 @@ export type Booking = {
   bookingRef: string;
   carId: string;
   carName: string;
+  shopName?: string;
   pickupDate: string;
   returnDate: string;
   totalPrice: number;
@@ -58,7 +59,9 @@ export default function useMyBookingDetailPage() {
       try {
         const bookingRes = await bookingApi.getBookingById(id, { tenantSlug });
         const booking = bookingRes.data;
-        const car = await getCarById(booking.carId, { tenantSlug });
+        const car = await getCarById(booking.carId, { tenantSlug }).catch(
+          () => null
+        );
 
         if (cancelled) return;
 
@@ -66,7 +69,8 @@ export default function useMyBookingDetailPage() {
           id: booking.bookingCode,
           bookingRef: booking.id,
           carId: booking.carId,
-          carName: car?.name || booking.carId,
+          carName: booking.carName || car?.name || booking.carId,
+          shopName: booking.shopName || car?.shopName,
           pickupDate: booking.pickupDate,
           returnDate: booking.returnDate,
           totalPrice: booking.totalAmount,
