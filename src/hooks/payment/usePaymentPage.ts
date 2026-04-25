@@ -93,16 +93,33 @@ export default function usePaymentPage() {
   const [method, setMethod] = React.useState<Method>("promptpay");
   const [fullName, setFullName] = React.useState(customerName);
   const [phone, setPhone] = React.useState(customerPhone);
+  const [cardDetails, setCardDetails] = React.useState({
+    cardNumber: "",
+    cardHolder: "",
+    cardExpiry: "",
+    cardCvv: "",
+  });
   const [slipFile, setSlipFile] = React.useState<File | null>(null);
   const [done, setDone] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   const needSlip = method === "transfer";
+  const cardDigits = React.useMemo(
+    () => cardDetails.cardNumber.replace(/\D/g, ""),
+    [cardDetails.cardNumber]
+  );
+  const cardReady =
+    method !== "card" ||
+    (cardDigits.length >= 12 &&
+      cardDetails.cardHolder.trim().length >= 2 &&
+      cardDetails.cardExpiry.trim().length >= 4 &&
+      cardDetails.cardCvv.replace(/\D/g, "").length >= 3);
 
   const canPay =
     fullName.trim().length >= 2 &&
     phone.trim().length >= 9 &&
+    cardReady &&
     (!needSlip || !!slipFile) &&
     !loading;
 
@@ -149,6 +166,13 @@ export default function usePaymentPage() {
         bookingId: bookingRef || bookingId,
         method: method === "transfer" ? "bank_transfer" : method,
         ...(slipImage ? { slipImage } : {}),
+        ...(method === "card"
+          ? {
+              cardHolder: cardDetails.cardHolder.trim(),
+              cardNumber: cardDetails.cardNumber,
+              cardExpiry: cardDetails.cardExpiry.trim(),
+            }
+          : {}),
       }, {
         tenantSlug,
       });
@@ -193,6 +217,9 @@ export default function usePaymentPage() {
     car?.name,
     car?.shopName,
     carName,
+    cardDetails.cardExpiry,
+    cardDetails.cardHolder,
+    cardDetails.cardNumber,
     fullName,
     method,
     phone,
@@ -245,6 +272,8 @@ export default function usePaymentPage() {
     setFullName,
     phone,
     setPhone,
+    cardDetails,
+    setCardDetails,
     slipFile,
     setSlipFile,
     done,

@@ -8,6 +8,11 @@ export type Payment = {
   status: "pending" | "paid" | "failed" | "refunded";
   amount: number;
   transactionId?: string;
+  processor?: string;
+  cardLast4?: string;
+  cardHolder?: string;
+  processedAt?: string;
+  failureReason?: string;
   paymentUrl?: string;
   qrCodeUrl?: string;
   slipUrl?: string;
@@ -19,4 +24,7 @@ export type CreatePaymentPayload = {
   bookingId: string;
   method: PaymentMethod;
   slipImage?: string;
+  cardHolder?: string;
+  cardNumber?: string;
+  cardExpiry?: string;
 };

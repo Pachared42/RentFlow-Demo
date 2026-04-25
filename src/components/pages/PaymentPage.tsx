@@ -129,6 +129,8 @@ export default function PaymentPage() {
                   method={payment.method}
                   setMethod={payment.setMethod}
                   amount={payment.amount}
+                  cardDetails={payment.cardDetails}
+                  setCardDetails={payment.setCardDetails}
                   slipFile={payment.slipFile}
                   setSlipFile={payment.setSlipFile}
                   roundedFieldSX={payment.roundedFieldSX}

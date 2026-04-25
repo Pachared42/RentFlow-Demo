@@ -11,6 +11,20 @@ type Props = {
   method: Method;
   setMethod: (value: Method) => void;
   amount: number;
+  cardDetails: {
+    cardNumber: string;
+    cardHolder: string;
+    cardExpiry: string;
+    cardCvv: string;
+  };
+  setCardDetails: React.Dispatch<
+    React.SetStateAction<{
+      cardNumber: string;
+      cardHolder: string;
+      cardExpiry: string;
+      cardCvv: string;
+    }>
+  >;
   slipFile: File | null;
   setSlipFile: (file: File | null) => void;
   roundedFieldSX: object;
@@ -20,6 +34,8 @@ export default function PaymentMethodSection({
   method,
   setMethod,
   amount,
+  cardDetails,
+  setCardDetails,
   slipFile,
   setSlipFile,
   roundedFieldSX,
@@ -80,29 +96,57 @@ export default function PaymentMethodSection({
             <TextField
               label="หมายเลขบัตร"
               placeholder="1234 5678 9012 3456"
+              value={cardDetails.cardNumber}
+              onChange={(e) =>
+                setCardDetails((prev) => ({
+                  ...prev,
+                  cardNumber: e.target.value,
+                }))
+              }
               fullWidth
               sx={roundedFieldSX}
             />
             <TextField
               label="ชื่อบนบัตร"
               placeholder="NAME SURNAME"
+              value={cardDetails.cardHolder}
+              onChange={(e) =>
+                setCardDetails((prev) => ({
+                  ...prev,
+                  cardHolder: e.target.value,
+                }))
+              }
               fullWidth
               sx={roundedFieldSX}
             />
             <TextField
               label="หมดอายุ (MM/YY)"
               placeholder="12/30"
+              value={cardDetails.cardExpiry}
+              onChange={(e) =>
+                setCardDetails((prev) => ({
+                  ...prev,
+                  cardExpiry: e.target.value,
+                }))
+              }
               fullWidth
               sx={roundedFieldSX}
             />
             <TextField
               label="CVV"
               placeholder="123"
+              value={cardDetails.cardCvv}
+              onChange={(e) =>
+                setCardDetails((prev) => ({
+                  ...prev,
+                  cardCvv: e.target.value,
+                }))
+              }
               fullWidth
               sx={roundedFieldSX}
             />
             <Typography className="apple-label-text leading-6 text-slate-500 sm:col-span-2">
-              * ข้อมูลบัตรจะถูกดูแลผ่านผู้ให้บริการชำระเงินที่ปลอดภัย
+              ระบบจะบันทึกเฉพาะข้อมูลที่จำเป็นต่อการยืนยันรายการ และไม่เก็บ CVV หลังยืนยัน
             </Typography>
           </Box>
         ) : null}

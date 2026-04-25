@@ -21,7 +21,7 @@ export default function BookingAddons({
         บริการเสริม
       </Typography>
       <Typography className="apple-label-text mt-1 text-slate-500">
-        เลือกความต้องการเพิ่มเติมไว้ก่อนได้ ราคาส่วนนี้ยังไม่ถูกรวมในยอดชำระออนไลน์อัตโนมัติ
+        เลือกบริการเสริมที่ต้องการ ระบบจะรวมยอดนี้ไว้ในสรุปการจองและยอดชำระ
       </Typography>
 
       <Box className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
