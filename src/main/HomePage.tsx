@@ -8,6 +8,7 @@ import CarsSection from "@/src/components/home/CarsSection";
 import CarClassSection from "@/src/components/home/CarClassSection";
 import BenefitsCTASection from "@/src/components/home/BenefitsCTASection";
 import ReviewsSection from "@/src/components/home/ReviewsSection";
+import StorefrontBlocksSection from "@/src/components/home/StorefrontBlocksSection";
 import ShopRecommendationsSection from "@/src/components/shops/ShopRecommendationsSection";
 import { formatTHB } from "@/src/constants/money";
 import { useCatalogDirectory } from "@/src/hooks/catalog/useCatalogDirectory";
@@ -17,6 +18,8 @@ import { platformApi } from "@/src/services/platform/platform.service";
 import type { PlatformPublicSettings } from "@/src/services/platform/platform.types";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
 import type { TenantProfile } from "@/src/services/tenant/tenant.types";
+import { storefrontApi } from "@/src/services/storefront/storefront.service";
+import type { StorefrontPage } from "@/src/services/storefront/storefront.types";
 
 type HomePageProps = {
   initialHost?: string;
@@ -38,6 +41,8 @@ export default function HomePage({
     React.useState<TenantProfile | null>(initialTenantProfile);
   const [platformSettings, setPlatformSettings] =
     React.useState<PlatformPublicSettings | null>(null);
+  const [storefrontPage, setStorefrontPage] =
+    React.useState<StorefrontPage | null>(null);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -76,6 +81,23 @@ export default function HomePage({
       })
       .catch(() => {
         if (!cancelled) setPlatformSettings(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [siteMode]);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    storefrontApi
+      .getHomePage({ marketplace: siteMode === "marketplace" })
+      .then((page) => {
+        if (!cancelled) setStorefrontPage(page);
+      })
+      .catch(() => {
+        if (!cancelled) setStorefrontPage(null);
       });
 
     return () => {
@@ -128,6 +150,8 @@ export default function HomePage({
           </Alert>
         </Box>
       ) : null}
+
+      <StorefrontBlocksSection blocks={storefrontPage?.blocks} />
 
       {siteMode === "marketplace" ? (
         <>

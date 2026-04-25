@@ -142,7 +142,7 @@ export default function BookingSummaryCard({
                   </Typography>
                   {addonsTotal > 0 ? (
                     <Typography className="apple-label-text text-slate-500">
-                      ยังไม่รวมในยอดชำระออนไลน์
+                      รวมอยู่ในยอดชำระแล้ว
                     </Typography>
                   ) : null}
                 </Box>

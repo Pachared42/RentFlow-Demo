@@ -191,7 +191,7 @@ export default function PaymentBookingSummaryCard({
                   </Box>
 
                   <Typography className="apple-label-text text-slate-500">
-                    ราคาส่วนนี้ยังไม่ถูกรวมในยอดชำระออนไลน์อัตโนมัติ
+                    รวมอยู่ในยอดชำระของรายการนี้แล้ว
                   </Typography>
 
                   <Box className="space-y-1">

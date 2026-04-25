@@ -14,7 +14,7 @@ import {
   OTHER_OPTION,
   merchantBranchesEnabled,
 } from "@/src/constants/booking.constants";
-import { DEFAULT_ADDONS, type AddonKey } from "@/src/constants/booking.addons";
+import { ADDONS, DEFAULT_ADDONS, type AddonKey } from "@/src/constants/booking.addons";
 import { parseDateTime, diffDaysCeil } from "@/src/utils/booking/booking.date";
 import { buildChatHref, buildChatMessage } from "@/src/utils/booking/booking.format";
 import { getSelectedAddonTitles } from "@/src/utils/booking/booking.pricing";
@@ -93,6 +93,16 @@ function resolveBranchPrefill(
     otherValue: location,
     freeTextValue: "",
   };
+}
+
+function buildAddonPayload(addons: Record<AddonKey, boolean>) {
+  return ADDONS.filter((addon) => addons[addon.key]).map((addon) => ({
+    key: addon.key,
+    name: addon.title,
+    title: addon.title,
+    price: addon.price,
+    pricing: addon.pricing,
+  }));
 }
 
 export default function useBooking() {
@@ -429,12 +439,14 @@ export default function useBooking() {
       }
 
       try {
+        const selectedAddonPayload = buildAddonPayload(addons);
         const res = await bookingApi.previewPrice({
           carId: car.id,
           pickupDate: combineDateAndTime(pickupDate, pickupTime),
           returnDate: combineDateAndTime(returnDate, returnTime),
           pickupLocation: finalPickupPoint || undefined,
           returnLocation: finalReturnPoint || undefined,
+          addons: selectedAddonPayload,
         }, {
           tenantSlug: effectiveTenantSlug,
         });
@@ -474,6 +486,7 @@ export default function useBooking() {
     returnTime,
     finalPickupPoint,
     finalReturnPoint,
+    addons,
     effectiveTenantSlug,
     timeInvalid,
   ]);
@@ -663,6 +676,7 @@ export default function useBooking() {
           note: selectedAddonTitles.length
             ? `บริการเสริมที่เลือก: ${selectedAddonTitles.join(", ")}`
             : undefined,
+          addons: buildAddonPayload(addons),
         }, {
           tenantSlug: effectiveTenantSlug,
         });

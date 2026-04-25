@@ -5,6 +5,8 @@ export type BookingStatus =
   | "pending"
   | "confirmed"
   | "paid"
+  | "active"
+  | "review"
   | "completed"
   | "cancelled";
 
@@ -28,6 +30,8 @@ export type Booking = TenantSummary & {
   returnMethod: ReturnMethod;
   totalDays: number;
   subtotal: number;
+  addons?: BookingAddon[];
+  addonsTotal?: number;
   extraCharge: number;
   discount: number;
   totalAmount: number;
@@ -38,6 +42,25 @@ export type Booking = TenantSummary & {
   createdAt: string;
   updatedAt: string;
   tenantId?: string;
+};
+
+export type BookingAddon = {
+  id?: string;
+  key?: string;
+  name: string;
+  price: number;
+  pricing: "perDay" | "perTrip";
+  quantity: number;
+  lineTotal: number;
+};
+
+export type BookingAddonPayload = {
+  id?: string;
+  key?: string;
+  name?: string;
+  title?: string;
+  price: number;
+  pricing: "perDay" | "perTrip";
 };
 
 export type CreateBookingPayload = {
@@ -52,12 +75,15 @@ export type CreateBookingPayload = {
   customerEmail: string;
   customerPhone: string;
   note?: string;
+  addons?: BookingAddonPayload[];
 };
 
 export type BookingPricePreview = {
   totalDays: number;
   pricePerDay: number;
   subtotal: number;
+  addons?: BookingAddon[];
+  addonsTotal?: number;
   extraCharge: number;
   discount: number;
   totalAmount: number;
@@ -69,4 +95,5 @@ export type BookingPricePreviewPayload = {
   returnDate: string;
   pickupLocation?: string;
   returnLocation?: string;
+  addons?: BookingAddonPayload[];
 };

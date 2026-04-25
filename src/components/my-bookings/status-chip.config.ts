@@ -23,6 +23,14 @@ export const BOOKING_STATUS_CHIP_MAP: Record<BookingStatus, StatusChipConfig> = 
     label: "ชำระแล้ว",
     className: `${baseClassName} !bg-green-500 !text-white`,
   },
+  active: {
+    label: "กำลังเช่า",
+    className: `${baseClassName} !bg-green-500 !text-white`,
+  },
+  review: {
+    label: "รอตรวจสอบ",
+    className: `${baseClassName} !bg-orange-600 !text-white`,
+  },
   completed: {
     label: "เสร็จสิ้น",
     className: `${baseClassName} !bg-slate-800 !text-white`,
