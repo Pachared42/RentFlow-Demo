@@ -13,6 +13,7 @@ type Options = {
   tenantSlug?: string;
   marketplace?: boolean;
   enabled?: boolean;
+  fallbackIntervalMs?: number;
 };
 
 export function useRentFlowRealtimeRefresh({
@@ -21,8 +22,16 @@ export function useRentFlowRealtimeRefresh({
   tenantSlug,
   marketplace,
   enabled = true,
+  fallbackIntervalMs = 15000,
 }: Options) {
   const eventKey = events.join("|");
+  const onRefreshRef = React.useRef(onRefresh);
+  const lastEventAtRef = React.useRef(0);
+  const [socketReady, setSocketReady] = React.useState(false);
+
+  React.useEffect(() => {
+    onRefreshRef.current = onRefresh;
+  }, [onRefresh]);
 
   React.useEffect(() => {
     if (!enabled) return;
@@ -34,10 +43,28 @@ export function useRentFlowRealtimeRefresh({
       marketplace,
       onEvent(event) {
         if (allowedEvents.has(event.type as RentFlowRealtimeEventType)) {
-          onRefresh(event);
+          lastEventAtRef.current = Date.now();
+          onRefreshRef.current(event);
         }
       },
+      onStatus(status) {
+        setSocketReady(status === "open");
+      },
     });
-  }, [enabled, eventKey, marketplace, onRefresh, tenantSlug]);
-}
+  }, [enabled, eventKey, marketplace, tenantSlug]);
 
+  React.useEffect(() => {
+    if (!enabled || socketReady || fallbackIntervalMs <= 0) return;
+
+    const timer = window.setInterval(() => {
+      if (Date.now() - lastEventAtRef.current < fallbackIntervalMs) return;
+      onRefreshRef.current({
+        type: "availability.changed",
+        createdAt: new Date().toISOString(),
+        data: { fallback: true },
+      });
+    }, fallbackIntervalMs);
+
+    return () => window.clearInterval(timer);
+  }, [enabled, fallbackIntervalMs, socketReady]);
+}

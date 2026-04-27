@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
 import { navigateBookingFlow } from "@/src/lib/booking-flow-navigation";
@@ -168,6 +169,9 @@ export default function useBooking() {
 
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [carReloadTick, setCarReloadTick] = React.useState(0);
+  const [branchReloadTick, setBranchReloadTick] = React.useState(0);
+  const [addonReloadTick, setAddonReloadTick] = React.useState(0);
   const [ready, setReady] = React.useState(false);
   const [checkingAuth, setCheckingAuth] = React.useState(true);
   const [pricing, setPricing] = React.useState<{
@@ -249,6 +253,42 @@ export default function useBooking() {
     () => car?.domainSlug || tenantSlugFromUrl || undefined,
     [car?.domainSlug, tenantSlugFromUrl]
   );
+
+  useRentFlowRealtimeRefresh({
+    events: [
+      "booking.created",
+      "booking.updated",
+      "booking.cancelled",
+      "car.changed",
+      "car.status.changed",
+      "availability.changed",
+      "tenant.updated",
+    ],
+    onRefresh: React.useCallback(() => {
+      setCarReloadTick((current) => current + 1);
+    }, []),
+    tenantSlug: effectiveTenantSlug,
+    marketplace: siteMode === "marketplace" && !effectiveTenantSlug,
+    enabled: Boolean(carId),
+  });
+
+  useRentFlowRealtimeRefresh({
+    events: ["branch.changed", "tenant.updated"],
+    onRefresh: React.useCallback(() => {
+      setBranchReloadTick((current) => current + 1);
+    }, []),
+    tenantSlug: effectiveTenantSlug,
+    enabled: Boolean(effectiveTenantSlug),
+  });
+
+  useRentFlowRealtimeRefresh({
+    events: ["addon.changed", "tenant.updated"],
+    onRefresh: React.useCallback(() => {
+      setAddonReloadTick((current) => current + 1);
+    }, []),
+    tenantSlug: effectiveTenantSlug,
+    enabled: siteMode === "storefront" || Boolean(effectiveTenantSlug),
+  });
 
   const [isCheckingAvailability, setIsCheckingAvailability] =
     React.useState(false);
@@ -350,7 +390,7 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [carId, params, router, siteMode, tenantSlugFromUrl]);
+  }, [carId, carReloadTick, params, router, siteMode, tenantSlugFromUrl]);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -393,7 +433,7 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [effectiveTenantSlug]);
+  }, [branchReloadTick, effectiveTenantSlug]);
 
   React.useEffect(() => {
     if (!merchantBranchesEnabled) {
@@ -468,7 +508,7 @@ export default function useBooking() {
     return () => {
       cancelled = true;
     };
-  }, [effectiveTenantSlug, siteMode]);
+  }, [addonReloadTick, effectiveTenantSlug, siteMode]);
 
   React.useEffect(() => {
     let cancelled = false;

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import usePageReady from "@/src/hooks/usePageReady";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
@@ -70,6 +71,7 @@ export default function usePaymentPage() {
 
   const [car, setCar] = React.useState<Car | undefined>(undefined);
   const [addonOptions, setAddonOptions] = React.useState<StorefrontAddon[]>([]);
+  const [reloadTick, setReloadTick] = React.useState(0);
 
   const addonsTotal = React.useMemo(
     () => calcAddonsTotal(addonOptions, addonIds, days),
@@ -129,6 +131,22 @@ export default function usePaymentPage() {
     (!needSlip || !!slipFile) &&
     !loading;
 
+  useRentFlowRealtimeRefresh({
+    events: [
+      "booking.updated",
+      "payment.updated",
+      "car.changed",
+      "car.status.changed",
+      "addon.changed",
+      "tenant.updated",
+    ],
+    onRefresh: React.useCallback(() => {
+      setReloadTick((current) => current + 1);
+    }, []),
+    enabled: Boolean(carId || bookingId),
+    tenantSlug,
+  });
+
   React.useEffect(() => {
     let cancelled = false;
 
@@ -166,7 +184,7 @@ export default function usePaymentPage() {
     return () => {
       cancelled = true;
     };
-  }, [carId, siteMode, tenantSlug]);
+  }, [carId, reloadTick, siteMode, tenantSlug]);
 
   const handleConfirm = React.useCallback(async () => {
     if (!canPay) return;

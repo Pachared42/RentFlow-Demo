@@ -13,6 +13,7 @@ type SubscribeOptions = {
   marketplace?: boolean;
   onEvent: (event: RentFlowRealtimeEvent) => void;
   onError?: () => void;
+  onStatus?: (status: "connecting" | "open" | "closed" | "error") => void;
 };
 
 function realtimeUrl(options: SubscribeOptions) {
@@ -50,6 +51,7 @@ export function subscribeRentFlowRealtime(options: SubscribeOptions) {
   const connect = () => {
     if (closed) return;
 
+    options.onStatus?.("connecting");
     socket = new WebSocket(realtimeUrl(options));
     socket.onmessage = (message) => {
       try {
@@ -60,11 +62,14 @@ export function subscribeRentFlowRealtime(options: SubscribeOptions) {
     };
     socket.onopen = () => {
       attempts = 0;
+      options.onStatus?.("open");
     };
     socket.onerror = () => {
+      options.onStatus?.("error");
       options.onError?.();
     };
     socket.onclose = () => {
+      options.onStatus?.("closed");
       if (closed) return;
       attempts += 1;
       const delay = Math.min(1000 + attempts * 700, 5000);
@@ -80,4 +85,3 @@ export function subscribeRentFlowRealtime(options: SubscribeOptions) {
     socket?.close();
   };
 }
-

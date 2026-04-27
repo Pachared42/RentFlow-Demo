@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { getErrorMessage } from "@/src/lib/api-error";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { branchesApi } from "@/src/services/branches/branches.service";
 import type { Branch } from "@/src/services/branches/branches.types";
@@ -11,6 +12,15 @@ export function useBranchDirectory() {
   const [branches, setBranches] = React.useState<Branch[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [reloadTick, setReloadTick] = React.useState(0);
+
+  useRentFlowRealtimeRefresh({
+    events: ["branch.changed", "tenant.updated"],
+    onRefresh: React.useCallback(() => {
+      setReloadTick((current) => current + 1);
+    }, []),
+    marketplace: siteMode === "marketplace",
+  });
 
   React.useEffect(() => {
     let cancelled = false;
@@ -51,7 +61,7 @@ export function useBranchDirectory() {
     return () => {
       cancelled = true;
     };
-  }, [siteMode]);
+  }, [reloadTick, siteMode]);
 
   return {
     branches,

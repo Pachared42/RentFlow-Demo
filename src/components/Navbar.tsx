@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 
 import { NAV } from "@/src/constants/navigation";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
 import {
   clearCachedSessionUser,
@@ -261,6 +262,24 @@ export default function Navbar({
     [siteMode]
   );
 
+  const reloadTenantProfile = React.useCallback(() => {
+    if (siteMode !== "storefront") return;
+    tenantApi
+      .resolveTenant()
+      .then((res) => {
+        setTenantProfile(res.data);
+      })
+      .catch(() => {
+        setTenantProfile(initialTenantProfile);
+      });
+  }, [initialTenantProfile, siteMode]);
+
+  useRentFlowRealtimeRefresh({
+    events: ["tenant.updated"],
+    onRefresh: reloadTenantProfile,
+    enabled: siteMode === "storefront",
+  });
+
   useHydrationLayoutEffect(() => {
     const cachedUser = getCachedSessionUser();
     if (cachedUser) {
@@ -279,24 +298,8 @@ export default function Navbar({
       return;
     }
 
-    let cancelled = false;
-    tenantApi
-      .resolveTenant()
-      .then((res) => {
-        if (!cancelled) {
-          setTenantProfile(res.data);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setTenantProfile(initialTenantProfile);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [initialTenantProfile, siteMode]);
+    reloadTenantProfile();
+  }, [reloadTenantProfile, siteMode]);
 
   React.useEffect(() => {
     let cancelled = false;

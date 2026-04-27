@@ -15,6 +15,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
 import { reviewsApi } from "@/src/services/reviews/reviews.service";
@@ -63,6 +64,7 @@ function ReviewsPageSkeleton() {
 export default function ReviewsPage() {
   const [reviews, setReviews] = React.useState<Review[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [reloadTick, setReloadTick] = React.useState(0);
   const [snackbar, setSnackbar] = React.useState<{
     open: boolean;
     message: string;
@@ -71,6 +73,16 @@ export default function ReviewsPage() {
     open: false,
     message: "",
     severity: "info",
+  });
+
+  const refreshReviews = React.useCallback(() => {
+    setReloadTick((current) => current + 1);
+  }, []);
+
+  useRentFlowRealtimeRefresh({
+    events: ["review.created", "tenant.updated"],
+    onRefresh: refreshReviews,
+    marketplace: true,
   });
 
   React.useEffect(() => {
@@ -97,7 +109,7 @@ export default function ReviewsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [reloadTick]);
 
   return (
     <Box className="apple-page">

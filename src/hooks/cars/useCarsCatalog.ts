@@ -6,6 +6,7 @@ import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowReal
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getCars } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
+import type { RentFlowRealtimeEvent } from "@/src/services/realtime/realtime.types";
 
 type Params = {
     q: string;
@@ -25,7 +26,34 @@ export function useCarsCatalog(params: Params) {
     const [error, setError] = React.useState<string | null>(null);
     const [reloadTick, setReloadTick] = React.useState(0);
 
-    const refreshFromRealtime = React.useCallback(() => {
+    const refreshFromRealtime = React.useCallback((event?: RentFlowRealtimeEvent) => {
+        if (event?.type === "car.status.changed") {
+            const carId = String(event.data?.carId || event.entityId || "");
+            if (carId) {
+                setCars((current) =>
+                    current.map((car) =>
+                        car.id === carId
+                            ? {
+                                ...car,
+                                status:
+                                    typeof event.data?.status === "string"
+                                        ? event.data.status
+                                        : car.status,
+                                isAvailable:
+                                    typeof event.data?.isAvailable === "boolean"
+                                        ? event.data.isAvailable
+                                        : car.isAvailable,
+                                availableUnits:
+                                    typeof event.data?.availableUnits === "number"
+                                        ? event.data.availableUnits
+                                        : car.availableUnits,
+                            }
+                            : car
+                    )
+                );
+            }
+            return;
+        }
         setReloadTick((current) => current + 1);
     }, []);
 
@@ -35,6 +63,8 @@ export function useCarsCatalog(params: Params) {
             "booking.updated",
             "booking.cancelled",
             "car.changed",
+            "car.status.changed",
+            "branch.changed",
             "availability.changed",
             "tenant.updated",
         ],

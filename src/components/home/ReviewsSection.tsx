@@ -17,6 +17,7 @@ import {
 import AppSnackbar, {
   type AppSnackbarSeverity,
 } from "@/src/components/common/AppSnackbar";
+import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getErrorMessage } from "@/src/lib/api-error";
 import { getRentFlowStorefrontHref } from "@/src/lib/tenant";
@@ -50,6 +51,7 @@ export default function ReviewsSection() {
   const [rating, setRating] = React.useState<number | null>(5);
   const [loadingReviews, setLoadingReviews] = React.useState(true);
   const [submitting, setSubmitting] = React.useState(false);
+  const [reloadTick, setReloadTick] = React.useState(0);
   const [snackbar, setSnackbar] = React.useState<SnackbarState>({
     open: false,
     message: "",
@@ -90,7 +92,15 @@ export default function ReviewsSection() {
     return () => {
       cancelled = true;
     };
-  }, [isMarketplace, showSnackbar]);
+  }, [isMarketplace, reloadTick, showSnackbar]);
+
+  useRentFlowRealtimeRefresh({
+    events: ["review.created", "tenant.updated"],
+    onRefresh: React.useCallback(() => {
+      setReloadTick((current) => current + 1);
+    }, []),
+    marketplace: isMarketplace,
+  });
 
   const canSubmit =
     firstName.trim().length >= 2 &&

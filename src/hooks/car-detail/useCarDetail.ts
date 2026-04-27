@@ -8,6 +8,7 @@ import usePageReady from "@/src/hooks/usePageReady";
 import { useRentFlowSiteMode } from "@/src/hooks/useRentFlowSiteMode";
 import { getCarById } from "@/src/services/cars/cars.service";
 import type { Car } from "@/src/services/cars/cars.types";
+import type { RentFlowRealtimeEvent } from "@/src/services/realtime/realtime.types";
 
 export default function useCarDetail(carId: string) {
   const ready = usePageReady();
@@ -20,9 +21,31 @@ export default function useCarDetail(carId: string) {
   const [reloadTick, setReloadTick] = React.useState(0);
 
   const refreshFromRealtime = React.useCallback(
-    (event: { entityId?: string; data?: Record<string, unknown> }) => {
+    (event: RentFlowRealtimeEvent) => {
       const eventCarId = String(event.data?.carId || event.entityId || "");
       if (!eventCarId || eventCarId === id) {
+        if (event.type === "car.status.changed") {
+          setDetail((current) =>
+            current
+              ? {
+                  ...current,
+                  status:
+                    typeof event.data?.status === "string"
+                      ? event.data.status
+                      : current.status,
+                  isAvailable:
+                    typeof event.data?.isAvailable === "boolean"
+                      ? event.data.isAvailable
+                      : current.isAvailable,
+                  availableUnits:
+                    typeof event.data?.availableUnits === "number"
+                      ? event.data.availableUnits
+                      : current.availableUnits,
+                }
+              : current
+          );
+          return;
+        }
         setReloadTick((current) => current + 1);
       }
     },
@@ -35,6 +58,7 @@ export default function useCarDetail(carId: string) {
       "booking.updated",
       "booking.cancelled",
       "car.changed",
+      "car.status.changed",
       "availability.changed",
       "tenant.updated",
     ],
