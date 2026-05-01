@@ -55,6 +55,7 @@ export const getInitialRentFlowTenantProfile = cache(
         ...tenant,
         logoUrl: resolveRentFlowAssetUrl(tenant.logoUrl),
         promoImageUrl: resolveRentFlowAssetUrl(tenant.promoImageUrl),
+        lineOaQrCodeUrl: resolveRentFlowAssetUrl(tenant.lineOaQrCodeUrl),
         promoImageUrls: (tenant.promoImageUrls || [])
           .map((url) => resolveRentFlowAssetUrl(url))
           .filter(Boolean) as string[],

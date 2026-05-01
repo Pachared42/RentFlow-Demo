@@ -6,6 +6,9 @@ export type TenantProfile = {
   logoUrl?: string;
   promoImageUrl?: string;
   promoImageUrls?: string[];
+  contactPhone?: string;
+  facebookPageUrl?: string;
+  lineOaQrCodeUrl?: string;
   status?: string;
   bookingMode?: "payment" | "chat" | string;
   chatThresholdTHB?: number;

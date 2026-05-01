@@ -82,6 +82,22 @@ export default function Footer({
     siteMode === "marketplace"
       ? "ถ้าสนใจเช่าแพลตฟอร์มให้บริการเช่ารถยนต์ออนไลน์ สามารถติดต่อทีม RentFlow ได้ที่นี่"
       : "ติดต่อร้านเพื่อสอบถามข้อมูลรถ สาขา และเงื่อนไขการเช่าเพิ่มเติม";
+  const contactPhone =
+    siteMode === "storefront" ? tenantProfile?.contactPhone || "" : CONTACT.phone;
+  const facebookPageUrl =
+    siteMode === "storefront"
+      ? tenantProfile?.facebookPageUrl || ""
+      : SOCIAL.facebook;
+  const lineOaQrCodeUrl =
+    siteMode === "storefront" ? tenantProfile?.lineOaQrCodeUrl || "" : "";
+  const telHref = contactPhone.replace(/[^\d+]/g, "");
+  const navItems = React.useMemo(
+    () =>
+      siteMode === "marketplace"
+        ? NAV
+        : NAV.filter((item) => item.href !== "/shops"),
+    [siteMode]
+  );
 
   return (
     <Box
@@ -120,7 +136,7 @@ export default function Footer({
             </Typography>
 
             <Stack spacing={1} className="mt-3">
-              {NAV.map((item) => (
+              {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -143,21 +159,39 @@ export default function Footer({
                 {contactText}
               </Typography>
 
-              <a
-                href={`tel:${CONTACT.phone.replace(/-/g, "")}`}
-                className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-              >
-                โทร: {CONTACT.phone}
-              </a>
+              {contactPhone ? (
+                <a
+                  href={`tel:${telHref}`}
+                  className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                >
+                  โทร: {contactPhone}
+                </a>
+              ) : null}
 
-              <a
-                href={SOCIAL.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
-              >
-                Facebook
-              </a>
+              {facebookPageUrl ? (
+                <a
+                  href={facebookPageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="apple-body-sm text-[var(--rf-apple-muted)] hover:text-[var(--rf-apple-ink)] focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/20"
+                >
+                  Facebook
+                </a>
+              ) : null}
+
+              {lineOaQrCodeUrl ? (
+                <Box className="mt-2 w-fit rounded-[22px] bg-white p-3 shadow-[0_12px_34px_rgba(15,23,42,0.08)] ring-1 ring-black/5">
+                  <Box
+                    component="img"
+                    src={lineOaQrCodeUrl}
+                    alt={`QR Code LINE OA ${brandName}`}
+                    className="h-28 w-28 rounded-2xl object-contain"
+                  />
+                  <Typography className="mt-2 max-w-32 text-center text-xs font-semibold text-[var(--rf-apple-muted)]">
+                    สแกนเพื่อแชท LINE OA
+                  </Typography>
+                </Box>
+              ) : null}
             </Stack>
           </Box>
         </Box>
