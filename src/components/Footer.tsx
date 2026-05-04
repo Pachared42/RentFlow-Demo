@@ -180,17 +180,12 @@ export default function Footer({
               ) : null}
 
               {lineOaQrCodeUrl ? (
-                <Box className="mt-2 w-fit rounded-[22px] bg-white p-3 shadow-[0_12px_34px_rgba(15,23,42,0.08)] ring-1 ring-black/5">
-                  <Box
-                    component="img"
-                    src={lineOaQrCodeUrl}
-                    alt={`QR Code LINE OA ${brandName}`}
-                    className="h-28 w-28 rounded-2xl object-contain"
-                  />
-                  <Typography className="mt-2 max-w-32 text-center text-xs font-semibold text-[var(--rf-apple-muted)]">
-                    สแกนเพื่อแชท LINE OA
-                  </Typography>
-                </Box>
+                <Box
+                  component="img"
+                  src={lineOaQrCodeUrl}
+                  alt={`QR Code LINE OA ${brandName}`}
+                  className="mt-3 h-44 w-44 object-contain sm:h-48 sm:w-48 md:h-52 md:w-52"
+                />
               ) : null}
             </Stack>
           </Box>
