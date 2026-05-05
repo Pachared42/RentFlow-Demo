@@ -178,6 +178,8 @@ export default function PaymentMethodSection({
             >
               {slipFile ? "เปลี่ยนไฟล์สลิป" : "แนบสลิปโอนเงิน"}
               <input
+                id="payment-slip-upload"
+                name="paymentSlip"
                 type="file"
                 hidden
                 accept="image/*"

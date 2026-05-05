@@ -1,5 +1,6 @@
 import api from "@/src/lib/axios";
 import { normalizeCustomer } from "../auth/auth.mapper";
+import { setCachedSessionUser } from "../auth/auth.service";
 import type { ApiResponse } from "../types/types";
 import type { Customer } from "../auth/auth.types";
 import type {
@@ -37,16 +38,20 @@ export const usersApi = {
         "/users/me",
         formData
       );
+      const user = normalizeCustomer(res.data.data)!;
+      setCachedSessionUser(user);
       return {
         ...res.data,
-        data: normalizeCustomer(res.data.data)!,
+        data: user,
       };
     }
 
     const res = await api.patch<ApiResponse<Customer>>("/users/me", payload);
+    const user = normalizeCustomer(res.data.data)!;
+    setCachedSessionUser(user);
     return {
       ...res.data,
-      data: normalizeCustomer(res.data.data)!,
+      data: user,
     };
   },
 

@@ -1,6 +1,9 @@
 import axios, { AxiosHeaders } from "axios";
 import { getRentFlowTenantHeaders } from "@/src/lib/tenant";
 import { getRentFlowApiBaseUrl } from "@/src/lib/runtime-api-url";
+import { readClientCookie } from "@/src/lib/client-cookie";
+
+const AUTH_TOKEN_STORAGE_KEY = "rf_session_token_v1";
 
 const api = axios.create({
   baseURL: getRentFlowApiBaseUrl(),
@@ -21,6 +24,13 @@ api.interceptors.request.use((config) => {
   }
 
   headers.set("X-RentFlow-App", "storefront");
+
+  if (typeof window !== "undefined" && !headers.has("Authorization")) {
+    const sessionToken = readClientCookie(AUTH_TOKEN_STORAGE_KEY);
+    if (sessionToken) {
+      headers.set("Authorization", `Bearer ${sessionToken}`);
+    }
+  }
 
   for (const [key, value] of Object.entries(getRentFlowTenantHeaders())) {
     if (!headers.has(key)) {

@@ -56,7 +56,11 @@ export default async function RootLayout({
   const initialTenantProfile = await getInitialRentFlowTenantProfile(host);
 
   return (
-    <html lang="th" className={`${notoThai.variable} ${notoSans.variable}`}>
+    <html
+      lang="th"
+      data-scroll-behavior="smooth"
+      className={`${notoThai.variable} ${notoSans.variable}`}
+    >
       <body className="font-thai">
         <Providers>
           <Navbar

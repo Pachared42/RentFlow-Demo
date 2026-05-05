@@ -77,10 +77,11 @@ export function subscribeRentFlowRealtime(options: SubscribeOptions) {
     };
   };
 
-  connect();
+  const connectTimer = window.setTimeout(connect, 180);
 
   return () => {
     closed = true;
+    if (connectTimer) window.clearTimeout(connectTimer);
     if (reconnectTimer) window.clearTimeout(reconnectTimer);
     socket?.close();
   };

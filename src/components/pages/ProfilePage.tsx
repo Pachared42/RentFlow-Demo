@@ -18,6 +18,8 @@ import ProfileActionCard from "@/src/components/profile/ProfileActionCard";
 import ProfilePageSkeleton from "@/src/components/profile/ProfilePageSkeleton";
 import ProfileSectionCard from "@/src/components/profile/ProfileSectionCard";
 import { ProfileField } from "@/src/components/profile/ProfileField";
+import { getCachedSessionUser } from "@/src/services/auth/auth.service";
+import type { Customer } from "@/src/services/auth/auth.types";
 import { usersApi } from "@/src/services/users/users.service";
 
 type ProfileData = {
@@ -80,6 +82,18 @@ function getProfileDisplayName(user: {
 }) {
   const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
   return user.name || fullName || user.username || "";
+}
+
+function mapUserToProfileData(user: Customer): ProfileData {
+  return {
+    avatarUrl: user.avatarUrl || "",
+    displayName: getProfileDisplayName(user),
+    username: user.username || "",
+    phone: user.phone || "",
+    provider: "RentFlow",
+    createdAt: formatDateTime(user.createdAt || ""),
+    updatedAt: formatDateTime(user.updatedAt || ""),
+  };
 }
 
 function ProfileFieldsGrid({
@@ -148,18 +162,19 @@ export default function ProfilePage() {
 
     async function loadProfile() {
       try {
+        const cachedUser = getCachedSessionUser();
+        if (cachedUser) {
+          const cachedProfile = mapUserToProfileData(cachedUser);
+          setProfile(cachedProfile);
+          setDraft(cachedProfile);
+          setError(null);
+          return;
+        }
+
         const res = await usersApi.getMe();
         if (cancelled) return;
 
-        const nextProfile: ProfileData = {
-          avatarUrl: res.data.avatarUrl || "",
-          displayName: getProfileDisplayName(res.data),
-          username: res.data.username || "",
-          phone: res.data.phone || "",
-          provider: "RentFlow",
-          createdAt: formatDateTime(res.data.createdAt || ""),
-          updatedAt: formatDateTime(res.data.updatedAt || ""),
-        };
+        const nextProfile = mapUserToProfileData(res.data);
 
         setProfile(nextProfile);
         setDraft(nextProfile);
@@ -168,6 +183,15 @@ export default function ProfilePage() {
         if (cancelled) return;
 
         if (getErrorStatus(err) === 401) {
+          const cachedUser = getCachedSessionUser();
+          if (cachedUser) {
+            const cachedProfile = mapUserToProfileData(cachedUser);
+            setProfile(cachedProfile);
+            setDraft(cachedProfile);
+            setError(null);
+            return;
+          }
+
           router.replace("/login?redirect=/profile");
           return;
         }
@@ -409,6 +433,8 @@ export default function ProfilePage() {
                         เลือกรูป
                         <input
                           hidden
+                          id="profile-avatar-upload"
+                          name="profileAvatar"
                           type="file"
                           accept="image/png,image/jpeg,image/webp,image/gif"
                           onChange={handleAvatarFileChange}

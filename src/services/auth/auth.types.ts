@@ -31,6 +31,8 @@ export type ForgotPasswordPayload = {
 
 export type AuthResult = {
   user: Customer;
+  sessionToken?: string;
+  token?: string;
 };
 
 export type AuthResponse = {

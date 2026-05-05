@@ -414,6 +414,8 @@ export default function StorefrontBlocksSection({
 	                              เปลี่ยนรูป
 	                              <input
                                   hidden
+                                  id={`storefront-block-image-replace-${block.id || index}`}
+                                  name={`storefrontBlockImageReplace${index}`}
                                   type="file"
                                   accept="image/png,image/jpeg,image/webp,image/gif"
                                   onChange={(event) =>
@@ -450,6 +452,8 @@ export default function StorefrontBlocksSection({
 	                            อัปโหลดรูปส่วนนี้
 	                            <input
                                 hidden
+                                id={`storefront-block-image-upload-${block.id || index}`}
+                                name={`storefrontBlockImageUpload${index}`}
                                 type="file"
                                 accept="image/png,image/jpeg,image/webp,image/gif"
                                 onChange={(event) =>

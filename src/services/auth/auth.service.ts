@@ -15,6 +15,8 @@ import type {
 } from "./auth.types";
 
 const AUTH_USER_STORAGE_KEY = "rf_session_user_v1";
+const AUTH_TOKEN_STORAGE_KEY = "rf_session_token_v1";
+export const AUTH_SESSION_CHANGED_EVENT = "rentflow:session-changed";
 
 function canUseStorage() {
   return typeof window !== "undefined";
@@ -35,6 +37,15 @@ function sanitizeCustomer(user: Customer): Customer {
   })!;
 }
 
+function notifySessionChanged(user: Customer | null) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(AUTH_SESSION_CHANGED_EVENT, {
+      detail: { user },
+    })
+  );
+}
+
 export function getCachedSessionUser(): Customer | null {
   if (!canUseStorage()) return null;
 
@@ -49,12 +60,34 @@ export function getCachedSessionUser(): Customer | null {
   }
 }
 
+export function getCachedSessionToken() {
+  if (!canUseStorage()) return "";
+  return readClientCookie(AUTH_TOKEN_STORAGE_KEY);
+}
+
+export function setCachedSessionToken(token: string | null | undefined) {
+  if (!canUseStorage()) return;
+
+  const trimmedToken = token?.trim();
+  if (!trimmedToken) {
+    deleteClientCookie(AUTH_TOKEN_STORAGE_KEY);
+    return;
+  }
+
+  writeClientCookie(AUTH_TOKEN_STORAGE_KEY, trimmedToken, {
+    maxAge: 60 * 60 * 24 * 7,
+    sameSite: "Strict",
+  });
+}
+
 export function setCachedSessionUser(user: Customer | null) {
   if (!canUseStorage()) return;
 
   try {
     if (!user) {
       deleteClientCookie(AUTH_USER_STORAGE_KEY);
+      deleteClientCookie(AUTH_TOKEN_STORAGE_KEY);
+      notifySessionChanged(null);
       return;
     }
 
@@ -63,6 +96,7 @@ export function setCachedSessionUser(user: Customer | null) {
       JSON.stringify(sanitizeCustomer(user)),
       { maxAge: 60 * 60 * 24 * 7, sameSite: "Strict" }
     );
+    notifySessionChanged(sanitizeCustomer(user));
   } catch {
     // no-op
   }
@@ -79,6 +113,7 @@ export async function loginWithPassword(
   try {
     const res = await api.post("/auth/login", payload);
     const normalized = normalizeAuthResponse(res.data);
+    setCachedSessionToken(normalized.data?.sessionToken);
     setCachedSessionUser(normalized.data?.user ?? null);
     return normalized;
   } catch (error: unknown) {
@@ -97,6 +132,7 @@ export async function registerWithPassword(
       name,
     });
     const normalized = normalizeAuthResponse(res.data);
+    setCachedSessionToken(normalized.data?.sessionToken);
     setCachedSessionUser(normalized.data?.user ?? null);
     return normalized;
   } catch (error: unknown) {

@@ -4,8 +4,10 @@ import type { AuthResponse, Customer } from "./auth.types";
 type LegacyAuthResponse = {
   success?: boolean;
   message?: string;
+  sessionToken?: string;
+  token?: string;
   user?: Customer;
-  data?: Customer | { user?: Customer };
+  data?: Customer | { user?: Customer; sessionToken?: string; token?: string };
 };
 
 export function normalizeCustomer(
@@ -30,7 +32,12 @@ export function normalizeAuthResponse(
     return {
       success: raw.success,
       message: raw.message,
-      data: data.user ? { user: normalizeCustomer(data.user)! } : undefined,
+      data: data.user
+        ? {
+            user: normalizeCustomer(data.user)!,
+            sessionToken: data.sessionToken || data.token,
+          }
+        : undefined,
     };
   }
 
@@ -46,7 +53,10 @@ export function normalizeAuthResponse(
     return {
       success: raw.success,
       message: raw.message,
-      data: { user: normalizeCustomer(raw.user)! },
+      data: {
+        user: normalizeCustomer(raw.user)!,
+        sessionToken: raw.sessionToken || raw.token,
+      },
     };
   }
 

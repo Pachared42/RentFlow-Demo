@@ -21,9 +21,8 @@ import { NAV } from "@/src/constants/navigation";
 import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
 import {
-  clearCachedSessionUser,
+  AUTH_SESSION_CHANGED_EVENT,
   getCachedSessionUser,
-  getSessionUser,
 } from "@/src/services/auth/auth.service";
 import type { Customer } from "@/src/services/auth/auth.types";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
@@ -240,7 +239,10 @@ export default function Navbar({
   const pathname = usePathname();
 
   const [open, setOpen] = React.useState(false);
-  const toggleDrawer = (v: boolean) => () => setOpen(v);
+  const closeDrawer = React.useCallback(() => setOpen(false), []);
+  const toggleDrawer = React.useCallback(() => {
+    setOpen((current) => !current);
+  }, []);
   const [user, setUser] = React.useState<User | null>(null);
   const [authResolved, setAuthResolved] = React.useState(false);
   const [authSkeletonVariant, setAuthSkeletonVariant] =
@@ -280,7 +282,7 @@ export default function Navbar({
     enabled: siteMode === "storefront",
   });
 
-  useHydrationLayoutEffect(() => {
+  const applyCachedSession = React.useCallback(() => {
     const cachedUser = getCachedSessionUser();
     if (cachedUser) {
       setUser(mapCustomerToNavbarUser(cachedUser));
@@ -289,8 +291,20 @@ export default function Navbar({
       setUser(null);
       setAuthSkeletonVariant("guest");
     }
-    setAuthShellReady(true);
+    setAuthResolved(true);
   }, []);
+
+  useHydrationLayoutEffect(() => {
+    applyCachedSession();
+    setAuthShellReady(true);
+  }, [applyCachedSession]);
+
+  React.useEffect(() => {
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, applyCachedSession);
+    return () => {
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, applyCachedSession);
+    };
+  }, [applyCachedSession]);
 
   React.useEffect(() => {
     if (siteMode !== "storefront") {
@@ -302,32 +316,26 @@ export default function Navbar({
   }, [reloadTenantProfile, siteMode]);
 
   React.useEffect(() => {
-    let cancelled = false;
+    applyCachedSession();
+  }, [applyCachedSession, pathname]);
 
-    async function syncSession() {
-      try {
-        const currentUser = await getSessionUser();
-        if (!cancelled) {
-          setUser(mapCustomerToNavbarUser(currentUser));
-          setAuthSkeletonVariant(currentUser ? "profile" : "guest");
-          setAuthResolved(true);
-        }
-      } catch {
-        if (!cancelled) {
-          clearCachedSessionUser();
-          setUser(null);
-          setAuthSkeletonVariant("guest");
-          setAuthResolved(true);
-        }
-      }
-    }
+  React.useEffect(() => {
+    closeDrawer();
+  }, [closeDrawer, pathname]);
 
-    syncSession();
+  React.useEffect(() => {
+    if (!open) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     return () => {
-      cancelled = true;
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
     };
-  }, [pathname]);
+  }, [open]);
 
   const isActive = (href: string) => pathname === href;
 
@@ -527,10 +535,10 @@ export default function Navbar({
           </Box>
 
           <Button
-            onClick={toggleDrawer(true)}
+            onClick={toggleDrawer}
             aria-label={open ? "ปิดเมนู" : "เปิดเมนู"}
             disableElevation
-            className="min-w-0! rounded-[12px]! px-2.5! py-2!"
+            className="h-11! w-11! min-w-0! rounded-[14px]! p-0!"
             sx={{
               display: "inline-flex",
               border: "0",
@@ -552,7 +560,7 @@ export default function Navbar({
       <Drawer
         anchor="top"
         open={open}
-        onClose={toggleDrawer(false)}
+        onClose={closeDrawer}
         transitionDuration={{ enter: 420, exit: 320 }}
         ModalProps={{ keepMounted: true }}
         sx={{
@@ -566,52 +574,57 @@ export default function Navbar({
             maxWidth: "100vw",
             height: "100dvh",
             maxHeight: "100dvh",
+            overflow: "hidden",
             backgroundColor: "var(--rf-apple-surface-soft)",
             borderBottomLeftRadius: "28px",
             borderBottomRightRadius: "28px",
           },
         }}
       >
-        <Box className="flex h-full min-h-dvh w-full flex-col bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
-          <Box className="flex items-center justify-between border-b border-black/10 px-4 py-4 md:px-5">
-            <Box className="flex items-center gap-3">
-              <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
-                <Box className="relative h-6 w-6 overflow-hidden">
-                  <BrandLogo
-                    src={brandLogoSrc}
-                    alt={brandName}
-                    className="h-full w-full object-contain"
-                  />
+        <Box className="flex h-full min-h-dvh w-full flex-col overflow-hidden bg-[var(--rf-apple-surface-soft)] text-[var(--rf-apple-ink)]">
+          <Container maxWidth="lg" className="w-full!">
+          <Box>
+            <Box className="flex items-center justify-between">
+              <Box className="flex items-center gap-3">
+                <Box className="relative flex h-8 w-8 shrink-0 items-center justify-center">
+                  <Box className="relative h-6 w-6 overflow-hidden">
+                    <BrandLogo
+                      src={brandLogoSrc}
+                      alt={brandName}
+                      className="h-full w-full object-contain"
+                    />
+                  </Box>
+                </Box>
+
+                <Box>
+                  <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
+                    {brandName}
+                  </Typography>
+                  <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
+                    {brandCaption}
+                  </Typography>
                 </Box>
               </Box>
 
-              <Box>
-                <Typography className="apple-nav-brand font-semibold! tracking-[-0.01em] text-[var(--rf-apple-ink)]! leading-none!">
-                  {brandName}
-                </Typography>
-                <Typography className="apple-nav-caption mt-1! font-medium! leading-none! text-[var(--rf-apple-muted)]!">
-                  {brandCaption}
-                </Typography>
-              </Box>
+              <Button
+                onClick={closeDrawer}
+                aria-label="ปิดเมนู"
+                disableElevation
+                className="h-11! w-11! min-w-0! rounded-[14px]! p-0!"
+                sx={{
+                  border: "0",
+                  color: "var(--rf-apple-ink)",
+                  backgroundColor: "transparent",
+                  "&:hover": {
+                    backgroundColor: "rgba(0,0,0,0.04)",
+                  },
+                }}
+              >
+                <MobileMenuGlyph open />
+              </Button>
             </Box>
-
-            <Button
-              onClick={toggleDrawer(false)}
-              aria-label="ปิดเมนู"
-              disableElevation
-              className="min-w-0! rounded-[12px]! px-2.5! py-2!"
-              sx={{
-                border: "0",
-                color: "var(--rf-apple-ink)",
-                backgroundColor: "transparent",
-                "&:hover": {
-                  backgroundColor: "rgba(0,0,0,0.04)",
-                },
-              }}
-            >
-              <MobileMenuGlyph open />
-            </Button>
           </Box>
+          </Container>
 
           <List
             className="flex-1 px-4! py-4! md:px-5! md:py-5!"
@@ -624,7 +637,7 @@ export default function Navbar({
                   key={n.href}
                   component={Link}
                   href={n.href}
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                   className="mb-2! rounded-[24px]!"
                   sx={{
                     px: 2.2,
@@ -671,7 +684,7 @@ export default function Navbar({
                   variant="outlined"
                   fullWidth
                   className="rounded-full! py-2.5!"
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                 >
                   เข้าสู่ระบบ
                 </Button>
@@ -682,7 +695,7 @@ export default function Navbar({
                   variant="contained"
                   fullWidth
                   className="rounded-full! py-2.5! font-semibold!"
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                 >
                   สมัครสมาชิก
                 </Button>
@@ -693,7 +706,7 @@ export default function Navbar({
                   <Box
                     component={Link}
                     href="/profile"
-                    onClick={() => setOpen(false)}
+                    onClick={closeDrawer}
                     sx={{
                       display: "block",
                       transition:
@@ -729,7 +742,7 @@ export default function Navbar({
                   variant="outlined"
                   fullWidth
                   className="rounded-full! py-2.5!"
-                  onClick={() => setOpen(false)}
+                  onClick={closeDrawer}
                 >
                   จัดการบัญชี
                 </Button>
