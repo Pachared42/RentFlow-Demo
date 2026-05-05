@@ -28,6 +28,34 @@ type FooterProps = {
   initialTenantProfile?: TenantProfile | null;
 };
 
+function FooterBrandLogo({ src, name }: { src?: string; name: string }) {
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
+    const fallbackText = name.trim().slice(0, 1).toUpperCase() || "R";
+
+    return (
+      <Box className="grid h-full w-full place-items-center rounded-md bg-[var(--rf-apple-ink)] text-xs font-bold leading-none text-white">
+        {fallbackText}
+      </Box>
+    );
+  }
+
+  return (
+    <Box
+      component="img"
+      src={src}
+      alt={name}
+      onError={() => setFailed(true)}
+      className="h-full w-full object-contain"
+    />
+  );
+}
+
 export default function Footer({
   initialHost,
   initialTenantProfile = null,
@@ -66,7 +94,9 @@ export default function Footer({
   const brandLogoSrc =
     siteMode === "storefront" && tenantProfile?.logoUrl
       ? tenantProfile.logoUrl
-      : "/RentFlow.png";
+      : siteMode === "storefront"
+        ? ""
+        : "/RentFlow.png";
   const brandTagline =
     siteMode === "storefront" && tenantProfile?.shopName
       ? `จองรถกับ ${tenantProfile.shopName} ได้ง่าย พร้อมดูข้อมูลรถและสาขาของร้านในที่เดียว`
@@ -111,12 +141,7 @@ export default function Footer({
           <Box className="space-y-3">
             <Stack direction="row" spacing={1} alignItems="center">
               <Box className="relative h-8 w-8 shrink-0 overflow-hidden rounded-md">
-                <Box
-                  component="img"
-                  src={brandLogoSrc}
-                  alt={brandName}
-                  className="h-full w-full object-contain"
-                />
+                <FooterBrandLogo src={brandLogoSrc} name={brandName} />
               </Box>
 
               <Typography className="apple-card-title font-bold tracking-[-0.03em] text-[var(--rf-apple-ink)]">

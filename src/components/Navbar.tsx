@@ -212,16 +212,36 @@ function BrandLogo({
   alt,
   className,
 }: {
-  src: string;
+  src?: string;
   alt: string;
   className: string;
 }) {
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setFailed(false);
+  }, [src]);
+
+  if (!src || failed) {
+    const fallbackText = alt.trim().slice(0, 1).toUpperCase() || "R";
+
+    return (
+      <Box
+        className={`${className} grid place-items-center rounded-full bg-[var(--rf-apple-ink)] text-[10px] font-bold leading-none text-white`}
+        aria-label={alt}
+      >
+        {fallbackText}
+      </Box>
+    );
+  }
+
   return (
     <Box
       component="img"
       src={src}
       alt={alt}
       className={className}
+      onError={() => setFailed(true)}
       sx={{ display: "block" }}
     />
   );
@@ -255,7 +275,8 @@ export default function Navbar({
   const brandName = tenantProfile?.shopName || "RentFlow";
   const brandCaption =
     siteMode === "storefront" && tenantProfile ? "หน้าร้านเช่ารถ" : "Smart Car Rental";
-  const brandLogoSrc = tenantProfile?.logoUrl || "/RentFlow.png";
+  const brandLogoSrc =
+    tenantProfile?.logoUrl || (siteMode === "storefront" ? "" : "/RentFlow.png");
   const navItems = React.useMemo(
     () =>
       siteMode === "marketplace"

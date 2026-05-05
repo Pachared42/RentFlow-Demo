@@ -8,6 +8,19 @@ export function getRentFlowApiBaseUrl() {
   );
 }
 
+function isRentFlowApiAssetPath(pathname: string) {
+  return (
+    pathname.startsWith("/tenants/") ||
+    pathname.startsWith("/cars/") ||
+    pathname.startsWith("/users/") ||
+    pathname === "/platform/settings/marketplace-promo-image"
+  );
+}
+
+function toRentFlowAssetProxyUrl(pathname: string, search = "") {
+  return `/api/rentflow-asset${pathname}${search}`;
+}
+
 export function resolveRentFlowAssetUrl(value?: string | null) {
   const rawValue = value?.trim() || "";
   if (
@@ -20,7 +33,30 @@ export function resolveRentFlowAssetUrl(value?: string | null) {
   }
 
   if (/^https?:\/\//i.test(rawValue)) {
+    try {
+      const url = new URL(rawValue);
+      const apiBaseUrl = new URL(getRentFlowApiBaseUrl());
+
+      if (
+        url.origin === apiBaseUrl.origin &&
+        isRentFlowApiAssetPath(url.pathname)
+      ) {
+        return toRentFlowAssetProxyUrl(url.pathname, url.search);
+      }
+    } catch {
+      return rawValue;
+    }
+
     return rawValue;
+  }
+
+  const relativeUrl = new URL(
+    rawValue.startsWith("/") ? rawValue : `/${rawValue}`,
+    "http://rentflow.local"
+  );
+
+  if (isRentFlowApiAssetPath(relativeUrl.pathname)) {
+    return toRentFlowAssetProxyUrl(relativeUrl.pathname, relativeUrl.search);
   }
 
   const apiBaseUrl = getRentFlowApiBaseUrl();
