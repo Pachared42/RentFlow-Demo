@@ -370,6 +370,8 @@ export default function ReviewsSection() {
             >
               <Box className="grid gap-4 sm:grid-cols-2">
                 <TextField
+                  id="review-first-name"
+                  name="firstName"
                   label="ชื่อจริง"
                   value={firstName}
                   onChange={(event) => setFirstName(event.target.value)}
@@ -379,6 +381,8 @@ export default function ReviewsSection() {
                   sx={{ "& .MuiOutlinedInput-root": { borderRadius: "18px" } }}
                 />
                 <TextField
+                  id="review-last-name"
+                  name="lastName"
                   label="นามสกุล"
                   value={lastName}
                   onChange={(event) => setLastName(event.target.value)}
@@ -403,15 +407,19 @@ export default function ReviewsSection() {
                 </Box>
               </Box>
 
-              <TextField
-                label="รีวิวของคุณ"
+              <Box
+                component="textarea"
+                id="review-comment"
+                name="comment"
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
-                fullWidth
-                multiline
-                minRows={4}
+                aria-label="รีวิวของคุณ"
                 placeholder="เล่าประสบการณ์ที่อยากแบ่งปัน"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "18px" } }}
+                rows={4}
+                className="min-h-32 w-full resize-y rounded-[18px] border border-black/15 bg-white px-4 py-3 text-sm leading-6 text-[var(--rf-apple-ink)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[var(--rf-apple-muted)] focus:border-[var(--rf-apple-blue)] focus:shadow-[0_0_0_3px_rgba(0,113,227,0.12)]"
+                sx={{
+                  font: "inherit",
+                }}
               />
 
               <Button

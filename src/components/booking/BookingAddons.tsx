@@ -46,6 +46,8 @@ export default function BookingAddons({
                 key={a.id}
                 control={
                   <Checkbox
+                    id={`booking-addon-${a.id}`}
+                    name="bookingAddons"
                     checked={selectedIds.has(a.id)}
                     onChange={(e) => onChange(a.id, e.target.checked)}
                   />

@@ -28,6 +28,8 @@ export default function MyBookingsFilters({
     <Box className="grid gap-4 md:grid-cols-12 md:items-center">
       <Box className="md:col-span-8">
         <TextField
+          id="my-bookings-search"
+          name="bookingSearch"
           label="ค้นหา (รหัส/ชื่อรถ)"
           value={q}
           onChange={(e) => onQChange(e.target.value)}
@@ -41,6 +43,8 @@ export default function MyBookingsFilters({
       <Box className="md:col-span-4">
         <TextField
           select
+          id="my-bookings-status"
+          name="bookingStatus"
           label="สถานะ"
           value={status}
           onChange={(e) =>

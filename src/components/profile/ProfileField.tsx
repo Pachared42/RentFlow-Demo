@@ -27,6 +27,8 @@ function FieldShell({
 type ProfileFieldProps = {
   label: string;
   value: string;
+  id?: string;
+  name?: string;
   mode?: "view" | "edit";
   onChange?: (value: string) => void;
   type?: React.InputHTMLAttributes<unknown>["type"];
@@ -38,6 +40,8 @@ type ProfileFieldProps = {
 export function ProfileField({
   label,
   value,
+  id,
+  name,
   mode = "view",
   onChange,
   type = "text",
@@ -47,6 +51,14 @@ export function ProfileField({
 }: ProfileFieldProps) {
   const isPasswordField = type === "password";
   const [showPassword, setShowPassword] = React.useState(false);
+  const generatedFieldId = React.useId();
+  const fieldId =
+    id ||
+    `profile-${label.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || generatedFieldId}`;
+  const fieldName =
+    name ||
+    label.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") ||
+    fieldId;
   const resolvedType =
     isPasswordField && showPassword ? "text" : type;
 
@@ -54,6 +66,8 @@ export function ProfileField({
     <FieldShell label={label} className={shellClassName}>
       {mode === "edit" ? (
         <TextField
+          id={fieldId}
+          name={fieldName}
           fullWidth
           variant="standard"
           value={value}

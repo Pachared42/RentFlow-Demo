@@ -78,6 +78,8 @@ function FilterInputSkeleton() {
     return (
         <Box>
             <TextField
+                id="cars-filter-skeleton"
+                name="carsFilterSkeleton"
                 fullWidth
                 size="small"
                 label=" "

@@ -153,6 +153,8 @@ export default function ForgotPasswordPage() {
 
             <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
               <TextField
+                id="forgot-password-username"
+                name="username"
                 label="ชื่อผู้ใช้"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
@@ -162,6 +164,8 @@ export default function ForgotPasswordPage() {
               />
 
               <TextField
+                id="forgot-password-phone"
+                name="phone"
                 label="เบอร์โทรศัพท์"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
@@ -173,6 +177,8 @@ export default function ForgotPasswordPage() {
               />
 
               <TextField
+                id="forgot-password-new-password"
+                name="newPassword"
                 label="รหัสผ่านใหม่"
                 type="password"
                 value={newPassword}
@@ -184,6 +190,8 @@ export default function ForgotPasswordPage() {
               />
 
               <TextField
+                id="forgot-password-confirm-password"
+                name="confirmPassword"
                 label="ยืนยันรหัสผ่านใหม่"
                 type="password"
                 value={confirmPassword}

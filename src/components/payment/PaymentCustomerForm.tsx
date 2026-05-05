@@ -29,6 +29,8 @@ export default function PaymentCustomerForm({
 
       <Box className="mt-4 grid gap-4 sm:grid-cols-2">
         <TextField
+          id="payment-customer-full-name"
+          name="fullName"
           label="ชื่อ-นามสกุล"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
@@ -36,6 +38,8 @@ export default function PaymentCustomerForm({
           sx={roundedFieldSX}
         />
         <TextField
+          id="payment-customer-phone"
+          name="phone"
           label="เบอร์โทร"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}

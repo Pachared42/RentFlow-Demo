@@ -37,6 +37,8 @@ export default function BookingDateTime({
         return (
           <>
       <TextField
+        id="booking-pickup-date"
+        name="pickupDate"
         label="วันรับรถ"
         type="date"
         value={pickupDate}
@@ -49,6 +51,8 @@ export default function BookingDateTime({
       />
 
       <TextField
+        id="booking-pickup-time"
+        name="pickupTime"
         label="เวลารับรถ"
         type="time"
         value={pickupTime}
@@ -61,6 +65,8 @@ export default function BookingDateTime({
       />
 
       <TextField
+        id="booking-return-date"
+        name="returnDate"
         label="วันคืนรถ"
         type="date"
         value={returnDate}
@@ -79,6 +85,8 @@ export default function BookingDateTime({
       />
 
       <TextField
+        id="booking-return-time"
+        name="returnTime"
         label="เวลาคืนรถ"
         type="time"
         value={returnTime}

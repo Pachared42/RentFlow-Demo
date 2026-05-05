@@ -66,6 +66,8 @@ export default function CarsFilterBar({
 
       <Box className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <TextField
+          id="cars-filter-search"
+          name="search"
           label="ค้นหารถ"
           value={q}
           onChange={(e) => onQChange(e.target.value)}
@@ -77,6 +79,8 @@ export default function CarsFilterBar({
 
         <TextField
           select
+          id="cars-filter-type"
+          name="type"
           label="ประเภทรถ"
           value={type}
           onChange={(e) => onTypeChange(e.target.value as CarType | "all")}
@@ -96,6 +100,8 @@ export default function CarsFilterBar({
 
         <TextField
           select
+          id="cars-filter-location"
+          name="location"
           label="สาขารับรถ"
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
@@ -115,6 +121,8 @@ export default function CarsFilterBar({
 
         <TextField
           type="date"
+          id="cars-filter-pickup-date"
+          name="pickupDate"
           label="วันรับรถ"
           value={pickupDate}
           onChange={(e) => onPickupDateChange(e.target.value)}
@@ -128,6 +136,8 @@ export default function CarsFilterBar({
 
         <TextField
           type="date"
+          id="cars-filter-return-date"
+          name="returnDate"
           label="วันคืนรถ"
           value={returnDate}
           onChange={(e) => onReturnDateChange(e.target.value)}
@@ -143,6 +153,8 @@ export default function CarsFilterBar({
       <Box className="mt-4 grid gap-4 sm:grid-cols-2">
         <TextField
           select
+          id="cars-filter-sort"
+          name="sort"
           label="เรียงตาม"
           value={sort}
           onChange={(e) => onSortChange(e.target.value as SortKey)}

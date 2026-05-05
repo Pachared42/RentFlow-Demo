@@ -296,6 +296,8 @@ export default function HeroSection({
                     <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-[1.08fr_1fr_1fr]">
                       <TextField
                         select
+                        id="home-search-pickup-branch"
+                        name="pickupBranch"
                         label="สาขารับรถ"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
@@ -313,6 +315,8 @@ export default function HeroSection({
 
                       <TextField
                         type="date"
+                        id="home-search-pickup-date"
+                        name="pickupDate"
                         label="วันรับรถ"
                         value={pickupDate}
                         onChange={(e) => {
@@ -332,6 +336,8 @@ export default function HeroSection({
 
                       <TextField
                         type="date"
+                        id="home-search-return-date"
+                        name="returnDate"
                         label="วันคืนรถ"
                         value={returnDate}
                         onChange={(e) =>
@@ -347,6 +353,8 @@ export default function HeroSection({
                     <Box className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr_auto] lg:items-stretch">
                       <TextField
                         select
+                        id="home-search-car-type"
+                        name="carType"
                         label="ประเภทรถ"
                         value={type}
                         onChange={(e) => setType(e.target.value as CarType | "All")}
@@ -363,6 +371,8 @@ export default function HeroSection({
                       </TextField>
 
                       <TextField
+                        id="home-search-car-model"
+                        name="carModel"
                         label="ค้นหาชื่อรุ่น"
                         value={q}
                         onChange={(e) => setQ(e.target.value)}

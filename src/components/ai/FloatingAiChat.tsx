@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 
@@ -224,7 +223,10 @@ export default function FloatingAiChat() {
 
           <Box className="border-t border-black/10 p-4">
             <Stack direction="row" spacing={1}>
-              <TextField
+              <Box
+                component="textarea"
+                id="ai-chat-message"
+                name="aiChatMessage"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={(event) => {
@@ -233,12 +235,14 @@ export default function FloatingAiChat() {
                     void ask();
                   }
                 }}
+                aria-label="พิมพ์สิ่งที่ต้องการถาม AI"
                 placeholder="พิมพ์สิ่งที่ต้องการ..."
-                size="small"
-                fullWidth
-                multiline
-                maxRows={3}
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "18px" } }}
+                rows={1}
+                className="min-h-10 max-h-24 w-full resize-none rounded-[18px] border border-black/15 bg-white px-3 py-2 text-sm leading-6 text-[var(--rf-apple-ink)] outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-[var(--rf-apple-muted)] focus:border-[var(--rf-apple-blue)] focus:shadow-[0_0_0_3px_rgba(0,113,227,0.12)]"
+                sx={{
+                  font: "inherit",
+                  overflowY: "auto",
+                }}
               />
               <Button
                 aria-label="ส่งคำถามให้ AI"

@@ -115,6 +115,8 @@ export default function BookingForm({
     <Box component="form" onSubmit={onSubmit} className="grid gap-4">
       <Box className="grid gap-4 sm:grid-cols-2">
         <TextField
+          id="booking-full-name"
+          name="fullName"
           label="ชื่อ-นามสกุล"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
@@ -123,6 +125,8 @@ export default function BookingForm({
           sx={fieldSX}
         />
         <TextField
+          id="booking-phone"
+          name="phone"
           label="เบอร์โทร"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}

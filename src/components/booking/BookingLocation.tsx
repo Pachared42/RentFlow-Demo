@@ -53,6 +53,8 @@ export default function BookingLocation({
 
           <Box className="mt-4 grid gap-4 sm:grid-cols-2">
             <TextField
+              id="booking-pickup-free-text"
+              name="pickupLocation"
               label="สถานที่รับรถ (ไม่บังคับ)"
               value={pickupFreeText}
               onChange={(e) => setPickupFreeText(e.target.value)}
@@ -69,6 +71,8 @@ export default function BookingLocation({
               }
             />
             <TextField
+              id="booking-return-free-text"
+              name="returnLocation"
               label="สถานที่คืนรถ (ไม่บังคับ)"
               value={returnFreeText}
               onChange={(e) => setReturnFreeText(e.target.value)}
@@ -97,6 +101,8 @@ export default function BookingLocation({
             <Box className="grid gap-3">
               <TextField
                 select
+                id="booking-pickup-branch"
+                name="pickupBranch"
                 label="สาขารับรถ"
                 value={pickupBranch}
                 onChange={(e) => setPickupBranch(e.target.value)}
@@ -117,6 +123,8 @@ export default function BookingLocation({
 
               {pickupBranch === OTHER_OPTION ? (
                 <TextField
+                  id="booking-pickup-other"
+                  name="pickupOther"
                   label="ระบุสถานที่รับรถ"
                   value={pickupOther}
                   onChange={(e) => setPickupOther(e.target.value)}
@@ -140,6 +148,8 @@ export default function BookingLocation({
             <Box className="grid gap-3">
               <TextField
                 select
+                id="booking-return-branch"
+                name="returnBranch"
                 label="สาขาคืนรถ"
                 value={returnBranch}
                 onChange={(e) => setReturnBranch(e.target.value)}
@@ -160,6 +170,8 @@ export default function BookingLocation({
 
               {returnBranch === OTHER_OPTION ? (
                 <TextField
+                  id="booking-return-other"
+                  name="returnOther"
                   label="ระบุสถานที่คืนรถ"
                   value={returnOther}
                   onChange={(e) => setReturnOther(e.target.value)}

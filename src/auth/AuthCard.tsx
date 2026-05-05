@@ -207,6 +207,8 @@ export default function AuthCard({
               {isRegister ? (
                 <Box className="grid gap-4 sm:grid-cols-2">
                   <TextField
+                    id="auth-first-name"
+                    name="firstName"
                     label="ชื่อจริง"
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
@@ -215,6 +217,8 @@ export default function AuthCard({
                     sx={fieldSX}
                   />
                   <TextField
+                    id="auth-last-name"
+                    name="lastName"
                     label="นามสกุล"
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
@@ -226,6 +230,8 @@ export default function AuthCard({
               ) : null}
 
               <TextField
+                id="auth-username"
+                name="username"
                 label="ชื่อผู้ใช้"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
@@ -235,6 +241,8 @@ export default function AuthCard({
               />
 
               <TextField
+                id="auth-password"
+                name="password"
                 label="รหัสผ่าน"
                 type="password"
                 value={password}
@@ -247,6 +255,8 @@ export default function AuthCard({
 
               {isRegister ? (
                 <TextField
+                  id="auth-confirm-password"
+                  name="confirmPassword"
                   label="ยืนยันรหัสผ่าน"
                   type="password"
                   value={confirmPassword}

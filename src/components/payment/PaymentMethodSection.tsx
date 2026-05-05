@@ -52,6 +52,8 @@ export default function PaymentMethodSection({
       <Box className="mt-4">
         <TextField
           select
+          id="payment-method"
+          name="paymentMethod"
           label="เลือกวิธี"
           value={method}
           onChange={(e) => setMethod(e.target.value as Method)}
@@ -94,6 +96,8 @@ export default function PaymentMethodSection({
         {method === "card" ? (
           <Box className="grid gap-4 sm:grid-cols-2">
             <TextField
+              id="payment-card-number"
+              name="cardNumber"
               label="หมายเลขบัตร"
               placeholder="1234 5678 9012 3456"
               value={cardDetails.cardNumber}
@@ -107,6 +111,8 @@ export default function PaymentMethodSection({
               sx={roundedFieldSX}
             />
             <TextField
+              id="payment-card-holder"
+              name="cardHolder"
               label="ชื่อบนบัตร"
               placeholder="NAME SURNAME"
               value={cardDetails.cardHolder}
@@ -120,6 +126,8 @@ export default function PaymentMethodSection({
               sx={roundedFieldSX}
             />
             <TextField
+              id="payment-card-expiry"
+              name="cardExpiry"
               label="หมดอายุ (MM/YY)"
               placeholder="12/30"
               value={cardDetails.cardExpiry}
@@ -133,6 +141,8 @@ export default function PaymentMethodSection({
               sx={roundedFieldSX}
             />
             <TextField
+              id="payment-card-cvv"
+              name="cardCvv"
               label="CVV"
               placeholder="123"
               value={cardDetails.cardCvv}
