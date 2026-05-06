@@ -14,11 +14,17 @@ import {
 import { getErrorMessage, getErrorStatus } from "@/src/lib/api-error";
 import usePageReady from "@/src/hooks/usePageReady";
 
+import AppSnackbar, {
+  type AppSnackbarSeverity,
+} from "@/src/components/common/AppSnackbar";
 import ProfileActionCard from "@/src/components/profile/ProfileActionCard";
 import ProfilePageSkeleton from "@/src/components/profile/ProfilePageSkeleton";
 import ProfileSectionCard from "@/src/components/profile/ProfileSectionCard";
 import { ProfileField } from "@/src/components/profile/ProfileField";
-import { getCachedSessionUser } from "@/src/services/auth/auth.service";
+import {
+  clearCachedSessionUser,
+  getCachedSessionUser,
+} from "@/src/services/auth/auth.service";
 import type { Customer } from "@/src/services/auth/auth.types";
 import { usersApi } from "@/src/services/users/users.service";
 
@@ -145,7 +151,15 @@ export default function ProfilePage() {
   const [passwordSaving, setPasswordSaving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [passwordError, setPasswordError] = React.useState<string | null>(null);
-  const [passwordSuccess, setPasswordSuccess] = React.useState<string | null>(null);
+  const [snackbar, setSnackbar] = React.useState<{
+    open: boolean;
+    message: string;
+    severity: AppSnackbarSeverity;
+  }>({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const [profile, setProfile] = React.useState<ProfileData | null>(null);
   const [draft, setDraft] = React.useState<ProfileData | null>(null);
   const [isEditing, setIsEditing] = React.useState(false);
@@ -156,6 +170,21 @@ export default function ProfilePage() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const showSnackbar = React.useCallback(
+    (message: string, severity: AppSnackbarSeverity = "success") => {
+      setSnackbar({ open: true, message, severity });
+    },
+    []
+  );
+
+  const closeSnackbar = React.useCallback(
+    (_event?: React.SyntheticEvent | Event, reason?: string) => {
+      if (reason === "clickaway") return;
+      setSnackbar((prev) => ({ ...prev, open: false }));
+    },
+    []
+  );
 
   React.useEffect(() => {
     let cancelled = false;
@@ -168,7 +197,6 @@ export default function ProfilePage() {
           setProfile(cachedProfile);
           setDraft(cachedProfile);
           setError(null);
-          return;
         }
 
         const res = await usersApi.getMe();
@@ -185,11 +213,7 @@ export default function ProfilePage() {
         if (getErrorStatus(err) === 401) {
           const cachedUser = getCachedSessionUser();
           if (cachedUser) {
-            const cachedProfile = mapUserToProfileData(cachedUser);
-            setProfile(cachedProfile);
-            setDraft(cachedProfile);
-            setError(null);
-            return;
+            clearCachedSessionUser();
           }
 
           router.replace("/login?redirect=/profile");
@@ -300,12 +324,19 @@ export default function ProfilePage() {
       setAvatarFileName("");
       setAvatarFile(null);
       setIsEditing(false);
+      showSnackbar("บันทึกข้อมูลโปรไฟล์สำเร็จ", "success");
     } catch (err: unknown) {
+      if (getErrorStatus(err) === 401) {
+        clearCachedSessionUser();
+        router.replace("/login?redirect=/profile");
+        return;
+      }
+
       setError(getErrorMessage(err, "ไม่สามารถบันทึกข้อมูลโปรไฟล์ได้"));
     } finally {
       setSaving(false);
     }
-  }, [avatarFile, draft, profile]);
+  }, [avatarFile, draft, profile, router, showSnackbar]);
 
   const handleDraftChange = React.useCallback(
     (key: keyof ProfileData, value: string) => {
@@ -323,7 +354,6 @@ export default function ProfilePage() {
 
   const handleChangePassword = React.useCallback(async () => {
     setPasswordError(null);
-    setPasswordSuccess(null);
 
     if (!passwordDraft.currentPassword.trim()) {
       setPasswordError("กรุณากรอกรหัสผ่านปัจจุบัน");
@@ -358,13 +388,13 @@ export default function ProfilePage() {
         newPassword: "",
         confirmPassword: "",
       });
-      setPasswordSuccess("เปลี่ยนรหัสผ่านเรียบร้อยแล้ว");
+      showSnackbar("เปลี่ยนรหัสผ่านสำเร็จ", "success");
     } catch (err: unknown) {
       setPasswordError(getErrorMessage(err, "ไม่สามารถเปลี่ยนรหัสผ่านได้"));
     } finally {
       setPasswordSaving(false);
     }
-  }, [passwordDraft]);
+  }, [passwordDraft, showSnackbar]);
 
   if (!ready || loading || !profile || !draft) {
     return <ProfilePageSkeleton />;
@@ -372,6 +402,13 @@ export default function ProfilePage() {
 
   return (
     <Box className="apple-page">
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={closeSnackbar}
+      />
+
       <Container maxWidth="lg" className="apple-section">
         <Box className="apple-section-intro mb-10 max-w-3xl md:mb-12">
           <Box className="flex flex-col gap-3">
@@ -479,12 +516,6 @@ export default function ProfilePage() {
               {passwordError ? (
                 <Alert severity="error" className="rounded-2xl!">
                   {passwordError}
-                </Alert>
-              ) : null}
-
-              {passwordSuccess ? (
-                <Alert severity="success" className="rounded-2xl!">
-                  {passwordSuccess}
                 </Alert>
               ) : null}
 

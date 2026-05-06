@@ -53,6 +53,7 @@ export default function MyBookingsFilters({
           size="small"
           fullWidth
           variant="outlined"
+          InputLabelProps={{ htmlFor: undefined }}
           SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >

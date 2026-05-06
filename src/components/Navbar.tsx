@@ -22,7 +22,9 @@ import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowReal
 import { useRentFlowSiteModeStatus } from "@/src/hooks/useRentFlowSiteMode";
 import {
   AUTH_SESSION_CHANGED_EVENT,
+  clearCachedSessionUser,
   getCachedSessionUser,
+  getSessionUser,
 } from "@/src/services/auth/auth.service";
 import type { Customer } from "@/src/services/auth/auth.types";
 import { tenantApi } from "@/src/services/tenant/tenant.service";
@@ -270,6 +272,7 @@ export default function Navbar({
   const [authShellReady, setAuthShellReady] = React.useState(false);
   const [tenantProfile, setTenantProfile] =
     React.useState<TenantProfile | null>(initialTenantProfile);
+  const verifyingSessionRef = React.useRef(false);
 
   const { siteMode } = useRentFlowSiteModeStatus(initialHost);
   const brandName = tenantProfile?.shopName || "RentFlow";
@@ -303,29 +306,67 @@ export default function Navbar({
     enabled: siteMode === "storefront",
   });
 
-  const applyCachedSession = React.useCallback(() => {
+  const applyCachedSession = React.useCallback((resolved = true) => {
     const cachedUser = getCachedSessionUser();
     if (cachedUser) {
-      setUser(mapCustomerToNavbarUser(cachedUser));
       setAuthSkeletonVariant("profile");
+      if (resolved) {
+        setUser(mapCustomerToNavbarUser(cachedUser));
+      }
     } else {
       setUser(null);
       setAuthSkeletonVariant("guest");
     }
-    setAuthResolved(true);
+    setAuthResolved(resolved);
+  }, []);
+
+  const verifySession = React.useCallback(async () => {
+    if (verifyingSessionRef.current) return;
+
+    const cachedUser = getCachedSessionUser();
+    if (!cachedUser) {
+      setUser(null);
+      setAuthSkeletonVariant("guest");
+      setAuthResolved(true);
+      setAuthShellReady(true);
+      return;
+    }
+
+    setAuthSkeletonVariant("profile");
+    setUser(null);
+    setAuthResolved(false);
+    setAuthShellReady(true);
+    verifyingSessionRef.current = true;
+
+    try {
+      const verifiedUser = await getSessionUser();
+      setUser(mapCustomerToNavbarUser(verifiedUser));
+      setAuthSkeletonVariant(verifiedUser ? "profile" : "guest");
+    } catch {
+      clearCachedSessionUser();
+      setUser(null);
+      setAuthSkeletonVariant("guest");
+    } finally {
+      verifyingSessionRef.current = false;
+      setAuthResolved(true);
+    }
   }, []);
 
   useHydrationLayoutEffect(() => {
-    applyCachedSession();
+    applyCachedSession(false);
     setAuthShellReady(true);
   }, [applyCachedSession]);
 
   React.useEffect(() => {
-    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, applyCachedSession);
-    return () => {
-      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, applyCachedSession);
+    const handleSessionChanged = () => {
+      void verifySession();
     };
-  }, [applyCachedSession]);
+
+    window.addEventListener(AUTH_SESSION_CHANGED_EVENT, handleSessionChanged);
+    return () => {
+      window.removeEventListener(AUTH_SESSION_CHANGED_EVENT, handleSessionChanged);
+    };
+  }, [verifySession]);
 
   React.useEffect(() => {
     if (siteMode !== "storefront") {
@@ -337,8 +378,8 @@ export default function Navbar({
   }, [reloadTenantProfile, siteMode]);
 
   React.useEffect(() => {
-    applyCachedSession();
-  }, [applyCachedSession, pathname]);
+    void verifySession();
+  }, [pathname, verifySession]);
 
   React.useEffect(() => {
     closeDrawer();

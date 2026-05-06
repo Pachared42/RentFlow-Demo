@@ -87,6 +87,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          InputLabelProps={{ htmlFor: undefined }}
           SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
@@ -108,6 +109,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          InputLabelProps={{ htmlFor: undefined }}
           SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >
@@ -161,6 +163,7 @@ export default function CarsFilterBar({
           size="small"
           fullWidth
           variant="outlined"
+          InputLabelProps={{ htmlFor: undefined }}
           SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={fieldSX}
         >

@@ -58,6 +58,7 @@ export default function PaymentMethodSection({
           value={method}
           onChange={(e) => setMethod(e.target.value as Method)}
           fullWidth
+          InputLabelProps={{ htmlFor: undefined }}
           SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
           sx={roundedFieldSX}
         >

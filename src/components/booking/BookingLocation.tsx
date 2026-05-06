@@ -108,6 +108,7 @@ export default function BookingLocation({
                 onChange={(e) => setPickupBranch(e.target.value)}
                 fullWidth
                 size="small"
+                InputLabelProps={{ htmlFor: undefined }}
                 SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                 sx={fieldSX}
               >
@@ -155,6 +156,7 @@ export default function BookingLocation({
                 onChange={(e) => setReturnBranch(e.target.value)}
                 fullWidth
                 size="small"
+                InputLabelProps={{ htmlFor: undefined }}
                 SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                 sx={fieldSX}
               >

@@ -302,6 +302,7 @@ export default function HeroSection({
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
                         fullWidth
+                        InputLabelProps={{ htmlFor: undefined }}
                         SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                         sx={Herotextfield}
                       >
@@ -359,6 +360,7 @@ export default function HeroSection({
                         value={type}
                         onChange={(e) => setType(e.target.value as CarType | "All")}
                         fullWidth
+                        InputLabelProps={{ htmlFor: undefined }}
                         SelectProps={{ MenuProps: rentFlowSelectMenuProps }}
                         sx={Herotextfield}
                       >

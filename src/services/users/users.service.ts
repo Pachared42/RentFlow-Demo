@@ -11,9 +11,12 @@ import type {
 export const usersApi = {
   async getMe() {
     const res = await api.get<ApiResponse<Customer>>("/users/me");
+    const user = normalizeCustomer(res.data.data)!;
+    setCachedSessionUser(user);
+
     return {
       ...res.data,
-      data: normalizeCustomer(res.data.data)!,
+      data: user,
     };
   },
 

@@ -5,8 +5,10 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useRentFlowRealtimeRefresh } from "@/src/hooks/realtime/useRentFlowRealtimeRefresh";
 import usePageReady from "@/src/hooks/usePageReady";
 import { getErrorStatus } from "@/src/lib/api-error";
+import { clearCachedSessionUser } from "@/src/services/auth/auth.service";
 import { bookingApi } from "@/src/services/booking/booking.service";
 import { getCarById } from "@/src/services/cars/cars.service";
+import { usersApi } from "@/src/services/users/users.service";
 
 export type BookingStatus =
   | "pending"
@@ -85,6 +87,8 @@ export default function useMyBookingDetailPage() {
       }
 
       try {
+        await usersApi.getMe();
+
         const bookingRes = await bookingApi.getBookingById(id, { tenantSlug });
         const booking = bookingRes.data;
         const car = await getCarById(booking.carId, { tenantSlug }).catch(
@@ -117,6 +121,7 @@ export default function useMyBookingDetailPage() {
         if (cancelled) return;
 
         if (getErrorStatus(err) === 401) {
+          clearCachedSessionUser();
           router.replace(
             `/login?redirect=${encodeURIComponent(
               tenantSlug
