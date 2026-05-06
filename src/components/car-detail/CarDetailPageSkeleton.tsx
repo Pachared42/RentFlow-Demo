@@ -168,40 +168,27 @@ function OverviewSkeleton() {
 function IncludedCardSkeleton() {
   return (
     <Box className="rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
-      <Box className="flex items-start gap-2">
+      <Box className="flex flex-col gap-1.5">
         <Skeleton
-          variant="rounded"
+          variant="text"
           animation="wave"
           sx={{
-            width: 20,
+            width: "62%",
             height: 20,
-            borderRadius: "6px",
-            flexShrink: 0,
-            mt: "2px",
+            borderRadius: "8px",
+            transform: "none",
           }}
         />
-        <Box className="flex flex-1 flex-col gap-1.5">
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "62%",
-              height: 20,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-          <Skeleton
-            variant="text"
-            animation="wave"
-            sx={{
-              width: "95%",
-              height: 16,
-              borderRadius: "8px",
-              transform: "none",
-            }}
-          />
-        </Box>
+        <Skeleton
+          variant="text"
+          animation="wave"
+          sx={{
+            width: "95%",
+            height: 16,
+            borderRadius: "8px",
+            transform: "none",
+          }}
+        />
       </Box>
     </Box>
   );
@@ -365,7 +352,7 @@ export default function CarDetailPageSkeleton() {
           />
         </Box>
 
-        <Box className="mt-8 grid gap-6 lg:grid-cols-12">
+        <Box className="mt-8 grid gap-5 lg:grid-cols-12 lg:gap-6">
           <HeroSkeleton />
           <SummaryCardSkeleton />
         </Box>

@@ -217,33 +217,28 @@ function ActionCardSkeleton() {
       <Box className="my-4 h-px bg-black/10" />
 
       <Box className="space-y-3 pt-1">
-        {Array.from({ length: 2 }).map((_, index) => (
-          <Box
-            key={`profile-status-skeleton-${index}`}
-            className="flex items-center justify-between"
-          >
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: 54,
-                height: 18,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-            <Skeleton
-              variant="text"
-              animation="wave"
-              sx={{
-                width: 72,
-                height: 18,
-                borderRadius: "8px",
-                transform: "none",
-              }}
-            />
-          </Box>
-        ))}
+        <Box className="flex items-center justify-between">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: 54,
+              height: 18,
+              borderRadius: "8px",
+              transform: "none",
+            }}
+          />
+          <Skeleton
+            variant="text"
+            animation="wave"
+            sx={{
+              width: 72,
+              height: 18,
+              borderRadius: "8px",
+              transform: "none",
+            }}
+          />
+        </Box>
       </Box>
 
       <Box className="my-4 h-px bg-black/10" />

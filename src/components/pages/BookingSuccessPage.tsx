@@ -22,7 +22,7 @@ export default function BookingSuccessPage({
   pickupPoint,
   returnPoint,
   shopName,
-  bookingMode = "payment",
+  bookingMode = "chat",
 }: {
   bookingId: string;
   amount: number;

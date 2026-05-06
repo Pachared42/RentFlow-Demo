@@ -93,40 +93,27 @@ function StepCardSkeleton() {
 
 function BranchInfoRowSkeleton() {
   return (
-    <Box className="flex items-start gap-3">
+    <Box>
       <Skeleton
-        variant="rounded"
+        variant="text"
         animation="wave"
         sx={{
-          width: 36,
-          height: 36,
-          borderRadius: "999px",
-          flexShrink: 0,
+          width: 70,
+          height: 16,
+          borderRadius: "8px",
+          transform: "none",
         }}
       />
-
-      <Box className="min-w-0 flex-1 space-y-1.5">
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: 72,
-            height: 16,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-        <Skeleton
-          variant="text"
-          animation="wave"
-          sx={{
-            width: "90%",
-            height: 18,
-            borderRadius: "8px",
-            transform: "none",
-          }}
-        />
-      </Box>
+      <Skeleton
+        variant="text"
+        animation="wave"
+        sx={{
+          width: "90%",
+          height: 18,
+          borderRadius: "8px",
+          transform: "none",
+        }}
+      />
     </Box>
   );
 }

@@ -301,7 +301,7 @@ export default function useBooking() {
     if (isDateAvailable === false) return false;
     return true;
   }, [car?.isAvailable, isDateAvailable]);
-  const bookingMode = car?.bookingMode === "chat" ? "chat" : "payment";
+  const bookingMode = car?.bookingMode === "payment" ? "payment" : "chat";
   const chatThresholdTHB = Math.max(car?.chatThresholdTHB ?? 0, 0);
   const forceChatBooking = bookingMode === "chat";
   const hasChatChannel = Boolean(

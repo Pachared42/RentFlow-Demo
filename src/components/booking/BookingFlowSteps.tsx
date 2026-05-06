@@ -30,7 +30,7 @@ const PENDING_TEXT = "#111827";
 
 export default function BookingFlowSteps({
   currentStep,
-  mode = "payment",
+  mode = "chat",
   className = "",
 }: {
   currentStep: BookingFlowStepKey;

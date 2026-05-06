@@ -11,7 +11,30 @@ type Props = {
     loading?: boolean;
 };
 
-function CarGridSkeletonCard() {
+function ShopBoxSkeleton() {
+    return (
+        <Box className="mt-5 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+            <Box className="flex flex-wrap items-end gap-x-2 gap-y-1">
+                <Skeleton variant="text" animation="wave" sx={{ width: 82, height: 24, borderRadius: "8px", transform: "none" }} />
+                <Skeleton variant="text" animation="wave" sx={{ width: 130, height: 30, borderRadius: "8px", transform: "none" }} />
+            </Box>
+        </Box>
+    );
+}
+
+function PriceBoxSkeleton() {
+    return (
+        <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
+            <Box className="flex items-end gap-2">
+                <Skeleton variant="text" animation="wave" sx={{ width: 74, height: 20, borderRadius: "8px", transform: "none" }} />
+                <Skeleton variant="text" animation="wave" sx={{ width: 104, height: 32, borderRadius: "8px", transform: "none" }} />
+                <Skeleton variant="text" animation="wave" sx={{ width: 28, height: 20, borderRadius: "8px", transform: "none" }} />
+            </Box>
+        </Box>
+    );
+}
+
+function CarGridSkeletonCard({ showShop = false }: { showShop?: boolean }) {
     return (
         <Card elevation={0} className="apple-card apple-card-no-hover">
             <Box className="relative h-52 w-full overflow-hidden bg-[var(--rf-apple-surface-soft)] sm:h-56">
@@ -20,17 +43,15 @@ function CarGridSkeletonCard() {
             <CardContent className="p-5! sm:p-6!">
                 <Skeleton variant="text" animation="wave" sx={{ width: "68%", height: 28, borderRadius: "8px", transform: "none" }} />
                 <Skeleton variant="text" animation="wave" sx={{ mt: 0.5, width: "88%", height: 22, borderRadius: "8px", transform: "none" }} />
-                <Box className="mt-3 rounded-[22px] bg-[var(--rf-apple-surface-soft)] p-4">
-                    <Skeleton variant="text" animation="wave" sx={{ width: "45%", height: 20, borderRadius: "8px", transform: "none" }} />
-                    <Skeleton variant="text" animation="wave" sx={{ mt: 1, width: "75%", height: 28, borderRadius: "8px", transform: "none" }} />
-                </Box>
+                {showShop ? <ShopBoxSkeleton /> : null}
+                <PriceBoxSkeleton />
             </CardContent>
             <CardActions
                 sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
                 className="flex-col gap-2 sm:flex-row"
             >
-                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, height: 36.5, borderRadius: "999px" }} />
-                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, height: 36.5, borderRadius: "999px" }} />
+                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, width: "100%", height: 40, borderRadius: "999px" }} />
+                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, width: "100%", height: 40, borderRadius: "999px" }} />
             </CardActions>
         </Card>
     );
@@ -41,7 +62,7 @@ export default function CarGrid({ cars, showShop = false, loading = false }: Pro
         return (
             <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: Math.max(cars.length, 6) }).map((_, index) => (
-                    <CarGridSkeletonCard key={`car-grid-loading-${index}`} />
+                    <CarGridSkeletonCard key={`car-grid-loading-${index}`} showShop={showShop} />
                 ))}
             </Box>
         );

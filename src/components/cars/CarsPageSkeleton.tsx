@@ -116,7 +116,31 @@ function FilterInputSkeleton() {
 
 function CarsFilterBarSkeleton() {
     return (
-        <Box className="apple-card apple-card-no-hover mt-8 p-4 md:p-5">
+        <Box className="apple-card apple-card-no-hover mt-8 p-4 sm:p-5">
+            <Box className="mb-4 flex flex-col gap-1">
+                <Skeleton
+                    variant="text"
+                    animation="wave"
+                    sx={{
+                        width: 132,
+                        height: 24,
+                        borderRadius: "8px",
+                        transform: "none",
+                    }}
+                />
+                <Skeleton
+                    variant="text"
+                    animation="wave"
+                    sx={{
+                        width: 360,
+                        maxWidth: "100%",
+                        height: 18,
+                        borderRadius: "8px",
+                        transform: "none",
+                    }}
+                />
+            </Box>
+
             <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <FilterInputSkeleton />
                 <FilterInputSkeleton />
@@ -284,24 +308,8 @@ function CarCardSkeleton({ showShop = false }: { showShop?: boolean }) {
                 sx={{ p: { xs: "0px 20px 20px", sm: "0px 16px 16px" } }}
                 className="flex-col gap-2 sm:flex-row"
             >
-                <Skeleton
-                    variant="rounded"
-                    animation="wave"
-                    sx={{
-                        flex: 1,
-                        height: 36.5,
-                        borderRadius: "999px",
-                    }}
-                />
-                <Skeleton
-                    variant="rounded"
-                    animation="wave"
-                    sx={{
-                        flex: 1,
-                        height: 36.5,
-                        borderRadius: "999px",
-                    }}
-                />
+                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, width: "100%", height: 40, borderRadius: "999px" }} />
+                <Skeleton variant="rounded" animation="wave" sx={{ flex: 1, width: "100%", height: 40, borderRadius: "999px" }} />
             </CardActions>
         </Card>
     );
@@ -314,7 +322,7 @@ export default function CarsPageSkeleton({ showShop = false }: { showShop?: bool
                 <HeaderSkeleton />
                 <CarsFilterBarSkeleton />
 
-                <Box className="mt-8 grid gap-5 md:grid-cols-3">
+                <Box className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, index) => (
                         <CarCardSkeleton key={index} showShop={showShop} />
                     ))}

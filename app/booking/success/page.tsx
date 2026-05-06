@@ -28,7 +28,7 @@ async function BookingSuccessPageContent({
   const pickupPoint = readParam(params.pickupPoint, "");
   const returnPoint = readParam(params.returnPoint, "");
   const shopName = readParam(params.shopName, "");
-  const bookingMode = readParam(params.bookingMode, "payment");
+  const bookingMode = readParam(params.bookingMode, "chat");
 
   return (
     <BookingSuccessPage

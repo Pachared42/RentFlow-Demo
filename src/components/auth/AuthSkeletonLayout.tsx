@@ -137,18 +137,39 @@ export default function AuthSkeletonLayout({
                 </Box>
               ) : null}
 
+              {isForgotPassword ? (
+                <Box className="space-y-1.5">
+                  <Skeleton
+                    variant="rounded"
+                    animation="wave"
+                    sx={{ width: "100%", height: 56, borderRadius: "18px" }}
+                  />
+                  <Skeleton
+                    variant="text"
+                    animation="wave"
+                    sx={{
+                      width: 92,
+                      height: 16,
+                      borderRadius: "8px",
+                      transform: "none",
+                      opacity: 0.85,
+                    }}
+                  />
+                </Box>
+              ) : null}
+
               <Skeleton
                 variant="rounded"
                 animation="wave"
                 sx={{ width: "100%", height: 52, borderRadius: "999px" }}
               />
 
-              {isForgotPassword ? (
+              {isForgotPassword || mode === "login" ? (
                 <Skeleton
                   variant="text"
                   animation="wave"
                   sx={{
-                    width: 156,
+                    width: isForgotPassword ? 156 : 190,
                     height: 20,
                     borderRadius: "8px",
                     transform: "none",
